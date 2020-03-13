@@ -1,0 +1,9 @@
+node_modules/*
+.vs/*
+.vscode/*
+src/db/*
+!src/db/sql-dataset-generator.py
+!src/db/cmps_schema.sql
+!src/db/aub_catalog_dataset.csv
+variables.env
+

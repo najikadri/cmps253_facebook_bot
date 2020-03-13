@@ -1,0 +1,25 @@
+{
+  "name": "facebook_bot",
+  "version": "1.0.0",
+  "description": "a facebook messenger bot for a computer science department",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "node src/server.js"
+  },
+  "config": {
+    "port": "8080"
+  },
+  "author": "Mohammad Naji Kadri, Mazen Natour, Muhammad Al Ghali, Sara Darwish",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "json2html": "0.0.8",
+    "natural": "^0.6.3",
+    "node-fetch": "^2.6.0",
+    "request": "^2.88.0",
+    "sqlite3": "^4.1.1"
+  }
+}

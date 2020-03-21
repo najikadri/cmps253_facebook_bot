@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const dbm = require('./database-manager').instance(); // create an instance of our database manager
 const path = require('path');
 const fb_api = require('./fb-api').instance();
+const nlp = require('./nlp-manager').instance();
 const sendTextMessage = fb_api.sendTextMessage; // a shortcut
 const getstarted = require('./get-started');
 
@@ -9,221 +10,250 @@ const getstarted = require('./get-started');
 // SETUP & STORE COMMON QUERIES
 
 
-dbm.storeQuery( dbm.queries.get_courses(), 'courses');
-dbm.storeQuery( dbm.queries.get_lectures(), 'lectures');
-dbm.storeQuery( dbm.queries.get_rooms(), 'rooms');
-dbm.storeQuery( dbm.queries.get_users(), 'users');
-
+dbm.storeQuery(dbm.queries.get_courses(), 'courses');
+dbm.storeQuery(dbm.queries.get_lectures(), 'lectures');
+dbm.storeQuery(dbm.queries.get_rooms(), 'rooms');
+dbm.storeQuery(dbm.queries.get_users(), 'users');
 
 // dbm.storeQuery ( dbm.queries.get_rooms_used(), 'rooms_used');
 
 //---------------------------------------------------
+// SETUP
 
+// Remember the Page Access Token you got from Facebook earlier?
+// Don't forget to add it to your `variables.env` file.
+const { FACEBOOK_ACCESS_TOKEN } = process.env;
 
-// UNDEFINED BEHAVIOR/TEXT MESSAGES
-// these messages are sent when the bot doesn't understand
-// what is the intent of what the user is saying
+const ErrorMessage = "Sorry I couldn't find any results for your request. 😕";
 
-// note to self: remember self-invoking functions if needed
+// helper function to trim strings
+if (typeof (String.prototype.trim) === "undefined") {
+  String.prototype.trim = function () {
+    return String(this).replace(/^\s+|\s+$/g, '');
+  };
+}
 
-const getErrorMessage = async function (userId){
-
-  var profile = await fb_api.getProfileInfo(userId);
-
-  var first_name = profile.first_name;
-
-  if(first_name == undefined){
-      first_name = '';
+// a function to handle custom queries requests
+const handleRequest = function(userId, res, formatter) {
+  dbm.requestCustomQuery(userId, res, formatter);
+  var request = dbm.getRequest(userId);
+  var data = request.nextPage();
+  if(!!data){
+    return sendTextMessage(userId, formatter(data, request.page(), request.last()));
+  }else{
+    return sendTextMessage(userId, ErrorMessage);
   }
+}
 
-  var messages = [
-    `Sorry ${first_name}, can you repeat that? I didn't get it.`,
-    `I don't know what are you talking about ${first_name}`,
-    'Can you repeat please?',
-    'I might not have learned to do that',
-    `Please try something else ${first_name}`
-  ]
-
-  return messages[Math.floor(Math.random() * messages.length)]
+// this function checks if day is valid
+const isValidDay = function(days){
+  let valid_days = ['M','T','W','R','F','TR', 'WF', 'MW', 'MWF'];
+  if(valid_days.includes(days)){
+    return true;
+  }else{
+    let error_msg = 'available days values are: \n';
+    for ( var i = 0; i < valid_days.length; i++){
+      error_msg += `"${valid_days[i]}"`;
+      if (i < valid_days.length - 1){ error_msg += ', ';};
+    }
+    return { error_msg };
+  }
 }
 
 
-//
+// help message builder
+
+const things_to_do = [
+  'ask to see all courses offered by the university',
+  'ask for the courses offered for a specific subject (ex. CMPS)',
+  'ask for lectures for a certain course',
+  'ask for lectures in a specific place or day(s)',
+  'ask for the title or name of a course you heard of'
+]
+
+const printThingsToDo = function () {
+
+  var result = '';
+
+  things_to_do.forEach( (element) => {
+    result += `📕 - ${element}\n`;
+  })
+
+  return result;
+}
+
+const HelpMessage = `Here are some of the things that you could do:\n${printThingsToDo()}`;
 
 
-    // Remember the Page Access Token you got from Facebook earlier?
-    // Don't forget to add it to your `variables.env` file.
-    const { FACEBOOK_ACCESS_TOKEN } = process.env;
+//--------------------------------------------------------------------------------
+// ACTION RUNNER/MANAGER
 
+// these functions process actions provided by the NLP manager and 
+// handles everything related to retreiving data from the database
+// and other behaviors
+const runAction = function (userId, msg, action_string) {
+  action_string = action_string.substring(1);
+  action_string = action_string.split('>').map((x) => { return x.trim() });
+  let action = action_string[0];
+  let parameters = {}
 
+  if (action_string.length > 1) {
 
-    // this is the function that recieves and process the message
+    action_string[1].split(',').map((x) => x.trim()).forEach(arg => {
+      arg = arg.split(':');
+      let name = arg[0];
+      let value = arg[1];
+      parameters[name] = value;
+    });
 
-    module.exports = (event) => {
-      const userId = event.sender.id;
-      const message = event.message.text;
+  }
 
-      const msg = message.toLowerCase();
+  console.log(action);
+  console.log(parameters);
 
-
-      //TODO: Use NLP later to process the user's intent naturally and extract data
-
-      // we are using regular expressions for now which are not very efficient compared to NLP
-
-      var lib = /view lectures in \s*(\w+)/g.exec(msg); // lib = lectures in building
-
-      if(lib != null){
-
-
-        dbm.executeQuery(dbm.queries.get_lectures_in(lib[1].toUpperCase()), (res) => {
-        dbm.requestCustomQuery(userId, res, dbm.formatLectures);
-        var request = dbm.getRequest(userId);
+  switch (action) {
+    // gets the next query that was loaded before
+    case 'help.core':
+      return sendTextMessage(userId, HelpMessage);
+      break;
+    case 'query.next':
+      var request = dbm.getRequest(userId);
+      if (!!request) {
         var data = request.nextPage();
         if (!!data) {
           return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
         }
-      });
-
-      return;
-      
       }
-
-      var lad = /view lectures at (days)?\s*(\w+)/g.exec(msg); // lad = lectures at days
-
-      if(lad != null){
-
-        var days = lad[2];
-
-        days = days.toUpperCase();
-
-        var valid_days = ['M','T','W','R','F','TR', 'WF', 'MW', 'MWF'];
-
-        if(valid_days.includes(days)){ // check if it is a valid day value
-
-          dbm.executeQuery(dbm.queries.get_lectures_at(lad[2].toUpperCase()), (res) => {
-            dbm.requestCustomQuery(userId, res, dbm.formatLectures);
-            var request = dbm.getRequest(userId);
-            var data = request.nextPage();
-            if (!!data) {
-              return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
-            }
-          });
-
-          return;
-
-        }else{ // otherwise tell the user what are the valid ones
-          let error_msg = 'available days values are: \n';
-          for ( var i = 0; i < valid_days.length; i++){
-            error_msg += `"${valid_days[i]}"`;
-            if (i < valid_days.length - 1){ error_msg += ', ';};
-          }
-
-          return sendTextMessage(userId, error_msg);
-
-        }
+      return sendTextMessage(userId, 'There is nothing to show for now');
+      break;
+    case 'courses.core':
+      dbm.requestStoredQuery(userId, 'courses', dbm.formatCourses);
+      var request = dbm.getRequest(userId);
+      var data = request.nextPage();
+      if (!!data) {
+        return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
       }
+      break;
+    case 'courses.subject':
+      dbm.executeQuery(dbm.queries.get_courses_for(parameters['subj'].toUpperCase()), (res) => {
+        return handleRequest(userId, res, dbm.formatCourses);
+      })
+      break;
+    case 'courses.title':
 
+      var subj = parameters['subj'].toUpperCase();
+      var code  = parameters['code'].toUpperCase();
 
-      
-      if(msg == 'help'){
-       return getstarted(userId);
-      }
+      dbm.executeQuery(dbm.queries.get_title(subj, code), (res => {
+        if(res.length > 0){
+          return sendTextMessage(userId, dbm.formatTitle(subj, code, res))
+        }else{
 
-      if(msg == 'next' || msg == 'show next'){
-
-        var request = dbm.getRequest(userId);
-
-        if(!! request){
-
-          var data = request.nextPage();
-
-          if(!!data){
-            return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
-          }
+          return sendTextMessage(userId, ErrorMessage);
         }
-
-        return sendTextMessage(userId, 'There is nothing to show for now');
-        
-      }
-
-
-      if( msg == 'view courses'){
-
-        dbm.requestStoredQuery(userId, 'courses', dbm.formatCourses);
-        var request = dbm.getRequest(userId);
-        var data = request.nextPage();
-
-        if(!!data){
-          return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
-        }
-
-
-      }else if ( msg == 'view lectures'){
-
-        dbm.requestStoredQuery(userId, 'lectures', dbm.formatLectures);
-        var request = dbm.getRequest(userId);
-        var data  = request.nextPage();
-
-        if(!!data){
-          return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
-        }
-
-      }else if ( msg == 'view rooms'){
-        dbm.requestStoredQuery(userId, 'rooms', dbm.formatRooms);
-        var request = dbm.getRequest(userId);
-        var data = request.nextPage();
-
-        if(!!data){
-          return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
-        }
-
-        // return sendTextMessage(userId, `${global.host}/view/rooms`);
+      }))
+      break;
+    case 'lectures.building':
+      dbm.executeQuery(dbm.queries.get_lectures_in(parameters['in'].toUpperCase()), (res) => {
+       return handleRequest(userId, res, dbm.formatLectures);
+      })
+      break;
+    case 'lectures.days':
+      var days = parameters['on'].toUpperCase();
+      var validation = isValidDay(days);
+      if(validation === true){
+        dbm.executeQuery( dbm.queries.get_lectures_on(days), (res) => {
+          return handleRequest(userId, res, dbm.formatLectures);
+        })
       }else{
-
-        // self-invoking functions are awesome (kinda)
-        (async function(userId) {
-          var error_msg = await getErrorMessage(userId);
-          return sendTextMessage(userId, error_msg);
-        })(userId);
-
+        return sendTextMessage(userId, validation.error_msg);
       }
+      break;
+    case 'lectures.building_and_days':
+      var bldg = parameters['in'].toUpperCase();
+      var days = parameters['on'].toUpperCase();
+      var validation = isValidDay(days);
+      if(validation === true){
+        dbm.executeQuery( dbm.queries.get_lectures_in_on(bldg, days) , (res) => {
+          return handleRequest(userId, res, dbm.formatLectures);
+        })
+      }else{
+        return sendTextMessage(userId, validation.error_msg);
+      }
+      break;
+    case 'lectures.course':
+      var subj = parameters['subj'].toUpperCase();
+      var code  = parameters['code'].toUpperCase();
 
-     
+      dbm.executeQuery(dbm.queries.get_lectures_for(subj, code), (res) => {
+        return handleRequest(userId, res, dbm.formatLectures);
+      })
+      break;
+    default: console.log('there must be something wrong!');
+  }
+}
+
+const isAction = function (response) {
+  return response[0] === '#';
+}
+
+//--------------------------------------------------------------------------------
+
+// this is the function that recieves and process the message
+
+module.exports = (event) => {
+
+  const userId = event.sender.id;
+  const message = event.message.text;
+
+  const msg = message.toLowerCase();
+
+  // let the natural language manager handle the message
+  nlp.getResponse(userId, msg, (response) => {
+
+    if (isAction(response)) {
+      runAction(userId, msg, response);
+    } else {
+      return sendTextMessage(userId, response);
     }
+
+  });
+
+}
 
 
 // My own defined functions and methods for the application
 
-var getStarted = function (user_id) {
-    return fetch(
-        `https://graph.facebook.com/v2.6/me/messages?access_token=${FACEBOOK_ACCESS_TOKEN}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'POST',
-          body: JSON.stringify({
-            messaging_type: 'RESPONSE',
-            recipient: {
-              id: user_id,
+/* var getStarted = function (user_id) {
+  return fetch(
+    `https://graph.facebook.com/v2.6/me/messages?access_token=${FACEBOOK_ACCESS_TOKEN}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        messaging_type: 'RESPONSE',
+        recipient: {
+          id: user_id,
+        },
+        message: {
+          text: "Welcome to Connect Four Bot!\nChoose what would you like to do:",
+          quick_replies: [
+            {
+              content_type: "text",
+              title: "Play Game",
+              payload: "PLAY"
+              // image_url :"http://example.com/img/green.png"   // use to add images to quick replies 
             },
-            message: {
-              text: "Welcome to Connect Four Bot!\nChoose what would you like to do:",
-              quick_replies : [
-                  {
-                    content_type: "text",
-                    title: "Play Game",
-                    payload  : "PLAY"
-                    // image_url :"http://example.com/img/green.png"   // use to add images to quick replies 
-                  },
-                  {
-                    content_type: "text",
-                    title: "Chit Chat",
-                    payload  : "CHAT"
-                  }
-              ]
-            },
-          }),
-        }
-      );
-}
+            {
+              content_type: "text",
+              title: "Chit Chat",
+              payload: "CHAT"
+            }
+          ]
+        },
+      }),
+    }
+  );
+} */

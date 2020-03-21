@@ -11,6 +11,18 @@ const path = require('path');
 const fs = require('fs');
 const createQueryIterator = require('./query-iterator').createQueryIterator; // import query iterator
 
+ // get the latest program provided
+const latest_program = { semester: "Spring", year: 2020};
+
+String.prototype.currentSemester = function(with_where = false){
+    return `${this} ${(with_where ? 'WHERE ' : 'AND ')} semester="${latest_program.semester}" AND lec_year=${latest_program.year}`;
+}
+
+// ashortcut since it is used very frequently
+function currentSemester (){
+    return `semester="${latest_program.semester}" AND lec_year=${latest_program.year}`;
+}
+
 
 class DatabaseManager {
 
@@ -28,23 +40,25 @@ class DatabaseManager {
     // store frequently used queries
     queries = {
         get_courses : () => { return "SELECT * FROM course"; },
-        get_lectures : () => { return "SELECT * FROM lecture"; },
+        get_title: (subj, code) => { return `SELECT title FROM course WHERE subj='${subj}' and code='${code}'`;},
+        get_lectures : () => { return "SELECT * FROM lecture".currentSemester(true); },
         get_rooms : () => { return "SELECT * FROM room";},
-        get_lectures_in: (bldgname) => { return `SELECT * FROM lecture WHERE bldgname = '${bldgname}';`; },
-        get_lectures_at: (days) => { return `SELECT * FROM lecture WHERE lec_days = '${days}';`},
+        get_lectures_in: (bldgname) => { return `SELECT * FROM ( SELECT * FROM lecture WHERE bldgname='${bldgname}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;},
+        get_lectures_on: (days) => { return `SELECT * FROM ( SELECT * FROM lecture WHERE lec_days='${days}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;},
+        get_lectures_in_on: (bldgname, days) => {return `SELECT * FROM ( SELECT * FROM lecture WHERE bldgname='${bldgname}' AND lec_days='${days}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;},
+        get_lectures_for: (subj, code) => {return `SELECT * FROM ( SELECT * FROM lecture WHERE subj='${subj}' AND code='${code}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;},
         get_users : () => { return "SELECT * FROM client;"},
-        add_user : (userId) => { return `INSERT INTO client VALUES (${userId});`}
+        add_user : (userId) => { return `INSERT INTO client VALUES (${userId})`},
+        get_courses_for: (subj) => {return `SELECT * FROM course WHERE subj="${subj}"`}
     }
 
     // store frequently used queries results
     table = {}
 
-    // save current program provided
-    latest_program = { semester: "spring", year: 2020}
-
     // ongoing queries are partitioned queries that the users are still using or displaying
 
     ongoing = {}
+    
     
 
 }
@@ -202,13 +216,17 @@ DatabaseManager.prototype.getRequest = function(userId){
     return undefined;
 }
 
-
 //-------------------------------------------------------------------------
 // DATA FORMATTERS
 // Code here are intended to format json results of the database
 // into readable text after execution
 
-DatabaseManager.prototype.formatCourses = function (crs, pg, mpg) { // courses, page number, max page number
+function _formatPage (pg, mpg){
+    return ( pg > 0 ? `\n\n page (${pg}/${mpg})` : '');
+}
+
+
+function _formatCourses(crs){ // courses, page number, max page number
 
     var result = '';
 
@@ -220,14 +238,12 @@ DatabaseManager.prototype.formatCourses = function (crs, pg, mpg) { // courses, 
         result += `${course.subj} ${course.code} - ${course.title}\n\n`;
     }
 
-    result += `\n\n page (${pg}/${mpg})`;
-
-    console.log("courses view executed");
+    // console.log("courses view executed");
 
     return result;
 }
 
-DatabaseManager.prototype.formatRooms = function (rooms, pg, mpg) {
+function _formatRooms(rooms){
 
     var result = '';
 
@@ -238,14 +254,12 @@ DatabaseManager.prototype.formatRooms = function (rooms, pg, mpg) {
         result += `Room ${i + 1}: ${room.bldgname} ${room.roomcode}\n\n`;
     }
 
-    result += `\n\n page (${pg}/${mpg})`;
-
-    console.log('rooms view executed');
+    // console.log('rooms view executed');
 
     return result;
 }
 
-DatabaseManager.prototype.formatLectures = function(lectures, pg, mpg){
+function _formatLectures(lectures){
 
     var result = '';
 
@@ -264,8 +278,9 @@ DatabaseManager.prototype.formatLectures = function(lectures, pg, mpg){
         var ending_hour = (!!lecture.ending_hour ? lecture.ending_hour : '');
         var lec_days = (!!lecture.lec_days ? lecture.lec_days : '');
         var crn = lecture.crn;
+        var instructor = lecture.instructor_email;
 
-        var days = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thurday', 'F': 'Friday'};
+        var days = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday'};
 
         if(lec_days != ''){
             lec_days = lec_days.split('');
@@ -273,18 +288,64 @@ DatabaseManager.prototype.formatLectures = function(lectures, pg, mpg){
             lec_days = lec_days.join(' and ');
         }
 
-        // result += `Lecture ${i + 1}:\n\n`;
         result += `${subj} ${code} - ${section}\n${semester} ${lec_year}\n`;
         result += `CRN: ${crn}\n`;
-        result += `Taught in ${bldgname} ${roomcode} between ${starting_hour} and ${ending_hour} every ${lec_days}\n\n`;
+
+        if(bldgname != '' || starting_hour !=  ''){
+            result += "Taught";
+        }else{
+            result += "No further information is available";
+        }
+
+        if( bldgname != ''){
+            result += ` in ${bldgname} ${roomcode}`;
+        }
+        
+        if( starting_hour != ''){
+            result += ` between ${starting_hour} and ${ending_hour} every ${lec_days}`;
+        }
+
+        if(!!instructor){
+            result += `\nInstructor: ${_formatInstructor(lecture)}`; // instructor information can be extracted from the lecture object
+        }
+
+        result += '\n\n';
     }
 
-    result += `\n\n page (${pg}/${mpg})`;
-
-    console.log('lectures view executed');
+    
+    // console.log('lectures view executed');
 
     return result;   
 }
+
+
+function _formatInstructor (instr){
+    return `${instr.first_name} ${instr.last_name} (${instr.email})`;
+}
+
+function _formatTitle (subj, code, res){
+    return `${subj} ${code} : ${res[0].title}`;
+}
+
+// DATABASE MANAGER FORMATTER FUNCTIONS WRAPPER
+
+DatabaseManager.prototype.formatCourses = function (crs, pg = -1, mpg = -1) {
+    return _formatCourses(crs) + _formatPage(pg, mpg);
+}
+
+DatabaseManager.prototype.formatRooms = function (rooms, pg = -1, mpg = -1)  {
+    return _formatRooms(rooms, pg, mpg) + _formatPage(pg, mpg);
+}
+
+DatabaseManager.prototype.formatLectures = function(lectures, pg = -1, mpg = -1){
+    return _formatLectures(lectures) + _formatPage(pg, mpg);
+}
+
+DatabaseManager.prototype.formatTitle = function(subj, code, title){
+    return _formatTitle(subj, code, title);
+}
+
+
 
 
 //------------------------------------------------------------------------

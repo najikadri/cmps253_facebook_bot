@@ -1,0 +1,112 @@
+! version = 2.0
+
+// This is the core brain for the facebook chatbot
+// It includes the main actions and functionalities required by the users
+
+// Substitutions
+! sub i'm     = i am
+! sub i'd     = i would
+! sub i've    = i have
+! sub i'll    = i will
+! sub don't   = do not
+! sub isn't   = is not
+! sub you'd   = you would
+! sub you're  = you are
+! sub you've  = you have
+! sub you'll  = you will
+! sub what's  = what is
+! sub whats   = what is
+! sub what're = what are
+! sub what've = what have
+! sub what'll = what will
+! sub who's   = who is
+
+
+// unknown response
+
++ *
+- what are you talking about ?!
+- I don't know what you mean
+- Can you please rephrase?
+- type help to see what you could do 
+
+
+// note: each block surrounded by a comment contains actions of the same category or action group
+// example : #<group>.<action>
+
+
+//------------------------------------------------------------------------
+// HELP
+
+// #HELP.CORE : GET THE BASIC HELP MESSAGE
+
++ [*] help [*] {weight=4}
+- #help.core
+
+//------------------------------------------------------------------------
+// QUERY
+
+// #QUERY.NEXT : GET NEXT PAGE 
+
++ [*] (next|more) {weight=5}
+- #query.next
+
+//------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------
+// LECTURES
+
+// #LECTURES.BUILDING : GET LECTURES IN SPECIFIC BUILDING
+
++ * lectures in _ [*]
+- #lectures.building > in:<star2>
+
+// #LECTURES.DAYS : GET LECTURES ON SPECIFIC DAYS
+
++ * lectures on _ [*]
+- #lectures.days > on:<star2>
+
+// #LECTURES.BUILDING_AND_DAYS : GET LECTURES OF SPECIFIED BUILDING AND DAYS
+
++ * lectures (in|on) _ [*] (in|on) _ [*]
+- #lectures.building_and_days > <star2>:<star3> , <star4>:<star5>
+
+// #LECTURES.COURSE : GET ALL LECTURES FOR A SPECIFIC COURSE
+
++ * lectures for _ _ [*]
+- #lectures.course > subj:<star2> , code:<star3>
+
++ * _ _ lectures [*]
+- #lectures.course > subj:<star2> , code:<star3>
+
+
+//------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------
+// COURSES
+
+// #COURSES.CORE : VIEW ALL COURSES PROVIDED BY THE UNIVERSITY
+
++ * all [the] courses [*] {weight=2}
+- #courses.core
+
+// #COURSES.SUBJECT : GET ALL COURSES FOR A SPECIFIC SUBJECT (ex. CMPS)
+
++ * courses [*] for _ [*] {weight=2}
+- #courses.subject > subj:<star2>
+
++ * _ courses [*]
+- #courses.subject > subj:<star2>
+
+// #COURSES.TITLE : GET THE TITLE FOR GIVEN COURSE
+
+
++ * (title|name) (for|of) the course _ _ [*]
+- #courses.title > subj:<star4> , code:<star5>
+
++ * (title|name) (for|of) _ _ [*]
+- #courses.title > subj:<star4> , code:<star5>
+
+//------------------------------------------------------------------------

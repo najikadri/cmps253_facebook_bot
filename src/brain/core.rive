@@ -126,4 +126,7 @@
 + [*] info (about|of|for) [professor|doctor|instructor] *
 - #instructors.info > name:<star2>
 
++ [*] [the] email (of|for) [professor|doctor|instructor] *
+- #instructors.info > name:<star2>
+
 //------------------------------------------------------------------------

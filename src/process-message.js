@@ -67,8 +67,10 @@ const things_to_do = [
   'ask to see all courses offered by the university',
   'ask for the courses offered for a specific subject (ex. CMPS)',
   'ask for lectures for a certain course',
-  'ask for lectures in a specific place or day(s)',
-  'ask for the title or name of a course you heard of'
+  'ask for lectures in a specific place and/or day(s)',
+  'ask for the title or name of a course you heard of',
+  'ask for info about instructors if you know their first and/or last names',
+  'ask for the email of an instructor'
 ]
 
 const printThingsToDo = function () {
@@ -188,6 +190,31 @@ const runAction = function (userId, msg, action_string) {
       dbm.executeQuery(dbm.queries.get_lectures_for(subj, code), (res) => {
         return handleRequest(userId, res, dbm.formatLectures);
       })
+      break;
+    case 'instructors.info':
+      // parameter could be name or email
+      if(!!parameters['name']){
+
+        var name = parameters['name'];
+
+        // try to find or suggest instructors by full name first, then by last name, and finally by first name
+        dbm.executeQuery( dbm.queries.get_instructor_by_fullname(name), (res) => {
+          if(res.length > 0){
+            return handleRequest(userId, res, dbm.formatInstructors);
+          }else{
+            dbm.executeQuery( dbm.queries.get_instructor_by_lastname(name), (res) => {
+              if(res.length > 0){
+                return handleRequest(userId, res, dbm.formatInstructors);
+              }else{
+                dbm.executeQuery( dbm.queries.get_instructor_by_firstname(name), (res) => {
+                  return handleRequest(userId, res, dbm.formatInstructors);
+                });
+              }
+            });
+          }
+        });
+      }
+
       break;
     default: console.log('there must be something wrong!');
   }

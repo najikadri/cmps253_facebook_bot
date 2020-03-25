@@ -49,7 +49,11 @@ class DatabaseManager {
         get_lectures_for: (subj, code) => {return `SELECT * FROM ( SELECT * FROM lecture WHERE subj='${subj}' AND code='${code}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;},
         get_users : () => { return "SELECT * FROM client;"},
         add_user : (userId) => { return `INSERT INTO client VALUES (${userId})`},
-        get_courses_for: (subj) => {return `SELECT * FROM course WHERE subj="${subj}"`}
+        get_courses_for: (subj) => {return `SELECT * FROM course WHERE subj="${subj}"`},
+        get_instructor_by_firstname: (first_name) => {return `SELECT * FROM instructor WHERE LOWER(first_name) like '%${first_name}%';`},
+        get_instructor_by_lastname: (last_name) => {return `SELECT * FROM instructor WHERE LOWER(last_name) like '%${last_name}%';`},
+        get_instructor_by_fullname: (fullname) => {return `SELECT * FROM instructor WHERE LOWER(first_name || " " || last_name) = '${fullname}';`},
+        
     }
 
     // store frequently used queries results
@@ -221,6 +225,19 @@ DatabaseManager.prototype.getRequest = function(userId){
 // Code here are intended to format json results of the database
 // into readable text after execution
 
+function _mapDays(lec_days){
+
+    var days = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday'};
+
+    if(lec_days != ''){
+        lec_days = lec_days.split('');
+        lec_days = lec_days.map( day => days[day] );
+        lec_days = lec_days.join(' and ');
+    }
+
+    return lec_days;
+}
+
 function _formatPage (pg, mpg){
     return ( pg > 0 ? `\n\n page (${pg}/${mpg})` : '');
 }
@@ -281,13 +298,7 @@ function _formatLectures(lectures){
         var crn = lecture.crn;
         var instructor = lecture.instructor_email;
 
-        var days = {'M': 'Monday', 'T': 'Tuesday', 'W': 'Wednesday', 'R': 'Thursday', 'F': 'Friday'};
-
-        if(lec_days != ''){
-            lec_days = lec_days.split('');
-            lec_days = lec_days.map( day => days[day] );
-            lec_days = lec_days.join(' and ');
-        }
+        lec_days = _mapDays(lec_days);
 
         result += `${subj} ${code} - ${section} (${credits} crs.)\n${semester} ${lec_year}\n`;
         result += `CRN: ${crn}\n`;
@@ -328,6 +339,55 @@ function _formatTitle (subj, code, res){
     return `${subj} ${code} : ${res[0].title}`;
 }
 
+function _formatInstructors(instrs){
+
+    var result = '';
+
+    for(var i = 0; i  < instrs.length; i++){
+        var instr = instrs[i];
+
+        var name = instr.first_name + ' ' + instr.last_name;
+        var email = instr.email;
+        var department = (!!instr.department ? instr.department : undefined);
+        var office_days = (!!instr.office_days ? _mapDays(instr.office_days) : undefined);
+        var building = (!!instr.bldgname ? instr.bldgname : undefined);
+        var room = (!!instr.roomcode ? instr.roomcode : undefined);
+        var office_starting_hour = (!!instr.office_starting_hour ? instr.office_starting_hour : undefined);
+        var office_ending_hour = (!!instr.office_ending_hour ? instr.office_ending_hour : undefined);
+
+        result += `Instructor: ${name} (${email})\n`;
+
+        if(!!department){
+            result += `Department: ${department}\n`;
+        }
+
+        if(!!building || !!office_days || !!office_starting_hour){
+            result += `Office Hours:`;
+        }
+        
+
+        if(!!building){
+            result += ` ${building} ${room}`;
+        }
+
+        if(!!office_days){
+            result += ` every ${office_days}`;
+        }
+
+        if(!!office_starting_hour){
+            result += ` between ${office_starting_hour} and ${office_ending_hour}`;
+        }
+
+        result += '\n\n';
+
+    }
+
+
+
+    return result;
+
+}
+
 // DATABASE MANAGER FORMATTER FUNCTIONS WRAPPER
 
 DatabaseManager.prototype.formatCourses = function (crs, pg = -1, mpg = -1) {
@@ -344,6 +404,10 @@ DatabaseManager.prototype.formatLectures = function(lectures, pg = -1, mpg = -1)
 
 DatabaseManager.prototype.formatTitle = function(subj, code, title){
     return _formatTitle(subj, code, title);
+}
+
+DatabaseManager.prototype.formatInstructors = function (instructors, pg = -1, mpg = -1){
+    return _formatInstructors(instructors) + _formatPage(pg, mpg);
 }
 
 

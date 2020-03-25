@@ -110,3 +110,20 @@
 - #courses.title > subj:<star4> , code:<star5>
 
 //------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------
+// INSTRUCTORS
+
+// #INSTRUCTORS.INFO : DISPLAY ALL INFO ABOUT A SPECIFIED INSTRUCTOR
+
++ [*] who is [professor|doctor|instructor|named] * {weight=3}
+- #instructors.info > name:<star1>
+
++ [*] who (has name|has the name) *
+- #instructors.info > name:<star2>
+
++ [*] info (about|of|for) [professor|doctor|instructor] *
+- #instructors.info > name:<star2>
+
+//------------------------------------------------------------------------

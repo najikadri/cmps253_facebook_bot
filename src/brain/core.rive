@@ -21,6 +21,8 @@
 ! sub what'll = what will
 ! sub who's   = who is
 
+! sub 👉 = point_right
+
 
 // unknown response
 
@@ -48,7 +50,7 @@
 
 // #QUERY.NEXT : GET NEXT PAGE 
 
-+ [*] (next|more) {weight=5}
++ [*] (next|more) [page] {weight=5}
 - #query.next
 
 //------------------------------------------------------------------------

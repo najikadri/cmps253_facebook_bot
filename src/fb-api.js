@@ -49,6 +49,7 @@ FB_API_Manager.prototype.getProfileInfo  = async (userId) => {
 
 // send a regular text message to facebook users
 FB_API_Manager.prototype.sendTextMessage = (userId, text) => {
+
     return fetch(
       `https://graph.facebook.com/v2.6/me/messages?access_token=${FACEBOOK_ACCESS_TOKEN}`,
       {
@@ -67,7 +68,39 @@ FB_API_Manager.prototype.sendTextMessage = (userId, text) => {
         }),
       }
     );
-  };
+
+};
+
+
+// send a message with a next postback button to display next page of a a query message
+FB_API_Manager.prototype.displayQueryMessage = (userId, msg) => {
+  return fetch(
+    `https://graph.facebook.com/v2.6/me/messages?access_token=${FACEBOOK_ACCESS_TOKEN}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        messaging_type: 'RESPONSE',
+        recipient: {
+          id: userId,
+        },
+        message: {
+          text: msg,
+          quick_replies: [
+            {
+              content_type: "text",
+              title: "👉 Next Page",
+              payload: "NEXT_PAGE"
+              // image_url :"http://example.com/img/green.png"   // use to add images to quick replies 
+            }
+          ]
+        },
+      }),
+    }
+  );
+};
 
 
 // send a common message to all users in the database

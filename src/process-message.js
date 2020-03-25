@@ -33,13 +33,23 @@ if (typeof (String.prototype.trim) === "undefined") {
   };
 }
 
+// this function decides whether to display next button or not with the current query
+const displayQuery = function(userId, data, request)
+{
+  if(request.page() === request.last()){
+    return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
+  }else{
+    return fb_api.displayQueryMessage(userId, request.formatter(data, request.page(), request.last()));
+  }
+}
+
 // a function to handle custom queries requests
 const handleRequest = function(userId, res, formatter) {
   dbm.requestCustomQuery(userId, res, formatter);
   var request = dbm.getRequest(userId);
   var data = request.nextPage();
   if(!!data){
-    return sendTextMessage(userId, formatter(data, request.page(), request.last()));
+    displayQuery(userId, data, request);
   }else{
     return sendTextMessage(userId, ErrorMessage);
   }
@@ -123,7 +133,7 @@ const runAction = function (userId, msg, action_string) {
       if (!!request) {
         var data = request.nextPage();
         if (!!data) {
-          return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
+          return displayQuery(userId, data, request);
         }
       }
       return sendTextMessage(userId, 'There is nothing to show for now');

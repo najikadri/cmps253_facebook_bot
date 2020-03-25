@@ -270,6 +270,7 @@ function _formatLectures(lectures){
         var subj = (!!lecture.subj ? lecture.subj : '');
         var code = (!!lecture.code ? lecture.code : '');
         var section = (!!lecture.section ? lecture.section : '');
+        var credits = lecture.credits;
         var semester = (!!lecture.semester ? lecture.semester : '');
         var lec_year = (!!lecture.lec_year ? lecture.lec_year : '');
         var bldgname = (!!lecture.bldgname ? lecture.bldgname : '');
@@ -288,7 +289,7 @@ function _formatLectures(lectures){
             lec_days = lec_days.join(' and ');
         }
 
-        result += `${subj} ${code} - ${section}\n${semester} ${lec_year}\n`;
+        result += `${subj} ${code} - ${section} (${credits} crs.)\n${semester} ${lec_year}\n`;
         result += `CRN: ${crn}\n`;
 
         if(bldgname != '' || starting_hour !=  ''){

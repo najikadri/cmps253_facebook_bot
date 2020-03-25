@@ -55,6 +55,7 @@ CREATE TABLE lecture (
     starting_hour TIME,
     ending_hour TIME,
     section varchar(5),
+    credits int,
     subj varchar(30),
     code int,
     bldgname VARCHAR(20),

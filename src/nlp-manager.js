@@ -1,13 +1,13 @@
 /**
  * This module is responsible for the management and interaction between the users (facebook users) and the 
- * chat bot. It wil allow the program to use basic NLP and AI technologies to be able to find the right response and
+ * chat bot. It will allow the program to use basic NLP and AI technologies to be able to find the right response and
  * process the users text and know their intent.
  * 
  * There are two inputs : facebook id of the user, and the message sent by the user
  * The outputs are:
  *  1- Response: regular string that contains the response by the nlp bot
  *  2- <ACTION>: which tell the bot to process this message as an action rather than a plain reply
- *      and its syntax is #<action_category>.<action> > [<parm_name>:<parm_value> , ...]+
+ *      and its syntax is #<action_category>.<action> > [<parm_name>:<parm_value> , ...]*
  * 
  *  example: #lectures.building_and_days > in:bliss , on:mwf
  */

@@ -31,6 +31,7 @@ BUILDING = 9
 ROOM = 10
 YEAR = 11
 SEMESTER = 12
+CREDITS = 13
 
 
 
@@ -219,7 +220,7 @@ with open( outFile , 'w') as sql_file:
 
         
 
-        sql_file.write(f'INSERT INTO lecture VALUES ({str(lecture[0])}, "{lecture[SEMESTER]}", {lecture[YEAR]}, {days}, {time[0]}, {time[1]}, "{lecture[3]}", "{lecture[1]}", "{lecture[2]}", {building}, {room}, {email});\n')
+        sql_file.write(f'INSERT INTO lecture VALUES ({str(lecture[0])}, "{lecture[SEMESTER]}", {lecture[YEAR]}, {days}, {time[0]}, {time[1]}, "{lecture[SECTION]}", {lecture[CREDITS]} , "{lecture[COURSE_SUBJ]}", "{lecture[COURSE_CODE]}", {building}, {room}, {email});\n')
 
     end(sql_file)
 

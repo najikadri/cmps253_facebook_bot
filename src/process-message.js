@@ -216,6 +216,13 @@ const runAction = function (userId, msg, action_string) {
       }
 
       break;
+
+    case 'issues.message':
+      dbm.executeQuery( dbm.queries.submit_issue(userId, parameters['msg']), (res) => {
+        console.log('an issue has been recorded, please check the issues dataset!'); // should be replaced by some logger
+        return sendTextMessage(userId, "Okay, I have notified my team so they can fix your problem as soon as possible! 👌");
+      });
+      break;
     default: console.log('there must be something wrong!');
   }
 }

@@ -53,6 +53,7 @@ class DatabaseManager {
         get_instructor_by_firstname: (first_name) => {return `SELECT * FROM instructor WHERE LOWER(first_name) like '%${first_name}%';`},
         get_instructor_by_lastname: (last_name) => {return `SELECT * FROM instructor WHERE LOWER(last_name) like '%${last_name}%';`},
         get_instructor_by_fullname: (fullname) => {return `SELECT * FROM instructor WHERE LOWER(first_name || " " || last_name) = '${fullname}';`},
+        submit_issue: (user_id, message) => {return `insert into issue values (${user_id}, ifnull( (select max(msgno) + 1 from issue where fid= ${user_id}),  1), '${message}');`}
         
     }
 

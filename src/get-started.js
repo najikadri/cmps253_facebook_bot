@@ -24,7 +24,8 @@ module.exports = async (userId) => {
        });
    }
 
-   var message  = `Hello ${first_name}! 😃 I'm here to help you to answer your questions about the computer science department in the American Univeristy of Beirut. Ask me anything you would like to know or type help and I'll walk you through.`;
+   var message  = `Hello ${first_name}! 😃 I'm here to help you to answer your questions about the computer science department in the American Univeristy of Beirut.\nAsk me anything you would like to know or type help and I'll walk you through.`;
+   message += `\nIf you are facing any problem please do let me know! 😊`;
 
     return sendTextMessage(userId, message);
 

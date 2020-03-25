@@ -109,6 +109,9 @@
 + * (title|name) (for|of) _ _ [*]
 - #courses.title > subj:<star4> , code:<star5>
 
++ [*] what does _ _ means
+- #courses.title > subj:<star1> , code:<star2>
+
 //------------------------------------------------------------------------
 
 
@@ -117,16 +120,16 @@
 
 // #INSTRUCTORS.INFO : DISPLAY ALL INFO ABOUT A SPECIFIED INSTRUCTOR
 
-+ [*] who is [professor|doctor|instructor|named] * {weight=3}
++ [*] who is [professor|doctor|instructor|named|prof|dr] * {weight=3}
 - #instructors.info > name:<star1>
 
 + [*] who (has name|has the name) *
 - #instructors.info > name:<star2>
 
-+ [*] info (about|of|for) [professor|doctor|instructor] *
++ [*] info (about|of|for) [professor|doctor|instructor|prof|dr] *
 - #instructors.info > name:<star2>
 
-+ [*] [the] email (of|for) [professor|doctor|instructor] *
++ [*] [the] email (of|for) [professor|doctor|instructor|prof|dr] *
 - #instructors.info > name:<star2>
 
 //------------------------------------------------------------------------

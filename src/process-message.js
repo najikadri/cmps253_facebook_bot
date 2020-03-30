@@ -143,7 +143,7 @@ const runAction = function (userId, msg, action_string) {
       var request = dbm.getRequest(userId);
       var data = request.nextPage();
       if (!!data) {
-        return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
+        return fb_api.displayQueryMessage(userId, request.formatter(data, request.page(), request.last()));
       }
       break;
     case 'courses.subject':

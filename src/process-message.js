@@ -76,6 +76,7 @@ const isValidDay = function(days){
 const things_to_do = [
   'ask to see all courses offered by the university (e.g. all courses)',
   'ask for the courses offered for a specific subject (e.g. courses CMPS)',
+  'ask for courses with a specific attribute (e.g. attribute social sciences)',
   'ask for lectures for a certain course (e.g. lectures MATH 201)',
   'ask for lectures in a specific place and/or day(s) (e.g. lectures in bliss on mwf)',
   'ask for the title or name of a course you heard of (e.g. title CMPS 253)',
@@ -151,6 +152,12 @@ const runAction = function (userId, msg, action_string) {
       dbm.executeQuery(dbm.queries.get_courses_for(parameters['subj'].toUpperCase()), (res) => {
         return handleRequest(userId, res, dbm.formatCourses);
       })
+      break;
+
+    case 'courses.attribute':
+      dbm.executeQuery( dbm.queries.get_courses_by_attribute(parameters['attr']), (res) => {
+        return handleRequest(userId, res, dbm.formatCourses);
+      });
       break;
     case 'courses.title':
 

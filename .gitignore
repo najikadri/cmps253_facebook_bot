@@ -5,6 +5,7 @@ src/db/*
 !src/db/sql-dataset-generator.py
 !src/db/cmps_schema.sql
 !src/db/aub_catalog_dataset.csv
+!src/db/courses_attributes.csv
 !src/db/tuition_fees.csv
 !src/db/departments_faculties.csv
 !src/db/config.ini

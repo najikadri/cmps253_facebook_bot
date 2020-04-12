@@ -102,6 +102,11 @@
 + [*] _ courses [*]
 - #courses.subject > subj:<star1>
 
+// #COURSES.ATTRIBUTE : VIEW ALL COURSES WITH GIVEN ATTRIBUTE
+
++ [*] attribute * {weight=4}
+- #courses.attribute > attr:<star1>
+
 // #COURSES.TITLE : GET THE TITLE FOR GIVEN COURSE
 
 

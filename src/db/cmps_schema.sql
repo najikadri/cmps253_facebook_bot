@@ -8,14 +8,15 @@ CREATE TABLE course (
     subj VARCHAR(30), -- subj is subject like CMPS
     code varchar(20), -- code is course numbering like 200
     title VARCHAR(30),
+    attribute VARCHAR(40),
     PRIMARY KEY (subj, code)
 );
 
 CREATE TABLE prerequisite (
     forsubj VARCHAR(30),
-    forcode int,
+    forcode VARHAR(20),
     reqsubj VARCHAR(30),
-    reqcode int,
+    reqcode VARCHAR(20),
     PRIMARY KEY (forsubj, forcode, reqsubj, reqcode),
     FOREIGN KEY (forsubj, forcode) REFERENCES course(subj, code),
     FOREIGN KEY (reqsubj, reqcode) REFERENCES course(subj, code)

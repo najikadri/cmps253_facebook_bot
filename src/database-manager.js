@@ -40,6 +40,7 @@ class DatabaseManager {
     // store frequently used queries
     queries = {
         get_courses : () => { return "SELECT * FROM course"; },
+        get_courses_by_attribute: (attr) => { return `SELECT * FROM course WHERE attribute LIKE '${attr}%' COLLATE NOCASE;`},
         get_title: (subj, code) => { return `SELECT title FROM course WHERE subj='${subj}' and code='${code}'`;},
         get_lectures : () => { return "SELECT * FROM lecture".currentSemester(true); },
         get_rooms : () => { return "SELECT * FROM room";},
@@ -270,7 +271,12 @@ function _formatCourses(crs){ // courses, page number, max page number
 
         var course = crs[i];
 
-        result += `${course.subj} ${course.code} - ${course.title}\n\n`;
+        if(!!course.attribute){
+            result += `${course.subj} ${course.code} - ${course.title}\nAttribute: ${course.attribute}\n\n`;
+        }else{
+            result += `${course.subj} ${course.code} - ${course.title}\n\n`;
+        }
+        
     }
 
     // console.log("courses view executed");

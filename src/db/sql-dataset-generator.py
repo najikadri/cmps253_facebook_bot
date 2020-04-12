@@ -12,8 +12,9 @@ import configparser # install configparser to read config.ini file
 # define necessary classes for the sql generator
 
 class ConfigFile:
-    def __init__(self, catalog_file, department_faculty_file, tuition_file, output_file):
+    def __init__(self, catalog_file, attribute_file, department_faculty_file, tuition_file, output_file):
         self.catalog_file = f'{catalog_file}.csv'
+        self.attribute_file = f'{attribute_file}.csv'
         self.department_faculty_file = f'{department_faculty_file}.csv'
         self.tuition_file = f'{tuition_file}.csv'
         self.output_file = f'{output_file}.sql'
@@ -35,6 +36,11 @@ class Catalog:
     YEAR = 11
     SEMESTER = 12
     CREDITS = 13
+
+class Attribute:
+    COURSE_SUBJ = 0
+    COURSE_CODE = 1
+    ATTRIBUTE = 2
 
 class DepartmentFaculty:
     DEPARTMENT = 0
@@ -66,6 +72,7 @@ read_config.read('config.ini')
 
 config = ConfigFile(
     read_config.get('settings', 'CatalogFile'),
+    read_config.get('settings', 'AttributeFile'),
     read_config.get('settings', 'DepartmentFacultyFile'),
     read_config.get('settings', 'TuitionFile'),
     read_config.get('settings', 'OutputFile')
@@ -89,7 +96,7 @@ with open( config.catalog_file , 'r') as csv_file:
             # they seem irrelavent to our required data
             continue 
 
-        course = (row[Catalog.COURSE_SUBJ], row[Catalog.COURSE_CODE], row[Catalog.COURSE_TITLE])
+        course = [row[Catalog.COURSE_SUBJ], row[Catalog.COURSE_CODE], row[Catalog.COURSE_TITLE], 'NULL']
         course_name = row[Catalog.COURSE_SUBJ] + str(row[Catalog.COURSE_CODE])
 
         instr_name = row[Catalog.INSTRUCTOR]
@@ -122,6 +129,22 @@ with open( config.catalog_file , 'r') as csv_file:
         lectures[row[Catalog.CRN]] = tuple(row)
 
 
+with open( config.attribute_file, 'r') as csv_file:
+
+    data = csv.reader(csv_file)
+
+    is_header = True
+
+    for row in data:
+
+        if is_header:
+            is_header = False
+            continue
+
+        course_name = row[Attribute.COURSE_SUBJ] + str(row[Attribute.COURSE_CODE])
+
+        if course_name in courses:
+            courses[course_name][-1] = row[Attribute.ATTRIBUTE]
 
 with open( config.department_faculty_file, 'r') as csv_file:
 
@@ -197,7 +220,13 @@ with open( config.output_file , 'w') as sql_file:
     begin(sql_file)
 
     for course in courses.values():
-        sql_file.write(f'INSERT INTO course VALUES ("{course[0]}","{str(course[1])}","{course[2]}");\n')
+
+        if course[3] == 'NULL':
+            course[3] = 'null'
+        else:
+            course[3] = f'"{course[3]}"'
+            
+        sql_file.write(f'INSERT INTO course VALUES ("{course[0]}","{str(course[1])}","{course[2]}", {course[3]});\n')
 
     end(sql_file)
 

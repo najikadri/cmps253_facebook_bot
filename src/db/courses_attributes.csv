@@ -1,0 +1,228 @@
+Subject,Code,Attribute
+AGBU,213,Social Sciences I
+AGSC,203,Natural Sciences
+AGSC,205,Humanities II
+AGSC,212,Social Sciences II
+AHIS,207,Humanities I
+AHIS,222,Humanities I
+AHIS,224,Humanities I
+AHIS,225,Humanities I
+AHIS,226,Humanities I
+AHIS,227,Humanities I
+AHIS,249F,Humanities I
+AHIS,251,Humanities I
+AMST,215,Humanities I
+AMST,265D,Social Sciences I
+AMST,275AI,Humanities I
+AMST,275AP,Humanities I
+ARAB,201,Arabic Communication Skills
+ARAB,202,Arabic Communication Skills
+ARAB,207,Arabic Communication Skills
+ARAB,209,Arabic Communication Skills
+ARAB,210A,Arabic Communication Skills
+ARAB,213,Humanities I
+ARAB,217,Humanities I
+ARAB,223,Arabic Communication Skills
+ARAB,224,Humanities I
+ARAB,225,Arabic Communication Skills
+ARAB,228,Humanities I
+ARAB,229,Humanities I
+ARAB,231,Humanities I
+ARAB,232,Arabic Communication Skills
+ARAB,236,Arabic Communication Skills
+ARAB,238,Arabic Communication Skills
+ARAB,239,Arabic Communication Skills
+ARAB,240,Arabic Communication Skills
+ARAB,243,Humanities I
+ARAB,244,Humanities I
+ARAB,245,Arabic Communication Skills
+ARAB,247,Humanities I
+ARAB,251AA,Arabic Communication Skills
+ARAB,251AB,Arabic Communication Skills
+ARAB,251AH,Arabic Communication Skills
+ARAB,251AK,Humanities I
+ARAB,251AL,Humanities I
+ARAB,251P,Arabic Communication Skills
+ARAB,251W,Arabic Communication Skills
+ARAB,254,Humanities I
+ARCH,122,Humanities I
+ARCH,151,Natural Sciences
+AROL,201,Humanities I
+AROL,214,Humanities II
+AROL,217,Humanities I
+AROL,222,Humanities I
+AROL,225,Humanities I
+AROL,228,Humanities I
+AROL,235AA,Humanities I
+AROL,235AE,Humanities I
+AROL,236E,Humanities I
+AVSC,220,Natural Sciences
+AVSC,224,Natural Sciences
+BIOL,200,Natural Sciences
+BIOL,201,Natural Sciences
+BIOL,209,Natural Sciences
+BIOL,210,Natural Sciences
+BUSS,215,Humanities II
+CHEM,200,Natural Sciences
+CHEM,201,Natural Sciences
+CHEM,202,Natural Sciences
+CHEM,205,Natural Sciences
+CHEM,208,Natural Sciences
+CHEM,209,Natural Sciences
+CMPS,200,Quantitative Thought
+CMPS,206,Quantitative Thought
+CMPS,207,Quantitative Thought
+CMPS,209,Quantitative Thought
+CVSP,201,Humanities I
+CVSP,202,Humanities I
+CVSP,203,Humanities I
+CVSP,204,Humanities I
+CVSP,205,Humanities I
+CVSP,207I,Humanities I
+CVSP,208M,Humanities I
+CVSP,212,Humanities I
+CVSP,295AR,Humanities II
+CVSP,295S,Humanities I
+CVSP,295WN,Humanities I
+CVSP,295X,Humanities I
+ECON,203,Social Sciences II
+ECON,211,Social Sciences I
+ECON,212,Social Sciences I
+ECON,217,Social Sciences I
+ECON,223,Humanities II
+ECON,230,Humanities I
+EDUC,211,Social Sciences I
+EDUC,215,Social Sciences I
+EDUC,218,Social Sciences II
+EDUC,230,Social Sciences II
+EDUC,231,Social Sciences II
+EDUC,274,Natural Sciences
+EECE,230,Quantitative Thought
+ENGL,203,English Communication Skills
+ENGL,204,English Communication Skills
+ENGL,205,Humanities I
+ENGL,206,English Communication Skills
+ENGL,207,Humanities I
+ENGL,209,Humanities I
+ENGL,212,Humanities I
+ENGL,214,Humanities I
+ENGL,219,Humanities I
+ENGL,220C,Humanities I
+ENGL,227,Humanities I
+ENGL,228,Humanities II
+ENGL,233,Humanities I
+ENGL,234,Humanities I
+ENGL,235,Social Sciences I
+ENGL,236,Humanities I
+ENGL,249,Humanities I
+ENGL,250,Humanities I
+ENGL,251,Humanities I
+ENGL,252,Humanities I
+ENGL,254A,Humanities I
+ENGL,254C,Humanities II
+ENGL,254H,Humanities I
+ENGL,255,Humanities I
+ENGL,256B,Humanities I
+ENGL,256D,Humanities II
+ENGL,257F,Humanities I
+ENGL,259D,Humanities I
+ENGL,263,Humanities II
+ENGL,294A,Social Sciences I
+ENHL,220,Natural Sciences
+ENMG,698E,Social Sciences I
+EPHD,213,Quantitative Thought
+GEOL,201,Natural Sciences
+GEOL,204,Natural Sciences
+GEOL,205,Natural Sciences
+GEOL,206,Natural Sciences
+GEOL,227,Natural Sciences
+HIST,211,Humanities I
+HIST,213,Humanities I
+HIST,227,Humanities I
+HIST,245,Humanities I
+HIST,251,Humanities I
+HIST,252,Humanities I
+HIST,258B,Humanities I
+HIST,258BM,Humanities II
+HIST,258BP,Humanities I
+HIST,278A,Humanities I
+HMPD,204,Social Sciences I
+HPCH,201,Social Sciences I
+HPCH,203,Social Sciences II
+INDE,410,Humanities I
+LDEM,208,Humanities I
+LDEM,217,Natural Sciences
+LDEM,230,Natural Sciences
+LDEM,262,Social Sciences I
+MATH,201,Quantitative Thought
+MATH,203,Quantitative Thought
+MATH,204,Quantitative Thought
+MATH,211,Quantitative Thought
+MATH,218,Quantitative Thought
+MCOM,203,Social Sciences I
+MCOM,204,Humanities I
+MCOM,217,Social Sciences I
+MCOM,227,Humanities I
+MCOM,246,Social Sciences II
+MNGT,215,Social Sciences I
+MSCU,202,Natural Sciences
+MSCU,204,Natural Sciences
+MUSC,205,Quantitative Thought
+MUSC,221,Humanities II
+MUSC,225,Humanities I
+MUSC,230,Humanities II
+MUSC,235,Humanities I
+MUSC,250,Humanities I
+MUSC,265,Humanities I
+NFSC,210,Quantitative Thought
+NFSC,220,Natural Sciences
+NFSC,223,Natural Sciences
+NFSC,252,Natural Sciences
+NURS,203,Quantitative Thought
+PHIL,201,Humanities I
+PHIL,205,Humanities II
+PHIL,209,Humanities I
+PHIL,210,Humanities I
+PHIL,211,Quantitative Thought
+PHIL,214,Humanities I
+PHIL,215,Humanities II
+PHIL,216,Humanities I
+PHIL,218,Humanities I
+PHIL,219,Humanities I
+PHIL,221,Humanities I
+PHIL,224,Humanities I
+PHIL,225,Humanities I
+PHIL,231,Humanities I
+PHIL,232,Humanities I
+PHIL,254F,Humanities I
+PHIL,260M,Humanities II
+PHYL,246,Natural Sciences
+PHYS,200,Natural Sciences
+PHYS,205,Natural Sciences
+PHYS,210,Natural Sciences
+PHYS,211,Natural Sciences
+PHYS,212,Natural Sciences
+PSPA,201,Social Sciences II
+PSPA,202,Social Sciences II
+PSPA,210,Humanities I
+PSPA,211,Social Sciences I
+PSPA,212,Social Sciences II
+PSPA,213,Social Sciences II
+PSPA,220,Social Sciences I
+PSPA,222,Social Sciences I
+PSPA,272,Social Sciences II
+PSPA,288K,Social Sciences I
+PSPA,329B,Social Sciences II
+PSYC,201,Social Sciences I
+SOAN,201,Social Sciences I
+SOAN,203,Social Sciences I
+SOAN,211,Quantitative Thought
+SOAN,213,Social Sciences I
+SOAN,224,Social Sciences I
+SOAN,237,Social Sciences I
+SOAN,245,Social Sciences I
+STAT,201,Quantitative Thought
+STAT,210,Quantitative Thought
+THTR,200,Humanities I
+THTR,260A,Humanities I
+THTR,282B,Humanities I

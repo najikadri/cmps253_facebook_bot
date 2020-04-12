@@ -1,58 +1,79 @@
 '''
 Authors: Mohammad Naji Kadri, Mazen Natour
 
-Description: This program is designed to translate a csv file into 
-a sql file by translating each operation into a sql statement.
-This allows the execution of these statements and entering them into the database.
-It also allows the modification of the sql file to change or add entities for testing
-without changing the original csv file ( original dataset )
-Note: this code is only intended for the facebook_bot database schema
-
-Note: to run this file use sqlite3 followed by the database name in the terminal
-example "sqlite3 cmps.db" and once the REPL open type .read followed by the name of the generated 
-sql file example "sqlite3 > .read aub_catalog_dataset.csv"
+Description: This script is designed to convert our csv files dataset which were obtained by scraping
+into sql code that can be used to populate our database with data.
 '''
 
 import csv
 import sys
+import configparser # install configparser to read config.ini file
+
+# define necessary classes for the sql generator
+
+class ConfigFile:
+    def __init__(self, catalog_file, department_faculty_file, tuition_file, output_file):
+        self.catalog_file = f'{catalog_file}.csv'
+        self.department_faculty_file = f'{department_faculty_file}.csv'
+        self.tuition_file = f'{tuition_file}.csv'
+        self.output_file = f'{output_file}.sql'
 
 # define columns in the dataset if it might change later on
 
-CRN = 0
-COURSE_SUBJ = 1
-COURSE_CODE = 2
-SECTION = 3
-COURSE_TITLE = 4
-TIME = 5
-DAYS = 6
-INSTRUCTOR = 7
-EMAIL = 8
-BUILDING = 9
-ROOM = 10
-YEAR = 11
-SEMESTER = 12
-CREDITS = 13
+class Catalog:
+    CRN = 0
+    COURSE_SUBJ = 1
+    COURSE_CODE = 2
+    SECTION = 3
+    COURSE_TITLE = 4
+    TIME = 5
+    DAYS = 6
+    INSTRUCTOR = 7
+    EMAIL = 8
+    BUILDING = 9
+    ROOM = 10
+    YEAR = 11
+    SEMESTER = 12
+    CREDITS = 13
+
+class DepartmentFaculty:
+    DEPARTMENT = 0
+    FACULTY = 1
 
 
+class Tuition:
+    SEMESTER = 0
+    YEAR = 1
+    FACULTY = 2
+    DEGREE_LEVEL = 3
+    CREDIT_COST = 4
 
+
+# dictionaries to store data to be generated
 courses = {}
 instuctors = {}
 buildings = {}
 rooms = {}
 lectures = {}
+faculties = {}
+departments = {}
+tuitions = {}
 
-# pass input and output file locations
+# load configuration file
 
-inFile = 'cmps_base_dataset.csv'
-outFile = 'cmps_base_dataset.sql'
+read_config = configparser.ConfigParser()
+read_config.read('config.ini')
 
-if len(sys.argv) >= 2:
-    inFile = sys.argv[1] 
-    outFile = sys.argv[2]
+config = ConfigFile(
+    read_config.get('settings', 'CatalogFile'),
+    read_config.get('settings', 'DepartmentFacultyFile'),
+    read_config.get('settings', 'TuitionFile'),
+    read_config.get('settings', 'OutputFile')
+)
 
-# read dataset and extract information about courses and lectures
+# read dataset and extract information
 
-with open( inFile , 'r') as csv_file:
+with open( config.catalog_file , 'r') as csv_file:
     data = csv.reader(csv_file)
 
     is_header = True 
@@ -62,11 +83,17 @@ with open( inFile , 'r') as csv_file:
         if is_header: # ignore first row ( it is the header)
             is_header = False
             continue
-        course = (row[COURSE_SUBJ], row[COURSE_CODE], row[COURSE_TITLE])
-        course_name = row[COURSE_SUBJ] + str(row[COURSE_CODE])
 
-        instr_name = row[INSTRUCTOR]
-        email = row[EMAIL]
+        if row[Catalog.COURSE_CODE][0] == '0':
+            # ignore any course/lecture which has a leading zero
+            # they seem irrelavent to our required data
+            continue 
+
+        course = (row[Catalog.COURSE_SUBJ], row[Catalog.COURSE_CODE], row[Catalog.COURSE_TITLE])
+        course_name = row[Catalog.COURSE_SUBJ] + str(row[Catalog.COURSE_CODE])
+
+        instr_name = row[Catalog.INSTRUCTOR]
+        email = row[Catalog.EMAIL]
 
         if not email in instuctors and email != 'N/A' and email != 'NULL':
 
@@ -80,19 +107,66 @@ with open( inFile , 'r') as csv_file:
         if course_name != 'NULL' and course_name != 'N/A' and not course_name in courses :
             courses[course_name] = course
 
-        building = row[BUILDING]
+        building = row[Catalog.BUILDING]
 
         if building != 'N/A' and building != 'NULL' and not building in buildings:
             buildings[building] = building
 
-        room = row[ROOM]
+        room = row[Catalog.ROOM]
 
-        if room != 'N/A' and room != 'NULL' and not room in rooms:
+        if room != 'N/A' and room != 'NULL' and not (building + room) in rooms:
             # while len(room) < 3:
             #     room = '0' + room
             rooms[building + room] = (building, room)
 
-        lectures[row[CRN]] = tuple(row)
+        lectures[row[Catalog.CRN]] = tuple(row)
+
+
+
+with open( config.department_faculty_file, 'r') as csv_file:
+
+    data = csv.reader(csv_file)
+
+    is_header = True
+
+    for row in data:
+
+        if is_header:
+            is_header = False
+            continue
+
+        department = ( row[DepartmentFaculty.DEPARTMENT], row[DepartmentFaculty.FACULTY] )
+
+        departments[ department[DepartmentFaculty.DEPARTMENT] ] = department
+
+        faculty = department[DepartmentFaculty.FACULTY]
+
+        if '-' in faculty:
+            fac = faculty.split('-')[0]
+            faculties[fac] = fac
+
+        if not faculty in faculties:
+            faculties[ faculty ] = faculty
+
+
+with open( config.tuition_file, 'r') as csv_file:
+
+    data = csv.reader(csv_file)
+
+    is_header = True
+
+    for row in data:
+
+        if is_header:
+            is_header = False
+            continue
+
+        row[Tuition.YEAR] = row[Tuition.YEAR].split('-')[1]
+
+        tuition = (row[Tuition.SEMESTER], row[Tuition.YEAR], row[Tuition.FACULTY], row[Tuition.DEGREE_LEVEL])
+
+        if not tuition in tuitions:
+            tuitions[tuition] = row
 
 
 # important functions that are used to make transcations faster
@@ -109,8 +183,7 @@ def end (sql_file):
 
 # convert dataset information to sql statements
 
-
-with open( outFile , 'w') as sql_file:
+with open( config.output_file , 'w') as sql_file:
 
     sql_file.write("-- facebook_data base dataset ( auto-generated )\n\n")
 
@@ -169,13 +242,13 @@ with open( outFile , 'w') as sql_file:
 
     for lecture in lectures.values():
         # check for null values or N/A
-        days = lecture[DAYS]
+        days = lecture[Catalog.DAYS]
         if days == 'N/A' or days == 'NULL':
             days = 'null'
         else:
             days = f'"{days}"'
 
-        time = lecture[TIME]
+        time = lecture[Catalog.TIME]
         time = time.split('-')
         if time == ['N/A'] or time == ['NULL']:
             time = ['null', 'null']
@@ -183,14 +256,14 @@ with open( outFile , 'w') as sql_file:
             time[0] = f'"{time[0]}"'
             time[1] = f'"{time[1]}"'
 
-        building = lecture[BUILDING]
+        building = lecture[Catalog.BUILDING]
 
         if building == 'N/A' or building == 'NULL':
             building = 'null'
         else:
             building = f'"{building}"'
 
-        room = lecture[ROOM]
+        room = lecture[Catalog.ROOM]
 
         if room == 'N/A' or room == 'NULL':
             room = 'null'
@@ -200,9 +273,9 @@ with open( outFile , 'w') as sql_file:
 
             room = f'"{room}"'
 
-        instuctor = lecture[INSTRUCTOR]
+        instuctor = lecture[Catalog.INSTRUCTOR]
 
-        email = lecture[EMAIL]
+        email = lecture[Catalog.EMAIL]
 
         if email == 'N/A' or email == 'NULL':
             email = 'null'
@@ -220,7 +293,49 @@ with open( outFile , 'w') as sql_file:
 
         
 
-        sql_file.write(f'INSERT INTO lecture VALUES ({str(lecture[0])}, "{lecture[SEMESTER]}", {lecture[YEAR]}, {days}, {time[0]}, {time[1]}, "{lecture[SECTION]}", {lecture[CREDITS]} , "{lecture[COURSE_SUBJ]}", "{lecture[COURSE_CODE]}", {building}, {room}, {email});\n')
+        sql_file.write(f'INSERT INTO lecture VALUES ({str(lecture[0])}, "{lecture[Catalog.SEMESTER]}", {lecture[Catalog.YEAR]}, {days}, {time[0]}, {time[1]}, "{lecture[Catalog.SECTION]}", {lecture[Catalog.CREDITS]} , "{lecture[Catalog.COURSE_SUBJ]}", "{lecture[Catalog.COURSE_CODE]}", {building}, {room}, {email});\n')
+
+    end(sql_file)
+
+
+    # inserting faculties
+
+    sql_file.write('\n-- INSERT FACULTIES \n\n')
+
+    begin(sql_file)
+
+    for faculty in faculties.values():
+        sql_file.write(f'INSERT INTO faculty VALUES ("{faculty}");\n')
+
+    end(sql_file)
+
+    # inserting departments
+
+    sql_file.write('\n-- INSERT DEPARTMENTS \n\n')
+
+    begin(sql_file)
+
+    for department in departments.values():
+        dep = department[ DepartmentFaculty.DEPARTMENT ]
+        fac = department[ DepartmentFaculty.FACULTY ]
+        sql_file.write(f'INSERT INTO department VALUES ("{dep}", "{fac}");\n')
+
+    end(sql_file)
+
+
+    # inserting tuitions
+
+    sql_file.write('\n-- INSERT TUITION \n\n')
+
+    begin(sql_file)
+
+    for tuition in tuitions.values():
+        sems = tuition[ Tuition.SEMESTER ]
+        year = tuition[ Tuition.YEAR ]
+        fac = tuition[ Tuition.FACULTY ]
+        deglvl = tuition[ Tuition.DEGREE_LEVEL ]
+        crd = tuition[ Tuition.CREDIT_COST ]
+        sql_file.write(f'INSERT INTO tuition VALUES ("{sems}", {year}, "{fac}", "{deglvl}", "{crd}");\n')
 
     end(sql_file)
 

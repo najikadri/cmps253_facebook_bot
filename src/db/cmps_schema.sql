@@ -135,3 +135,31 @@ CREATE TABLE agreement (
     CONSTRAINT tip_link FOREIGN KEY (author_id, post_id) REFERENCES tip(fid, post_id)
 );
 
+CREATE TABLE faculty (
+    name VARCHAR(60),
+    CONSTRAINT faculty_id PRIMARY KEY (name)
+);
+
+CREATE TABLE department (
+    name VARCHAR(30),
+    faculty_name VARCHAR(60),
+    CONSTRAINT department_id PRIMARY KEY (name),
+    CONSTRAINT faculty_link FOREIGN KEY (faculty_name) REFERENCES faculty(name)
+);
+
+CREATE TABLE tuition (
+    semester VARCHAR(12),
+    year int,
+    faculty_name VARCHAR(60),
+    degree_level VARCHAR(30),
+    credit_cost VARCHAR(30),
+    CONSTRAINT tuition_id PRIMARY KEY (semester, year, faculty_name, degree_level),
+    CONSTRAINT faculty_link FOREIGN KEY (faculty_name) REFERENCES faculty(name)
+);
+
+CREATE TABLE info (
+    tag VARCHAR(30),
+    value TEXT,
+    CONSTRAINT tag_id PRIMARY KEY (tag)
+);
+

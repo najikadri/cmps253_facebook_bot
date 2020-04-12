@@ -44,6 +44,7 @@ CREATE TABLE instructor (
     office_ending_hour TIME,
     bldgname VARCHAR(20),
     roomcode int,
+    image_url STRING,
     CONSTRAINT instructor_id PRIMARY KEY (email),
     CONSTRAINT office_room FOREIGN KEY (bldgname, roomcode) REFERENCES room(bldgname, roomcode)
 );

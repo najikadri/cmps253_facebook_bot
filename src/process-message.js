@@ -217,7 +217,10 @@ const runAction = function (userId, msg, action_string) {
 
         // try to find or suggest instructors by full name first, then by last name, and finally by first name
         dbm.executeQuery( dbm.queries.get_instructor_by_fullname(name), (res) => {
-          if(res.length > 0){
+          if(res.length == 1){
+            if(!!res[0].image_url){
+              fb_api.sendImageMessage(userId, res[0].image_url);
+            }
             return handleRequest(userId, res, dbm.formatInstructors);
           }else{
             dbm.executeQuery( dbm.queries.get_instructor_by_lastname(name), (res) => {

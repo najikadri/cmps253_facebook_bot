@@ -12,11 +12,12 @@ import configparser # install configparser to read config.ini file
 # define necessary classes for the sql generator
 
 class ConfigFile:
-    def __init__(self, catalog_file, attribute_file, department_faculty_file, tuition_file, output_file):
+    def __init__(self, catalog_file, attribute_file, department_faculty_file, tuition_file, instructors_images_file, output_file):
         self.catalog_file = f'{catalog_file}.csv'
         self.attribute_file = f'{attribute_file}.csv'
         self.department_faculty_file = f'{department_faculty_file}.csv'
         self.tuition_file = f'{tuition_file}.csv'
+        self.instructors_images_file = f'{instructors_images_file}.csv'
         self.output_file = f'{output_file}.sql'
 
 # define columns in the dataset if it might change later on
@@ -54,6 +55,10 @@ class Tuition:
     DEGREE_LEVEL = 3
     CREDIT_COST = 4
 
+class InstructorsImages:
+    EMAIL = 0
+    SRC = 1
+
 
 # dictionaries to store data to be generated
 courses = {}
@@ -75,6 +80,7 @@ config = ConfigFile(
     read_config.get('settings', 'AttributeFile'),
     read_config.get('settings', 'DepartmentFacultyFile'),
     read_config.get('settings', 'TuitionFile'),
+    read_config.get('settings', 'InstructorsImagesFile'),
     read_config.get('settings', 'OutputFile')
 )
 
@@ -105,11 +111,11 @@ with open( config.catalog_file , 'r') as csv_file:
         if not email in instuctors and email != 'N/A' and email != 'NULL':
 
             if instr_name == 'N/A' or instr_name == 'NULL':
-                instuctors[email] = (f'"{email}"', 'null','null')
+                instuctors[email] = [f'"{email}"', 'null','null', 'null']
             else:
                 first_name = instr_name.split()[0]
                 last_name = ' '.join( instr_name.split()[1:])
-                instuctors[email] = (f'"{email}"', f'"{ first_name }"', f'"{  last_name  }"')
+                instuctors[email] = [f'"{email}"', f'"{ first_name }"', f'"{  last_name  }"', 'null']
 
         if course_name != 'NULL' and course_name != 'N/A' and not course_name in courses :
             courses[course_name] = course
@@ -192,6 +198,24 @@ with open( config.tuition_file, 'r') as csv_file:
             tuitions[tuition] = row
 
 
+with open( config.instructors_images_file, 'r') as csv_file:
+
+    data = csv.reader(csv_file)
+
+    is_header = True
+
+    for row in data:
+
+        if is_header:
+            is_header = False
+            continue
+
+        email = row[InstructorsImages.EMAIL]
+
+        if email in instuctors:
+            instuctors[email][-1] = f'"{row[InstructorsImages.SRC]}"'
+
+
 # important functions that are used to make transcations faster
 # note any sql statements between begin and end will either all be 
 # inserted or none of them if there is any error or any problem
@@ -259,7 +283,7 @@ with open( config.output_file , 'w') as sql_file:
     begin(sql_file)
 
     for instr in instuctors.values():
-        sql_file.write(f'INSERT INTO instructor (email, first_name, last_name) VALUES ({instr[0]}, {instr[1]}, {instr[2]});\n')
+        sql_file.write(f'INSERT INTO instructor (email, first_name, last_name, image_url) VALUES ({instr[0]}, {instr[1]}, {instr[2]}, {instr[3]});\n')
 
     end(sql_file)
 

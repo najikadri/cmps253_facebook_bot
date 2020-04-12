@@ -8,6 +8,7 @@ src/db/*
 !src/db/courses_attributes.csv
 !src/db/tuition_fees.csv
 !src/db/departments_faculties.csv
+!src/db/instructors_images.csv
 !src/db/config.ini
 variables.env
 

@@ -1,0 +1,35 @@
+! version = 2.0
+
+! sub chairman = chairperson
+! sub chairwoman = chairperson
+! sub department = dep
+
+// these triggers are used to retreive information from the info relation
+
+//--------------------------------------------------------------------------
+
+// president
+
++ [aub] president [aub]
+- #info.get > tag:president
+
+// cmps chairperson
+
++ (cmps chairperson|chairperson cmps|computer science chairperson|chairperson computer science)
+- #info.get > tag:cmps_chairperson
+
+// cmps department info and news
+
++ (cmps|computer science) dep [info]
+- #info.get > tag:cmps_dep
+
++  (cmps news|news cmps|computer science news|news computer science)
+- #info.get > tag:cmps_dep
+
+// contact cmps department
+
++ (cmps dep contact [info]|computer science dep contact [info]|contact [info] cmps dep|contact [info] computer science department)
+- #info.get > tag:cmps_dep_contact_info
+
+
+

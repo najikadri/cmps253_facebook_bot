@@ -102,6 +102,82 @@ FB_API_Manager.prototype.displayQueryMessage = (userId, msg) => {
   );
 };
 
+// send an image attachment
+//note: it uses facebook api version 6.0 not 2.6
+FB_API_Manager.prototype.sendImageMessage = (userId, image_url) => {
+
+  return fetch(
+    `https://graph.facebook.com/v6.0/me/messages?access_token=${FACEBOOK_ACCESS_TOKEN}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        messaging_type: 'RESPONSE',
+        recipient: {
+          id: userId,
+        },
+        message: {
+          attachment: {
+            type: 'image',
+            payload: {
+              url: image_url,
+              is_reusable: true
+            }
+          }
+        },
+      }),
+    }
+  );
+
+};
+
+// send a generic template
+
+FB_API_Manager.prototype.sendGenericTemplate = (userId, msg_title, msg_subtitle, msg_image_url, msg_def_action_url) => {
+
+  return fetch(
+    `https://graph.facebook.com/v2.6/me/messages?access_token=${FACEBOOK_ACCESS_TOKEN}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        messaging_type: 'RESPONSE',
+        recipient: {
+          id: userId,
+        },
+        message: {
+          attachment: {
+            type: 'template',
+            payload: {
+              template_type: 'generic',
+              elements: [
+                {
+                  title: msg_title,
+                  image_url: msg_image_url,
+                  subtitle: msg_subtitle,
+
+                  default_action: {
+                    type: 'web_url',
+                    url: msg_def_action_url,
+                    webview_height_ratio: 'tall',
+                  }
+                }
+
+              ]
+            }
+          }
+        },
+      }),
+    }
+  );
+
+};
+
+
 
 // send a common message to all users in the database
 FB_API_Manager.prototype.broadcastMessage = function(text) {
@@ -110,6 +186,8 @@ FB_API_Manager.prototype.broadcastMessage = function(text) {
         this.sendTextMessage(client.fid, text);
     });
 }
+
+
 
 
 

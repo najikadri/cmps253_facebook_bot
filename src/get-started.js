@@ -20,6 +20,7 @@ module.exports = async (userId) => {
    // add user to database if not found
    if (! dbm.userFound(userId) ){
        dbm.executeQuery(dbm.queries.add_user(userId), (res) => {
+           dbm.storeQuery(dbm.queries.get_users(), 'users'); // retreive all user after adding the new user
            console.log('user has been successfully added');
        });
    }

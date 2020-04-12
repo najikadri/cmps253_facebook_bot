@@ -161,6 +161,9 @@ CREATE TABLE tuition (
 CREATE TABLE info (
     tag VARCHAR(30),
     value TEXT,
+    image_url STRING,
+    default_action_url STRING,
+    title STRING,
     CONSTRAINT tag_id PRIMARY KEY (tag)
 );
 

@@ -70,7 +70,8 @@ class DatabaseManager {
                  tuition.semester = '${latest_program.semester}' AND 
                  tuition.year = ${latest_program.year};
           ;`
-        }
+        },
+        get_info: (tag) => { return `SELECT * FROM info WHERE tag = '${tag}';`}
 
         
     }

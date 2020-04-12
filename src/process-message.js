@@ -254,6 +254,27 @@ const runAction = function (userId, msg, action_string) {
       });
       break;
 
+    case 'info.get':
+      var tag = parameters['tag'];
+      dbm.executeQuery( dbm.queries.get_info(tag), (res) => {
+        
+        var info = res[0];
+
+        if(!!info.default_action_url){
+          return fb_api.sendGenericTemplate(userId, info.title, info.value, info.image_url, info.default_action_url);
+        }else if(!!info.image_url){
+          fb_api.sendImageMessage(userId, info.image_url);
+
+          if(!!info.value){
+            sendTextMessage(userId, info.value);
+          }
+          return;
+        }else{
+          return sendTextMessage(userId, info.value);
+        }
+        
+      });
+      break;
     default: console.log('there must be something wrong!');
   }
 }

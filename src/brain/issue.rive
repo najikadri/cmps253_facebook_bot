@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------
 
 // the weight is 5 because someone might type help! so it will think we want the help message
-+ [*] (bug|error|issue|problem|something is wrong|something wrong|mistake|not right) [*] {weight=5}
++ [*] (report|bug|error|issue|problem|something is wrong|something wrong|mistake|not right) [*] {weight=5}
 - are you facing issues with this app? 😯
 
 

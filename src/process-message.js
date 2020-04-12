@@ -74,14 +74,14 @@ const isValidDay = function(days){
 // help message builder
 
 const things_to_do = [
-  'ask to see all courses offered by the university',
-  'ask for the courses offered for a specific subject (ex. CMPS)',
-  'ask for lectures for a certain course',
-  'ask for lectures in a specific place and/or day(s)',
-  'ask for the title or name of a course you heard of',
-  'ask for info about instructors if you know their first and/or last names',
-  'ask for the email of an instructor',
-  'ask for tuition of a certain department'
+  'ask to see all courses offered by the university (e.g. all courses)',
+  'ask for the courses offered for a specific subject (e.g. courses CMPS)',
+  'ask for lectures for a certain course (e.g. lectures MATH 201)',
+  'ask for lectures in a specific place and/or day(s) (e.g. lectures in bliss on mwf)',
+  'ask for the title or name of a course you heard of (e.g. title CMPS 253)',
+  'ask for info about instructors if you know their first and/or last names (e.g. faculty bdeir)',
+  'ask for the email of an instructor (e.g. email bdeir)',
+  'ask for tuition of a certain department (e.g. tuition computer science undergraduate)'
 ]
 
 const printThingsToDo = function () {
@@ -89,13 +89,13 @@ const printThingsToDo = function () {
   var result = '';
 
   things_to_do.forEach( (element) => {
-    result += `📕 - ${element}\n`;
+    result += `📕 - ${element}\n\n`;
   })
 
   return result;
 }
 
-const HelpMessage = `Here are some of the things that you could do:\n${printThingsToDo()}`;
+const HelpMessage = `Here are some of the things that you could do:\n\n${printThingsToDo()}`;
 
 
 //--------------------------------------------------------------------------------

@@ -53,7 +53,24 @@ class DatabaseManager {
         get_instructor_by_firstname: (first_name) => {return `SELECT * FROM instructor WHERE LOWER(first_name) like '%${first_name}%';`},
         get_instructor_by_lastname: (last_name) => {return `SELECT * FROM instructor WHERE LOWER(last_name) like '%${last_name}%';`},
         get_instructor_by_fullname: (fullname) => {return `SELECT * FROM instructor WHERE LOWER(first_name || " " || last_name) = '${fullname}';`},
-        submit_issue: (user_id, message) => {return `insert into issue values (${user_id}, ifnull( (select max(msgno) + 1 from issue where fid= ${user_id}),  1), '${message}');`}
+        submit_issue: (user_id, message) => {return `insert into issue values (${user_id}, ifnull( (select max(msgno) + 1 from issue where fid= ${user_id}),  1), '${message}');`},
+        get_tuition: (dep, deglvl) => {
+            if(!!deglvl){
+                deglvl = `'${deglvl}'`; // surround with string quotation marks
+            }else{
+                deglvl = 'tuition.degree_level';
+            }
+            return `SELECT *
+            FROM department,
+                 tuition
+           WHERE department.faculty_name = tuition.faculty_name AND 
+                 department.name = '${dep}' COLLATE NOCASE AND 
+                 tuition.degree_level = ${deglvl} COLLATE NOCASE AND 
+                 tuition.semester = '${latest_program.semester}' AND 
+                 tuition.year = ${latest_program.year};
+          ;`
+        }
+
         
     }
 
@@ -389,6 +406,15 @@ function _formatInstructors(instrs){
 
 }
 
+function _formatTuition (tuitions) {
+    var text = '';
+    for (var i = 0; i < tuitions.length; i++){
+        var tuition = tuitions[i];
+        text += `Credit cost for ${tuition.name} ( ${tuition.degree_level} ) in ${tuition.faculty_name} is $${tuition.credit_cost}\n`;
+    }
+    return text;
+}
+
 // DATABASE MANAGER FORMATTER FUNCTIONS WRAPPER
 
 DatabaseManager.prototype.formatCourses = function (crs, pg = -1, mpg = -1) {
@@ -409,6 +435,10 @@ DatabaseManager.prototype.formatTitle = function(subj, code, title){
 
 DatabaseManager.prototype.formatInstructors = function (instructors, pg = -1, mpg = -1){
     return _formatInstructors(instructors) + _formatPage(pg, mpg);
+}
+
+DatabaseManager.prototype.formatTuition = function(tuitions){
+    return _formatTuition(tuitions);
 }
 
 

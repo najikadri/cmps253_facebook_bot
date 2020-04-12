@@ -80,7 +80,8 @@ const things_to_do = [
   'ask for lectures in a specific place and/or day(s)',
   'ask for the title or name of a course you heard of',
   'ask for info about instructors if you know their first and/or last names',
-  'ask for the email of an instructor'
+  'ask for the email of an instructor',
+  'ask for tuition of a certain department'
 ]
 
 const printThingsToDo = function () {
@@ -233,6 +234,19 @@ const runAction = function (userId, msg, action_string) {
         return sendTextMessage(userId, "Okay, I have notified my team so they can fix your problem as soon as possible! 👌");
       });
       break;
+
+    case 'tuitions.core':
+      var dep = parameters['dep'];
+      var deglvl = parameters['deglvl'];
+      dbm.executeQuery( dbm.queries.get_tuition(dep, deglvl), (res) => {
+        if( res.length > 0){
+          return sendTextMessage(userId, dbm.formatTuition(res) );
+        }else{
+          return sendTextMessage(userId, ErrorMessage);
+        }
+      });
+      break;
+
     default: console.log('there must be something wrong!');
   }
 }

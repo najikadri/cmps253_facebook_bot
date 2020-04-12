@@ -135,3 +135,15 @@
 - #instructors.info > name:<star2>
 
 //------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------
+// TUITION
+
++ [*] tuition [for] * (freshman|undergraduate|graduate|doctorate)
+- #tuitions.core > dep:<star1> , deglvl:<star2>
+
++ [*] tuition [for] * 
+- #tuitions.core > dep:<star1>
+
+//------------------------------------------------------------------------

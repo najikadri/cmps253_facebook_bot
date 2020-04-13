@@ -71,7 +71,10 @@ class DatabaseManager {
                  tuition.year = ${latest_program.year};
           ;`
         },
-        get_info: (tag) => { return `SELECT * FROM info WHERE tag = '${tag}';`}
+        get_info: (tag) => { return `SELECT * FROM info WHERE tag = '${tag}';`},
+        get_studyplan( major, deglvl){
+            return `SELECT * FROM studyplan WHERE major = '${major}' COLLATE NOCASE AND degree_level = '${deglvl}' COLLATE NOCASE;`
+        }
 
         
     }

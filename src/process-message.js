@@ -83,7 +83,8 @@ const things_to_do = [
   'ask for the title or name of a course you heard of (e.g. title CMPS 253)',
   'ask for info about instructors if you know their first and/or last names (e.g. faculty bdeir)',
   'ask for the email of an instructor (e.g. email bdeir)',
-  'ask for tuition of a certain department (e.g. tuition computer science undergraduate)'
+  'ask for tuition of a certain department (e.g. tuition computer science undergraduate)',
+  'ask for a study plan for a certain major and degree (e.g. study plan computer science undergraduate)'
 ]
 
 const printThingsToDo = function () {
@@ -280,6 +281,17 @@ const runAction = function (userId, msg, action_string) {
           return sendTextMessage(userId, info.value);
         }
         
+      });
+      break;
+    case 'studyplan.core':
+      var major = parameters['major'];
+      var deglvl = parameters['deglvl'];
+      dbm.executeQuery( dbm.queries.get_studyplan(major, deglvl) , (res) => {
+        if(res.length === 1){
+          return sendTextMessage(userId, res[0].value);
+        }else{
+          return sendTextMessage(userId, ErrorMessage);
+        }
       });
       break;
     default: console.log('there must be something wrong!');

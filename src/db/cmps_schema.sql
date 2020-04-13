@@ -168,3 +168,9 @@ CREATE TABLE info (
     CONSTRAINT tag_id PRIMARY KEY (tag)
 );
 
+CREATE TABLE studyplan (
+    major VARCHAR(30),
+    degree_level VARCHAR(30),
+    value TEXT,
+    CONSTRAINT studyplan_id PRIMARY KEY (major, degree_level)
+);

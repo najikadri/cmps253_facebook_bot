@@ -151,6 +151,9 @@
 //------------------------------------------------------------------------
 // TUITION
 
++ tuition
+- in order to view tuitions please type tuition followed by desired major and w/o degree level (e.g. tuition computer science undergraduate)
+
 + [*] tuition [for] * (freshman|undergraduate|graduate|doctorate)
 - #tuitions.core > dep:<star1> , deglvl:<star2>
 

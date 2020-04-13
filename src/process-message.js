@@ -75,6 +75,7 @@ const isValidDay = function(days){
 
 const things_to_do = [
   'ask to see all courses offered by the university (e.g. all courses)',
+  'ask to see useful links related to AUB (e.g. links)',
   'ask for the courses offered for a specific subject (e.g. courses CMPS)',
   'ask for courses with a specific attribute (e.g. attribute social sciences)',
   'ask for lectures for a certain course (e.g. lectures MATH 201)',
@@ -139,6 +140,9 @@ const runAction = function (userId, msg, action_string) {
         }
       }
       return sendTextMessage(userId, 'There is nothing to show for now');
+      break;
+    case 'links.show':
+      return fb_api.sendUniversityLinks(userId);
       break;
     case 'courses.core':
       dbm.requestStoredQuery(userId, 'courses', dbm.formatCourses);

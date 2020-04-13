@@ -177,6 +177,136 @@ FB_API_Manager.prototype.sendGenericTemplate = (userId, msg_title, msg_subtitle,
 
 };
 
+// send most important AUB links
+FB_API_Manager.prototype.sendUniversityLinks = (userId) => {
+
+  return fetch(
+    `https://graph.facebook.com/v2.6/me/messages?access_token=${FACEBOOK_ACCESS_TOKEN}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        messaging_type: 'RESPONSE',
+        recipient: {
+          id: userId,
+        },
+        message: {
+          attachment: {
+            type: 'template',
+            payload: {
+              template_type: 'generic',
+              elements: [
+                {
+                  title: "General",
+                  image_url: 'https://www.aub.edu.lb/HomeRotator/aub-homepage-MO1_9124.jpg',
+                  subtitle: 'Important and useful links for everyone',
+
+                  default_action: {
+                    type: 'web_url',
+                    url: 'https://www.aub.edu.lb/',
+                    webview_height_ratio: 'tall',
+                  },
+
+                  buttons: [
+                    {
+                      type: 'web_url',
+                      url: 'https://www.aub.edu.lb/academics/pages/majors_programs.aspx',
+                      title: 'Majors and Programs'
+                    },
+                    {
+                      type: 'web_url',
+                      url: 'https://www.aub.edu.lb/admissions/Pages/default.aspx',
+                      title: 'Admissions'
+                    },
+                    {
+                      type: 'web_url',
+                      url: 'https://www.aub.edu.lb/registrar/pages/default.aspx',
+                      title: 'Registrar'
+                    },
+                  ]
+                },
+
+                {
+                  title: "Students",
+                  image_url: 'https://pbs.twimg.com/media/Cx9p7A6XcAEPmHM.jpg:large',
+                  subtitle: 'Indispensable links for AUB Students',
+
+                  default_action: {
+                    type: 'web_url',
+                    url: 'https://www.aub.edu.lb/president/titleix/Pages/default.aspx',
+                    webview_height_ratio: 'tall',
+                  },
+
+                  buttons: [
+                    {
+                      type: 'web_url',
+                      url: 'https://www.aub.edu.lb/Pages/Webmail.aspx',
+                      title: 'Webmail'
+                    },
+                    {
+                      type: 'web_url',
+                      url: 'https://www-banner.aub.edu.lb/pls/weba/twbkwbis.P_WWWLogin',
+                      title: 'AUBsis'
+                    },
+                    {
+                      type: 'web_url',
+                      url: 'https://lms.aub.edu.lb/',
+                      title: 'AUB Moodle'
+                    },
+                    // {
+                    //   type: 'web_url',
+                    //   url: 'https://www.aub.edu.lb/admissions/Pages/TC/index.html',
+                    //   title: 'Tuition Calculator'
+                    // }
+                  ]
+                },
+
+
+
+                {
+                  title: "Academics",
+                  image_url: 'https://greenarea.me/wp-content/uploads/2016/01/AUB-Logo-833x833.jpg',
+                  subtitle: 'Academics related links',
+
+                  default_action: {
+                    type: 'web_url',
+                    url: 'https://www.aub.edu.lb/Pages/AUBSIS.aspx',
+                    webview_height_ratio: 'tall',
+                  },
+
+                  buttons: [
+                    {
+                      type: 'web_url',
+                      url: 'https://www.aub.edu.lb/libraries/Pages/default.aspx',
+                      title: 'Libraries'
+                    },
+                    {
+                      type: 'web_url',
+                      url: 'https://epetitions.aub.edu.lb/ords/f?p=101:101',
+                      title: 'Petition'
+                    },
+                    {
+                      type: 'web_url',
+                      url: 'https://www.aub.edu.lb/admissions/Pages/TC/index.html',
+                      title: 'Tuition Calculator'
+                    },
+                    
+                  ]
+                }
+
+
+              ]
+            }
+          }
+        },
+      }),
+    }
+  );
+
+};
+
 
 
 // send a common message to all users in the database

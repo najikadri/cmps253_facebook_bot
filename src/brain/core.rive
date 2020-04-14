@@ -185,4 +185,7 @@
 + building * 
 - #buildings.show > bldgname:<star1>
 
++ * (building|hall)
+- #buildings.show > bldgname:<star1>
+
 //------------------------------------------------------------------------

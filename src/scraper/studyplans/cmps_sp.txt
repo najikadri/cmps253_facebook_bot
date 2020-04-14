@@ -1,0 +1,22 @@
+Computer Science-Undergraduate
+    Students Starting in the Fall term:
+        First Year:
+            Fall term: CMPS 200, CMPS 211
+            Spring term: CMPS 212
+        Second Year:
+            Fall term: CMPS 252, CMPS 255, CMPS 256, CMPS elective
+            Spring term: CMPS 253, CMPS 258, CMPS 277
+        Third Year:
+            Fall term: CMPS 257, CMPS 272, CMPS elective
+            Spring term: CMPS 299, CMPS elective
+
+    Students starting in the Spring term:
+        First Year
+            Spring term: CMPS 200, CMPS 211
+            Fall term: CMPS 212
+        Second Year
+            Spring term: CMPS 252, CMPS 256, CMPS 258
+            Fall term: CMPS 253, CMPS 255, CMPS 257, CMPS elective
+        Third Year
+            Spring term: CMPS 277, CMPS elective
+            Fall term: CMPS 272, CMPS 299, CMPS elective

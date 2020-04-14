@@ -1,0 +1,25 @@
+[
+{
+"SchemaVersion":"15.0.0.0","LibraryVersion":"16.0.4756.1000","ErrorInfo":null,"TraceCorrelationId":"a585399f-aff3-70ba-5598-066c2e88b7b7"
+},26,{
+"IsNull":false
+},27,{
+"_ObjectIdentity_":"a585399f-aff3-70ba-5598-066c2e88b7b7|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:c57b692f-e869-4927-99ff-b97b243f8f77"
+},29,{
+"IsNull":false
+},31,{
+"IsNull":false
+},32,{
+"_ObjectType_":"SP.ListItemCollection","_Child_Items_":[
+{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"a585399f-aff3-70ba-5598-066c2e88b7b7|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:c57b692f-e869-4927-99ff-b97b243f8f77:list:e53bda3e-d108-4ea5-b269-5c1c7537757f:item:49,1","_ObjectVersion_":"9","Title":"ja106","FirstName":"Jason","LastName":"Amatoury","Department":"Biomedical Engineering","JobTitle":"Assistant Professor","Email":"ja106@aub.edu.lb","OfficeAddress":"RGB 413","Extension":"3497","FullTimer":true,"PublishingPageImage":"<img alt=\"\" src=\"\u002fmsfea\u002fFacultyPictures\u002fjason-amatoury.jpg\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":"\u002fpages\u002fprofile.aspx?memberId=ja106","Id":49
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"a585399f-aff3-70ba-5598-066c2e88b7b7|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:c57b692f-e869-4927-99ff-b97b243f8f77:list:e53bda3e-d108-4ea5-b269-5c1c7537757f:item:50,1","_ObjectVersion_":"4","Title":"ad75","FirstName":"Arij","LastName":"Daou","Department":"Biomedical Engineering","JobTitle":"Assistant Professor","Email":"ad75@aub.edu.lb","OfficeAddress":"RGB 405","Extension":"3412","FullTimer":true,"PublishingPageImage":"<img alt=\"\" src=\"\u002fmsfea\u002fFacultyPictures\u002fArij%20Daou.jpg\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":"\u002fpages\u002fprofile.aspx?memberId=ad75","Id":50
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"a585399f-aff3-70ba-5598-066c2e88b7b7|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:c57b692f-e869-4927-99ff-b97b243f8f77:list:e53bda3e-d108-4ea5-b269-5c1c7537757f:item:51,1","_ObjectVersion_":"10","Title":"mk243","FirstName":"Massoud","LastName":"Khraiche","Department":"Biomedical Engineering","JobTitle":"Assistant Professor","Email":"mk243@aub.edu.lb","OfficeAddress":"Masri 503","Extension":"3473","FullTimer":true,"PublishingPageImage":"<img alt=\"\" src=\"\u002fmsfea\u002fFacultyPictures\u002fmassoud-khraiche.jpg\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":"\u002fpages\u002fprofile.aspx?memberId=mk243","Id":51
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"a585399f-aff3-70ba-5598-066c2e88b7b7|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:c57b692f-e869-4927-99ff-b97b243f8f77:list:e53bda3e-d108-4ea5-b269-5c1c7537757f:item:52,1","_ObjectVersion_":"4","Title":"rm136","FirstName":"Rami","LastName":"Mhanna","Department":"Biomedical Engineering","JobTitle":"Assistant Professor","Email":"rm136@aub.edu.lb","OfficeAddress":"RGB 404","Extension":"3635","FullTimer":true,"PublishingPageImage":"<img alt=\"\" src=\"\u002fmsfea\u002fFacultyPictures\u002frami-mhanna.jpg\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":"\u002fpages\u002fprofile.aspx?memberId=rm136","Id":52
+}
+]
+}
+]

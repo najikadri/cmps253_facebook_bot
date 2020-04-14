@@ -1,0 +1,19 @@
+Semester:Fall, Year:2019-2020, Faculty:Arts and Science-Freshman, Degree Level:Undergraduate, Cost Per Credit:753
+Semester:Fall, Year:2019-2020, Faculty:Arts and Science-Humanities and Social Sciences, Degree Level:Undergraduate, Cost Per Credit:731
+Semester:Fall, Year:2019-2020, Faculty:Arts and Science-Humanities and Social Sciences, Degree Level:Graduate, Cost Per Credit:939
+Semester:Fall, Year:2019-2020, Faculty:Arts and Science-Sciences, Degree Level:Undergraduate, Cost Per Credit:775
+Semester:Fall, Year:2019-2020, Faculty:Arts and Science-Sciences, Degree Level:Graduate, Cost Per Credit:971
+Semester:Fall, Year:2019-2020, Faculty:Arts and Science-Financial Economics, Degree Level:Undergraduate, Cost Per Credit:892
+Semester:Fall, Year:2019-2020, Faculty:Arts and Science-Financial Economics, Degree Level:Graduate, Cost Per Credit:1016
+Semester:Fall, Year:2019-2020, Faculty:Agricultural and Food Sciences, Degree Level:Undergraduate, Cost Per Credit:789
+Semester:Fall, Year:2019-2020, Faculty:Agricultural and Food Sciences, Degree Level:Graduate, Cost Per Credit:1041
+Semester:Fall, Year:2019-2020, Faculty:Engineering and Architecture, Degree Level:Undergraduate, Cost Per Credit:874
+Semester:Fall, Year:2019-2020, Faculty:Engineering and Architecture, Degree Level:Graduate, Cost Per Credit:1095
+Semester:Fall, Year:2019-2020, Faculty:Health Sciences, Degree Level:Undergraduate, Cost Per Credit:814
+Semester:Fall, Year:2019-2020, Faculty:Health Sciences, Degree Level:Graduate, Cost Per Credit:1033
+Semester:Fall, Year:2019-2020, Faculty:School of Business, Degree Level:Undergraduate, Cost Per Credit:846
+Semester:Fall, Year:2019-2020, Faculty:School of Business, Degree Level:Graduate, Cost Per Credit:1063
+Semester:Fall, Year:2019-2020, Faculty:School of Nursing, Degree Level:Undergraduate, Cost Per Credit:626
+Semester:Fall, Year:2019-2020, Faculty:School of Nursing, Degree Level:Graduate, Cost Per Credit:860
+Semester:Fall, Year:2019-2020, Faculty:Medicine, Degree Level:Graduate, Cost Per Credit:1031
+Semester:Fall, Year:2019-2020, Faculty:Medicine, Degree Level:Doctorate, Cost Per Credit:40948(Yearly)

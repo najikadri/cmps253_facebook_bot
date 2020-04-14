@@ -1,0 +1,31 @@
+[
+{
+"SchemaVersion":"15.0.0.0","LibraryVersion":"16.0.4756.1000","ErrorInfo":null,"TraceCorrelationId":"2a8c399f-1fb0-70ba-5598-0138a305aee8"
+},26,{
+"IsNull":false
+},27,{
+"_ObjectIdentity_":"2a8c399f-1fb0-70ba-5598-0138a305aee8|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:07b78866-79af-4382-b4b2-27a7718a455c"
+},29,{
+"IsNull":false
+},31,{
+"IsNull":false
+},32,{
+"_ObjectType_":"SP.ListItemCollection","_Child_Items_":[
+{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"2a8c399f-1fb0-70ba-5598-0138a305aee8|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:07b78866-79af-4382-b4b2-27a7718a455c:list:7af8a832-2f35-493b-bb2f-151987bee5c8:item:6,1","_ObjectVersion_":"2","Title":"rb89","FirstName":"Rachel","LastName":"Bahn","Department":"Department of Agriculture","JobTitle":"Instructor, Food Security","Email":"rb89@aub.edu.lb","OfficeAddress":"Reynolds Hall Room 118","Extension":"4422","FullTimer":false,"PublishingPageImage":"<img alt=\"\" src=\"\u002ffafs\u002fagri\u002fPublishingImages\u002fFAFS%20logo.jpg\" width=\"81\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":null,"Id":6
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"2a8c399f-1fb0-70ba-5598-0138a305aee8|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:07b78866-79af-4382-b4b2-27a7718a455c:list:7af8a832-2f35-493b-bb2f-151987bee5c8:item:8,1","_ObjectVersion_":"2","Title":"gb00","FirstName":"George","LastName":"Battikha","Department":"Department of Agriculture","JobTitle":"Senior Lecturer, Floriculture ","Email":"gb00@aub.edu.lb","OfficeAddress":"Reynolds Hall Room 202","Extension":"4578","FullTimer":false,"PublishingPageImage":"<img alt=\"\" src=\"\u002ffafs\u002fagri\u002fPublishingImages\u002fFAFS%20logo.jpg\" width=\"58\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":null,"Id":8
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"2a8c399f-1fb0-70ba-5598-0138a305aee8|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:07b78866-79af-4382-b4b2-27a7718a455c:list:7af8a832-2f35-493b-bb2f-151987bee5c8:item:2,1","_ObjectVersion_":"3","Title":"mb05","FirstName":"Makram","LastName":"Bou Nassar","Department":"Department of Agriculture","JobTitle":"Lecturer, Entrepreneurship in Agriculture","Email":"mb50@aub.edu.lb","OfficeAddress":"Reynolds Hall Room 119","Extension":"4554","FullTimer":false,"PublishingPageImage":"<img alt=\"\" src=\"\u002ffafs\u002fagri\u002fPublishingImages\u002fFAFS%20logo.jpg\" width=\"61\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":null,"Id":2
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"2a8c399f-1fb0-70ba-5598-0138a305aee8|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:07b78866-79af-4382-b4b2-27a7718a455c:list:7af8a832-2f35-493b-bb2f-151987bee5c8:item:5,1","_ObjectVersion_":"5","Title":"he36","FirstName":"Hachem ","LastName":"El Husseini","Department":"Department of Agriculture","JobTitle":"Instructor, Legal Aspects of Agribusiness","Email":"he36@aub.edu.lb","OfficeAddress":"FAFS Wing A Room 312","Extension":"4839","FullTimer":false,"PublishingPageImage":"<img alt=\"\" src=\"\u002ffafs\u002fagri\u002fPublishingImages\u002fFAFS%20logo.jpg\" width=\"57\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":null,"Id":5
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"2a8c399f-1fb0-70ba-5598-0138a305aee8|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:07b78866-79af-4382-b4b2-27a7718a455c:list:7af8a832-2f35-493b-bb2f-151987bee5c8:item:4,1","_ObjectVersion_":"5","Title":"arlette.lteif","FirstName":"Arlette","LastName":"Lteif","Department":"Department of Agriculture","JobTitle":"Post Doctoral Fellow","Email":"arlette.lteif@mail.mcgill.ca","OfficeAddress":"FAFS Wing A Room 312","Extension":"4839","FullTimer":false,"PublishingPageImage":"<img alt=\"\" src=\"\u002ffafs\u002fagri\u002fPublishingImages\u002fFAFS%20logo.jpg\" width=\"80\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":null,"Id":4
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"2a8c399f-1fb0-70ba-5598-0138a305aee8|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:07b78866-79af-4382-b4b2-27a7718a455c:list:7af8a832-2f35-493b-bb2f-151987bee5c8:item:7,1","_ObjectVersion_":"2","Title":"ro03","FirstName":"Rami","LastName":"Ollaik","Department":"Department of Agriculture","JobTitle":"Instructor, Apiculture","Email":"ro03@aub.edu.lb","OfficeAddress":"Honey Making Lab","Extension":"4588","FullTimer":false,"PublishingPageImage":"<img alt=\"\" src=\"\u002ffafs\u002fagri\u002fPublishingImages\u002fFAFS%20logo.jpg\" width=\"76\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":null,"Id":7
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"2a8c399f-1fb0-70ba-5598-0138a305aee8|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:07b78866-79af-4382-b4b2-27a7718a455c:list:7af8a832-2f35-493b-bb2f-151987bee5c8:item:9,1","_ObjectVersion_":"7","Title":"sarahosmane","FirstName":"Sarah","LastName":"Osmane","Department":"Department of Agriculture ","JobTitle":"Instructor, Agricultural Extension ","Email":"sarahosmane@gmail.com","OfficeAddress":"FAFS Wing A Room 312 ","Extension":"4839","FullTimer":false,"PublishingPageImage":"<img alt=\"\" height=\"85\" src=\"\u002ffafs\u002fagri\u002fPublishingImages\u002fFAFS%20logo.jpg\" width=\"74\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":null,"Id":9
+}
+]
+}
+]

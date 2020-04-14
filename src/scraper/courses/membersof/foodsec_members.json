@@ -1,0 +1,27 @@
+[
+{
+"SchemaVersion":"15.0.0.0","LibraryVersion":"16.0.4756.1000","ErrorInfo":null,"TraceCorrelationId":"4a8c399f-5f42-70ba-5598-0ccd26ff74b3"
+},26,{
+"IsNull":false
+},27,{
+"_ObjectIdentity_":"4a8c399f-5f42-70ba-5598-0ccd26ff74b3|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:78878a8c-a61b-4dc6-97fa-b24bb3e79d07"
+},29,{
+"IsNull":false
+},31,{
+"IsNull":false
+},32,{
+"_ObjectType_":"SP.ListItemCollection","_Child_Items_":[
+{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"4a8c399f-5f42-70ba-5598-0ccd26ff74b3|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:78878a8c-a61b-4dc6-97fa-b24bb3e79d07:list:483fcd5c-c652-47a3-a6d8-2a75f01d8e2d:item:3,1","_ObjectVersion_":"4","Title":"Shadi Hamadeh","FirstName":"Shadi","LastName":"Hamadeh","Department":"Department of Agriculture","JobTitle":"Professor  ","Email":"shamadeh@aub.edu.lb","OfficeAddress":"FAFS Wing A, 323","Extension":"4458","FullTimer":false,"PublishingPageImage":"<img alt=\"\" src=\"\u002ffafs\u002ffoodsecurity\u002fPublishingImages\u002fLists\u002fFacultyMembers\u002fAllItems\u002fShadyHamadeh.jpg\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":"\u002ffafs\u002ffoodsecurity\u002fDocuments\u002fShadiHamadehCV.pdf","Id":3
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"4a8c399f-5f42-70ba-5598-0ccd26ff74b3|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:78878a8c-a61b-4dc6-97fa-b24bb3e79d07:list:483fcd5c-c652-47a3-a6d8-2a75f01d8e2d:item:1,1","_ObjectVersion_":"5","Title":"LamisJomaa","FirstName":"Lamis","LastName":"Jomaa","Department":"Department of Nutrition and Food Sciences","JobTitle":"Assistant Professor","Email":"lj18@aub.edu.lb","OfficeAddress":"FAFS Wing A, 311","Extension":"4544","FullTimer":false,"PublishingPageImage":"<img alt=\"\" src=\"\u002ffafs\u002ffoodsecurity\u002fPublishingImages\u002fLists\u002fFacultyMembers\u002fAllItems\u002fLamisJomaa.jpg\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":"\u002ffafs\u002ffoodsecurity\u002fDocuments\u002fCVLamis%20JomaaFeb212018.pdf","Id":1
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"4a8c399f-5f42-70ba-5598-0ccd26ff74b3|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:78878a8c-a61b-4dc6-97fa-b24bb3e79d07:list:483fcd5c-c652-47a3-a6d8-2a75f01d8e2d:item:2,1","_ObjectVersion_":"3","Title":"MartinKeulertz","FirstName":"Martin","LastName":"Keulertz","Department":"Food Security Program","JobTitle":"Assistant Professor","Email":"mk219@aub.edu.lb","OfficeAddress":"Reynolds, 117","Extension":" 3086","FullTimer":false,"PublishingPageImage":"<img alt=\"\" src=\"\u002ffafs\u002ffoodsecurity\u002fPublishingImages\u002fLists\u002fFacultyMembers\u002fAllItems\u002fMartinKeulertz.png\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":"\u002ffafs\u002ffoodsecurity\u002fDocuments\u002fCV_MK_2018.pdf","Id":2
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"4a8c399f-5f42-70ba-5598-0ccd26ff74b3|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:78878a8c-a61b-4dc6-97fa-b24bb3e79d07:list:483fcd5c-c652-47a3-a6d8-2a75f01d8e2d:item:6,1","_ObjectVersion_":"2","Title":"RachelBahn","FirstName":"Rachel ","LastName":"Bahn","Department":"Food Security Program","JobTitle":"Coordinator","Email":"rb89@aub.edu.lb","OfficeAddress":"Reynolds, 118","Extension":"4422","FullTimer":false,"PublishingPageImage":"<img alt=\"\" src=\"\u002ffafs\u002ffoodsecurity\u002fPublishingImages\u002fLists\u002fFacultyMembers\u002fAllItems\u002fBahnRachel.jpg\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":null,"Id":6
+},{
+"_ObjectType_":"SP.ListItem","_ObjectIdentity_":"4a8c399f-5f42-70ba-5598-0ccd26ff74b3|740c6a0b-85e2-48a0-a494-e0f1759d4aa7:site:fc076364-e921-406c-91fd-36ac4d776bd9:web:78878a8c-a61b-4dc6-97fa-b24bb3e79d07:list:483fcd5c-c652-47a3-a6d8-2a75f01d8e2d:item:7,1","_ObjectVersion_":"2","Title":"Abedyehya","FirstName":"Abed","LastName":"Yehya","Department":"Food Security Program","JobTitle":"Research Assistant","Email":"ay27@aub.edu.lb","OfficeAddress":"Reynolds, 119","Extension":"4954","FullTimer":false,"PublishingPageImage":"<img alt=\"\" src=\"\u002ffafs\u002ffoodsecurity\u002fPublishingImages\u002fLists\u002fFacultyMembers\u002fAllItems\u002fabedyehya.jpg\" style=\"BORDER: 0px solid; \">","ProfileDetailsUrl":null,"Id":7
+}
+]
+}
+]

@@ -3,6 +3,7 @@ const dbm = require('./database-manager').instance(); // create an instance of o
 const path = require('path');
 const fb_api = require('./fb-api').instance();
 const nlp = require('./nlp-manager').instance();
+const sc = require('./spell-checker').instance( () => {console.log('spell checker corpus loaded successfully')} );
 const sendTextMessage = fb_api.sendTextMessage; // a shortcut
 const getstarted = require('./get-started');
 
@@ -311,7 +312,7 @@ module.exports = (event) => {
   const userId = event.sender.id;
   const message = event.message.text;
 
-  const msg = message.toLowerCase();
+  const msg = sc.correct(message.toLowerCase()); // do spell checking before processing
 
   // let the natural language manager handle the message
   nlp.getResponse(userId, msg, (response) => {

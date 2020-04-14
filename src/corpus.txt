@@ -1,0 +1,18 @@
+// corpus of words that are required to be spelled correctly to activate the rivescript triggers
+
+help
+lectures
+courses
+next
+attribute
+title
+name
+faculty
+tuition
+undergraduate
+graduate
+doctorate
+instructor
+professor
+president
+chairperson

@@ -78,6 +78,7 @@ const things_to_do = [
   'ask to see all courses offered by the university (e.g. all courses)',
   'ask to see useful links related to AUB (e.g. links)',
   'ask for a building\'s image (e.g. building Nicely)',
+  'ask for info/description about a specific course (e.g. info about CMPS 200)',
   'ask for the courses offered for a specific subject (e.g. courses CMPS)',
   'ask for courses with a specific attribute (e.g. attribute social sciences)',
   'ask for lectures for a certain course (e.g. lectures MATH 201)',
@@ -179,6 +180,23 @@ const runAction = function (userId, msg, action_string) {
           return sendTextMessage(userId, ErrorMessage);
         }
       }))
+      break;
+    case 'courses.info':
+
+      var subj = parameters['subj'].toUpperCase();
+      var code  = parameters['code'].toUpperCase();
+
+      dbm.executeQuery( dbm.queries.get_course_info(subj, code), (res) => {
+        if(res.length > 0){
+          var course = res[0];
+          // even though formatting should be in database manager formatter but the query is very simple
+          // and easy to modify
+          var course_info = `${course.subj} ${course.code} - ${course.title}\n\n${course.description}`;
+          return sendTextMessage(userId, course_info);
+        }else{
+          return sendTextMessage(userId, ErrorMessage);
+        }
+      });
       break;
     case 'lectures.building':
       dbm.executeQuery(dbm.queries.get_lectures_in(parameters['in'].toUpperCase()), (res) => {

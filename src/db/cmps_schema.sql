@@ -9,6 +9,7 @@ CREATE TABLE course (
     code varchar(20), -- code is course numbering like 200
     title VARCHAR(30),
     attribute VARCHAR(40),
+    description STRING,
     PRIMARY KEY (subj, code)
 );
 

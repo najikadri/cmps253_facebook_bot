@@ -41,6 +41,7 @@ class DatabaseManager {
     queries = {
         get_courses : () => { return "SELECT * FROM course"; },
         get_courses_by_attribute: (attr) => { return `SELECT * FROM course WHERE attribute LIKE '${attr}%' COLLATE NOCASE;`},
+        get_course_info: (subj, code) => { return `SELECT * FROM course WHERE subj = '${subj}' AND code = '${code}' AND description NOT NULL;`},
         get_title: (subj, code) => { return `SELECT title FROM course WHERE subj='${subj}' and code='${code}'`;},
         get_lectures : () => { return "SELECT * FROM lecture".currentSemester(true); },
         get_rooms : () => { return "SELECT * FROM room";},
@@ -75,7 +76,8 @@ class DatabaseManager {
         get_studyplan( major, deglvl){
             return `SELECT * FROM studyplan WHERE major = '${major}' COLLATE NOCASE AND degree_level = '${deglvl}' COLLATE NOCASE;`
         },
-        get_building_image: (bldgname) => { return `SELECT * FROM building WHERE (bldgname = '${bldgname}' COLLATE NOCASE OR alias like '${bldgname}%' COLLATE NOCASE) AND image_url NOT NULL;`}
+        get_building_image: (bldgname) => { return `SELECT * FROM building WHERE (bldgname = '${bldgname}' COLLATE NOCASE OR alias like '${bldgname}%' COLLATE NOCASE) AND image_url NOT NULL;`},
+
 
         
     }

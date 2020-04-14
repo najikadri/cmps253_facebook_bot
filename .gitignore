@@ -10,6 +10,7 @@ src/db/*
 !src/db/departments_faculties.csv
 !src/db/instructors_images.csv
 !src/db/buildings.csv
+!src/db/courses_info.csv
 !src/db/config.ini
 variables.env
 

@@ -122,6 +122,12 @@
 + [*] what does _ _ means
 - #courses.title > subj:<star1> , code:<star2>
 
+
+// #COURSES.INFO : GET THE DESCRIPTION FOR GIVEN COURSE
+
++ info [about] _ _
+- #courses.info > subj:<star1> , code:<star2>
+
 //------------------------------------------------------------------------
 
 
@@ -135,9 +141,6 @@
 
 + [*] who (has name|has the name) *
 - #instructors.info > name:<star2>
-
-+ [*] info [about|of|for] [professor|doctor|instructor|prof|dr] *
-- #instructors.info > name:<star1>
 
 + [*] [the] email [of|for] [professor|doctor|instructor|prof|dr] *
 - #instructors.info > name:<star1>

@@ -12,13 +12,15 @@ import configparser # install configparser to read config.ini file
 # define necessary classes for the sql generator
 
 class ConfigFile:
-    def __init__(self, catalog_file, attribute_file, department_faculty_file, tuition_file, instructors_images_file, buildings_file, output_file):
+    def __init__(self, catalog_file, attribute_file, department_faculty_file,
+     tuition_file, instructors_images_file, buildings_file, course_info_file, output_file):
         self.catalog_file = f'{catalog_file}.csv'
         self.attribute_file = f'{attribute_file}.csv'
         self.department_faculty_file = f'{department_faculty_file}.csv'
         self.tuition_file = f'{tuition_file}.csv'
         self.instructors_images_file = f'{instructors_images_file}.csv'
         self.buildings_file = f'{buildings_file}.csv'
+        self.course_info_file = f'{course_info_file}.csv'
         self.output_file = f'{output_file}.sql'
 
 # define columns in the dataset if it might change later on
@@ -65,6 +67,11 @@ class Buildings:
     ALIAS = 1
     IMAGE = 2
 
+class CourseInfo:
+    SUBJECT = 0
+    CODE = 1
+    DESCRIPTION = 2
+
 
 # dictionaries to store data to be generated
 courses = {}
@@ -88,6 +95,7 @@ config = ConfigFile(
     read_config.get('settings', 'TuitionFile'),
     read_config.get('settings', 'InstructorsImagesFile'),
     read_config.get('settings', 'BuildingsFile'),
+    read_config.get('settings', 'CourseInfoFile'),
     read_config.get('settings', 'OutputFile')
 )
 
@@ -109,7 +117,7 @@ with open( config.catalog_file , 'r') as csv_file:
             # they seem irrelavent to our required data
             continue 
 
-        course = [row[Catalog.COURSE_SUBJ], row[Catalog.COURSE_CODE], row[Catalog.COURSE_TITLE], 'NULL']
+        course = [row[Catalog.COURSE_SUBJ], row[Catalog.COURSE_CODE], row[Catalog.COURSE_TITLE], 'NULL', 'NULL']
         course_name = row[Catalog.COURSE_SUBJ] + str(row[Catalog.COURSE_CODE])
 
         instr_name = row[Catalog.INSTRUCTOR]
@@ -157,7 +165,7 @@ with open( config.attribute_file, 'r') as csv_file:
         course_name = row[Attribute.COURSE_SUBJ] + str(row[Attribute.COURSE_CODE])
 
         if course_name in courses:
-            courses[course_name][-1] = row[Attribute.ATTRIBUTE]
+            courses[course_name][-2] = row[Attribute.ATTRIBUTE]
 
 with open( config.department_faculty_file, 'r') as csv_file:
 
@@ -241,6 +249,22 @@ with open( config.buildings_file, 'r') as csv_file:
                   buildings[bldgame][Buildings.ALIAS] = f'"{row[Buildings.ALIAS]}"'
             buildings[bldgame][Buildings.IMAGE] = f'"{row[Buildings.IMAGE]}"'
 
+with open( config.course_info_file, 'r') as csv_file:
+
+    data = csv.reader(csv_file)
+
+    is_header = True
+
+    for row in data:
+
+        if is_header:
+            is_header = False
+            continue
+
+        course_name = row[CourseInfo.SUBJECT] + row [CourseInfo.CODE]
+
+        if course_name in courses:
+            courses[course_name][-1] = f'"{row[CourseInfo.DESCRIPTION]}"'
 
 # important functions that are used to make transcations faster
 # note any sql statements between begin and end will either all be 
@@ -275,8 +299,11 @@ with open( config.output_file , 'w') as sql_file:
             course[3] = 'null'
         else:
             course[3] = f'"{course[3]}"'
+
+        if course[4] == 'NULL':
+            course[4] = 'null'
             
-        sql_file.write(f'INSERT INTO course VALUES ("{course[0]}","{str(course[1])}","{course[2]}", {course[3]});\n')
+        sql_file.write(f'INSERT INTO course VALUES ("{course[0]}","{str(course[1])}","{course[2]}", {course[3]}, {course[4]});\n')
 
     end(sql_file)
 

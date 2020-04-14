@@ -24,6 +24,8 @@ CREATE TABLE prerequisite (
 
 CREATE TABLE building (
     bldgname VARCHAR(20),
+    alias VARCHAR(20),
+    image_url STRING,
     PRIMARY KEY (bldgname)
 );
 

@@ -12,12 +12,13 @@ import configparser # install configparser to read config.ini file
 # define necessary classes for the sql generator
 
 class ConfigFile:
-    def __init__(self, catalog_file, attribute_file, department_faculty_file, tuition_file, instructors_images_file, output_file):
+    def __init__(self, catalog_file, attribute_file, department_faculty_file, tuition_file, instructors_images_file, buildings_file, output_file):
         self.catalog_file = f'{catalog_file}.csv'
         self.attribute_file = f'{attribute_file}.csv'
         self.department_faculty_file = f'{department_faculty_file}.csv'
         self.tuition_file = f'{tuition_file}.csv'
         self.instructors_images_file = f'{instructors_images_file}.csv'
+        self.buildings_file = f'{buildings_file}.csv'
         self.output_file = f'{output_file}.sql'
 
 # define columns in the dataset if it might change later on
@@ -59,6 +60,11 @@ class InstructorsImages:
     EMAIL = 0
     SRC = 1
 
+class Buildings:
+    BUILDING = 0
+    ALIAS = 1
+    IMAGE = 2
+
 
 # dictionaries to store data to be generated
 courses = {}
@@ -81,6 +87,7 @@ config = ConfigFile(
     read_config.get('settings', 'DepartmentFacultyFile'),
     read_config.get('settings', 'TuitionFile'),
     read_config.get('settings', 'InstructorsImagesFile'),
+    read_config.get('settings', 'BuildingsFile'),
     read_config.get('settings', 'OutputFile')
 )
 
@@ -123,7 +130,7 @@ with open( config.catalog_file , 'r') as csv_file:
         building = row[Catalog.BUILDING]
 
         if building != 'N/A' and building != 'NULL' and not building in buildings:
-            buildings[building] = building
+            buildings[building] = [building, 'null', 'null']
 
         room = row[Catalog.ROOM]
 
@@ -215,6 +222,25 @@ with open( config.instructors_images_file, 'r') as csv_file:
         if email in instuctors:
             instuctors[email][-1] = f'"{row[InstructorsImages.SRC]}"'
 
+with open( config.buildings_file, 'r') as csv_file:
+
+    data = csv.reader(csv_file)
+
+    is_header = True
+
+    for row in data:
+
+        if is_header:
+            is_header = False
+            continue
+
+        bldgame = row[Buildings.BUILDING]
+
+        if bldgame in buildings:
+            if row[Buildings.ALIAS] != '': # make sure that the alias is not empty
+                  buildings[bldgame][Buildings.ALIAS] = f'"{row[Buildings.ALIAS]}"'
+            buildings[bldgame][Buildings.IMAGE] = f'"{row[Buildings.IMAGE]}"'
+
 
 # important functions that are used to make transcations faster
 # note any sql statements between begin and end will either all be 
@@ -261,7 +287,7 @@ with open( config.output_file , 'w') as sql_file:
     begin(sql_file)
 
     for bldg in buildings.values():
-        sql_file.write(f'INSERT INTO building  VALUES ("{bldg}");\n')
+        sql_file.write(f'INSERT INTO building  VALUES ("{bldg[0]}", {bldg[1]}, {bldg[2]});\n')
 
     end(sql_file)
 

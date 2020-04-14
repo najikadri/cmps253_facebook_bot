@@ -77,6 +77,7 @@ const isValidDay = function(days){
 const things_to_do = [
   'ask to see all courses offered by the university (e.g. all courses)',
   'ask to see useful links related to AUB (e.g. links)',
+  'ask for a building\'s image (e.g. building Nicely)',
   'ask for the courses offered for a specific subject (e.g. courses CMPS)',
   'ask for courses with a specific attribute (e.g. attribute social sciences)',
   'ask for lectures for a certain course (e.g. lectures MATH 201)',
@@ -290,6 +291,17 @@ const runAction = function (userId, msg, action_string) {
       dbm.executeQuery( dbm.queries.get_studyplan(major, deglvl) , (res) => {
         if(res.length === 1){
           return sendTextMessage(userId, res[0].value);
+        }else{
+          return sendTextMessage(userId, ErrorMessage);
+        }
+      });
+      break;
+    case 'buildings.show':
+      var bldgname = parameters['bldgname'];
+      dbm.executeQuery( dbm.queries.get_building_image(bldgname), (res) => {
+        if(res.length > 0){
+          var image = res[0].image_url;
+          return fb_api.sendImageMessage(userId, image);
         }else{
           return sendTextMessage(userId, ErrorMessage);
         }

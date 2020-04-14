@@ -117,7 +117,7 @@
 - #courses.title > subj:<star1> , code:<star2>
 
 + [*] (title|name) (for|of) _ _ [*]
-- #courses.title > subj:<star4> , code:<star5>
+- #courses.title > subj:<star3> , code:<star4>
 
 + [*] what does _ _ means
 - #courses.title > subj:<star1> , code:<star2>

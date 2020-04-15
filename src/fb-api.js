@@ -133,6 +133,37 @@ FB_API_Manager.prototype.sendImageMessage = (userId, image_url) => {
 
 };
 
+// send a message containing the link to a file
+FB_API_Manager.prototype.sendFileMessage = (userId, file_url) => {
+
+  return fetch(
+    `https://graph.facebook.com/v6.0/me/messages?access_token=${FACEBOOK_ACCESS_TOKEN}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        messaging_type: 'RESPONSE',
+        recipient: {
+          id: userId,
+        },
+        message: {
+          attachment: {
+            type: 'file',
+            payload: {
+              url: file_url,
+              is_reusable: true
+            }
+          }
+        },
+      }),
+    }
+  );
+
+};
+
+
 // send a generic template
 
 FB_API_Manager.prototype.sendGenericTemplate = (userId, msg_title, msg_subtitle, msg_image_url, msg_def_action_url) => {

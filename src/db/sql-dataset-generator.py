@@ -13,7 +13,8 @@ import configparser # install configparser to read config.ini file
 
 class ConfigFile:
     def __init__(self, catalog_file, attribute_file, department_faculty_file,
-     tuition_file, instructors_images_file, buildings_file, course_info_file, output_file):
+     tuition_file, instructors_images_file, buildings_file, course_info_file,
+     catalogues_file, output_file):
         self.catalog_file = f'{catalog_file}.csv'
         self.attribute_file = f'{attribute_file}.csv'
         self.department_faculty_file = f'{department_faculty_file}.csv'
@@ -21,6 +22,7 @@ class ConfigFile:
         self.instructors_images_file = f'{instructors_images_file}.csv'
         self.buildings_file = f'{buildings_file}.csv'
         self.course_info_file = f'{course_info_file}.csv'
+        self.catalogues_file = f'{catalogues_file}.csv'
         self.output_file = f'{output_file}.sql'
 
 # define columns in the dataset if it might change later on
@@ -72,6 +74,11 @@ class CourseInfo:
     CODE = 1
     DESCRIPTION = 2
 
+class Catalogues:
+    DEPARTMENT = 0
+    DEGREE_LEVEL = 1
+    LINK = 2
+
 
 # dictionaries to store data to be generated
 courses = {}
@@ -82,6 +89,7 @@ lectures = {}
 faculties = {}
 departments = {}
 tuitions = {}
+catalogues = {}
 
 # load configuration file
 
@@ -96,6 +104,7 @@ config = ConfigFile(
     read_config.get('settings', 'InstructorsImagesFile'),
     read_config.get('settings', 'BuildingsFile'),
     read_config.get('settings', 'CourseInfoFile'),
+    read_config.get('settings', 'CataloguesFile'),
     read_config.get('settings', 'OutputFile')
 )
 
@@ -265,6 +274,24 @@ with open( config.course_info_file, 'r') as csv_file:
 
         if course_name in courses:
             courses[course_name][-1] = f'"{row[CourseInfo.DESCRIPTION]}"'
+
+
+with open( config.catalogues_file , 'r') as csv_file:
+
+    data = csv.reader(csv_file)
+
+    is_header = True
+
+    for row in data:
+
+        if is_header:
+            is_header = False
+            continue
+
+        dep = row[Catalogues.DEPARTMENT] + row[Catalogues.DEGREE_LEVEL]
+
+        catalogues[dep] = row
+
 
 # important functions that are used to make transcations faster
 # note any sql statements between begin and end will either all be 
@@ -444,6 +471,19 @@ with open( config.output_file , 'w') as sql_file:
         sql_file.write(f'INSERT INTO tuition VALUES ("{sems}", {year}, "{fac}", "{deglvl}", "{crd}");\n')
 
     end(sql_file)
+
+
+    # inserting catalogues
+
+    sql_file.write('\n-- INSERT CATALOGUES \n\n')
+
+    begin(sql_file)
+
+    for ctlg in catalogues.values():
+        sql_file.write(f'INSERT INTO catalogues VALUES ("{ctlg[Catalogues.DEPARTMENT]}", "{ctlg[Catalogues.DEGREE_LEVEL]}", "{ctlg[Catalogues.LINK]}");\n')
+
+    end(sql_file)
+    
 
 
 print("facebook_bot base dataset sql successfully generated!")

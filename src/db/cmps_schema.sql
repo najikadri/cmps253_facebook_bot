@@ -177,3 +177,12 @@ CREATE TABLE studyplan (
     value TEXT,
     CONSTRAINT studyplan_id PRIMARY KEY (major, degree_level)
 );
+
+
+CREATE TABLE catalogues (
+    department VARCHAR(30),
+    degree_level VARCHAR(30),
+    link STRING,
+    CONSTRAINT catalouges_id PRIMARY KEY (department, degree_level),
+    CONSTRAINT department_fk FOREIGN KEY  (department) REFERENCES department(name)
+);

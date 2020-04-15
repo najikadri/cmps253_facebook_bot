@@ -49,7 +49,7 @@ SpellCheker.prototype.correct =  function(text){
     text = text.split(' ');
 
     for(var i = 0; i < text.length; i++){
-        var corrections = this.checker.getCorrections(text[i], 1);
+        var corrections = this.checker.getCorrections(text[i], 2);
         if( corrections.length > 0){
             text[i] = corrections[0]; // get the first possible correction 
         }

@@ -23,6 +23,8 @@
 
 ! sub 👉 = point_right
 
+! sub undergrad = undergraduate
+! sub grad = graduate
 
 // unknown response
 
@@ -113,7 +115,7 @@
 + [*] (title|name) (for|of) the course _ _ [*]
 - #courses.title > subj:<star3> , code:<star4>
 
-+ title _ _
++ [*] title _ _
 - #courses.title > subj:<star1> , code:<star2>
 
 + [*] (title|name) (for|of) _ _ [*]
@@ -125,7 +127,7 @@
 
 // #COURSES.INFO : GET THE DESCRIPTION FOR GIVEN COURSE
 
-+ info [about] _ _
++ [*] info [about] _ _
 - #courses.info > subj:<star1> , code:<star2>
 
 //------------------------------------------------------------------------
@@ -145,7 +147,7 @@
 + [*] [the] email [of|for] [professor|doctor|instructor|prof|dr] *
 - #instructors.info > name:<star1>
 
-+ faculty [professor|doctor|instructor|named|prof|dr] *
++ [*] faculty [professor|doctor|instructor|named|prof|dr] *
 - #instructors.info > name:<star1>
 
 //------------------------------------------------------------------------
@@ -157,10 +159,10 @@
 + tuition
 - in order to view tuitions please type tuition followed by desired major and w/o degree level (e.g. tuition computer science undergraduate)
 
-+ [*] tuition [for] * (freshman|undergraduate|graduate|doctorate)
++ [*] tuition [for|of] * (freshman|undergraduate|graduate|doctorate)
 - #tuitions.core > dep:<star1> , deglvl:<star2>
 
-+ [*] tuition [for] * 
++ [*] tuition [for|of] * 
 - #tuitions.core > dep:<star1>
 
 //------------------------------------------------------------------------
@@ -168,7 +170,7 @@
 //------------------------------------------------------------------------
 // AUB LINKS
 
-+ [aub] links
++ [*] [aub] links
 - #links.show
 
 //------------------------------------------------------------------------
@@ -176,7 +178,7 @@
 //------------------------------------------------------------------------
 // STUDY PLANS
 
-+ study plan [for] * (freshman|undergraduate|graduate|doctorate) 
++ [*] study plan [for] * (freshman|undergraduate|graduate|doctorate) 
 - #studyplan.core > major:<star1> , deglvl:<star2>
 
 //------------------------------------------------------------------------
@@ -185,10 +187,19 @@
 // BUILDINGS
 // show buildings images
 
-+ building * 
++ [*] building * 
 - #buildings.show > bldgname:<star1>
 
 + * (building|hall)
 - #buildings.show > bldgname:<star1>
+
+//------------------------------------------------------------------------
+
+//------------------------------------------------------------------------
+// CATALOGUE
+// get catalogue file to download for users
+
++ [*] catalogue [of|for] * (undergraduate|graduate) 
+- #catalogue.core > dep:<star1> , deglvl:<star2>
 
 //------------------------------------------------------------------------

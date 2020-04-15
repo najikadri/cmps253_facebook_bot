@@ -77,6 +77,7 @@ class DatabaseManager {
             return `SELECT * FROM studyplan WHERE major = '${major}' COLLATE NOCASE AND degree_level = '${deglvl}' COLLATE NOCASE;`
         },
         get_building_image: (bldgname) => { return `SELECT * FROM building WHERE (bldgname = '${bldgname}' COLLATE NOCASE OR alias like '${bldgname}%' COLLATE NOCASE) AND image_url NOT NULL;`},
+        get_catalogue: (dep, deglvl) => { return `SELECT * FROM catalogues WHERE department = '${dep}' COLLATE NOCASE AND degree_level = '${deglvl}' COLLATE NOCASE;`}
 
 
         

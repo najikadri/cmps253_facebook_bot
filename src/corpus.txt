@@ -18,3 +18,5 @@ president
 chairperson
 building
 info
+catalogue
+yes

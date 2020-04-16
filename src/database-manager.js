@@ -50,7 +50,7 @@ class DatabaseManager {
         get_lectures_in_on: (bldgname, days) => {return `SELECT * FROM ( SELECT * FROM lecture WHERE bldgname='${bldgname}' AND lec_days='${days}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;},
         get_lectures_for: (subj, code) => {return `SELECT * FROM ( SELECT * FROM lecture WHERE subj='${subj}' AND code='${code}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;},
         get_users : () => { return "SELECT * FROM client;"},
-        add_user : (userId) => { return `INSERT INTO client VALUES (${userId})`},
+        add_user : (userId, fn, ln) => { return `INSERT INTO client VALUES (${userId}, ${fn}, ${ln})`},
         get_courses_for: (subj) => {return `SELECT * FROM course WHERE subj="${subj}"`},
         get_instructor_by_firstname: (first_name) => {return `SELECT * FROM instructor WHERE LOWER(first_name) like '%${first_name}%';`},
         get_instructor_by_lastname: (last_name) => {return `SELECT * FROM instructor WHERE LOWER(last_name) like '%${last_name}%';`},

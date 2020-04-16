@@ -74,6 +74,8 @@ CREATE TABLE lecture (
 
 CREATE TABLE client ( -- user is a reserved keyword
     fid int, -- facebook id
+    first_name VARCHAR,
+    last_name VARCHAR,
     CONSTRAINT facebook_id PRIMARY KEY (fid)
 );
 

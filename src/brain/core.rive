@@ -199,7 +199,18 @@
 // CATALOGUE
 // get catalogue file to download for users
 
-+ [*] catalogue [of|for] * (undergraduate|graduate) 
++ [*] catalogue [of|for] *  [dep] [for|of] (undergraduate|graduate) 
 - #catalogue.core > dep:<star1> , deglvl:<star2>
+
+//------------------------------------------------------------------------
+
+
+//------------------------------------------------------------------------
+// DEPARTMENTS
+
+// #DEPARTMENTS.CORE : DISPLAY ALL DEPARTMENTS AND THEIR FACULTIES
+
++ [*] departments [*]
+- #departments.core
 
 //------------------------------------------------------------------------

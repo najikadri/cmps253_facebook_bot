@@ -1,6 +1,8 @@
 // a module and a singleton class that uses a corpus file to spell check text and messages
 // it uses Natural module which will read the corpus file and determine for each
 // word if it spelled correctly and fix any spelling mistakes based on the corpus words
+// this is also NLP but we decided to seperate it from the processing because it is applied
+// before processing the message/text
 
 const natural = require('natural');
 const goto = require('./goto');
@@ -49,7 +51,7 @@ SpellCheker.prototype.correct =  function(text){
     text = text.split(' ');
 
     for(var i = 0; i < text.length; i++){
-        var corrections = this.checker.getCorrections(text[i], 2);
+        var corrections = this.checker.getCorrections(text[i], 1);
         if( corrections.length > 0){
             text[i] = corrections[0]; // get the first possible correction 
         }

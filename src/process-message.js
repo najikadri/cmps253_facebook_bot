@@ -338,6 +338,11 @@ const runAction = function (userId, msg, action_string) {
         }
       })
       break;
+    case 'departments.core':
+      dbm.executeQuery( dbm.queries.get_departments(), (res) => {
+        return handleRequest(userId, res, dbm.formatDepartments);
+      });
+      break;
     default: console.log('there must be something wrong!');
   }
 }

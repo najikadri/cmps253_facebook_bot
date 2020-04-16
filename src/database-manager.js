@@ -77,7 +77,8 @@ class DatabaseManager {
             return `SELECT * FROM studyplan WHERE major = '${major}' COLLATE NOCASE AND degree_level = '${deglvl}' COLLATE NOCASE;`
         },
         get_building_image: (bldgname) => { return `SELECT * FROM building WHERE (bldgname = '${bldgname}' COLLATE NOCASE OR alias like '${bldgname}%' COLLATE NOCASE) AND image_url NOT NULL;`},
-        get_catalogue: (dep, deglvl) => { return `SELECT * FROM catalogues WHERE department = '${dep}' COLLATE NOCASE AND degree_level = '${deglvl}' COLLATE NOCASE;`}
+        get_catalogue: (dep, deglvl) => { return `SELECT * FROM catalogues WHERE department = '${dep}' COLLATE NOCASE AND degree_level = '${deglvl}' COLLATE NOCASE;`},
+        get_departments: () => { return 'SELECT * FROM department;'}
 
 
         
@@ -429,6 +430,19 @@ function _formatTuition (tuitions) {
     return text;
 }
 
+
+function _formatDepartments (departments){
+
+    var result = '';
+
+    for (var i = 0; i < departments.length;i++){
+        var dep = departments[i];
+        result += `${dep.name} - ${dep.faculty_name}\n\n`;
+    }
+
+    return result;
+}
+
 // DATABASE MANAGER FORMATTER FUNCTIONS WRAPPER
 
 DatabaseManager.prototype.formatCourses = function (crs, pg = -1, mpg = -1) {
@@ -453,6 +467,10 @@ DatabaseManager.prototype.formatInstructors = function (instructors, pg = -1, mp
 
 DatabaseManager.prototype.formatTuition = function(tuitions){
     return _formatTuition(tuitions);
+}
+
+DatabaseManager.prototype.formatDepartments = function(departments, pg = -1, mpg = -1){
+    return _formatDepartments(departments) + _formatPage(pg, mpg);
 }
 
 

@@ -258,7 +258,7 @@ with open( config.buildings_file, 'r') as csv_file:
                   buildings[bldgame][Buildings.ALIAS] = f'"{row[Buildings.ALIAS]}"'
             buildings[bldgame][Buildings.IMAGE] = f'"{row[Buildings.IMAGE]}"'
 
-with open( config.course_info_file, 'r') as csv_file:
+with open( config.course_info_file, 'r', encoding='utf-8') as csv_file:
 
     data = csv.reader(csv_file)
 
@@ -307,7 +307,7 @@ def end (sql_file):
 
 # convert dataset information to sql statements
 
-with open( config.output_file , 'w') as sql_file:
+with open( config.output_file , 'w', encoding='utf-8') as sql_file:
 
     sql_file.write("-- facebook_data base dataset ( auto-generated )\n\n")
 

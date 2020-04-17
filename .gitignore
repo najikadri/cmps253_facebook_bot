@@ -12,6 +12,8 @@ src/db/*
 !src/db/buildings.csv
 !src/db/courses_info.csv
 !src/db/catalogues.csv
+!src/db/pdf_catalogue.py
+!src/db/pdf2csv.py
 !src/db/config.ini
 variables.env
 

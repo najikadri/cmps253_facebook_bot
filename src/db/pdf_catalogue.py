@@ -21,51 +21,18 @@ from pdfminer.layout import LTTextBoxHorizontal
 import wget
 import urllib.error
 import os
+import random
+import time
+import multiprocessing
+import concurrent.futures
 
 class FileType:
     LOCAL = 0
     ONLINE = 1
 
-def process_pdf(file_name, type):
-    # Open a PDF file
-    print('reading from', file_name)
+# process a single element in layout
+def process_element(element, courses):
 
-    if (type == FileType.ONLINE):
-        url_name = file_name
-        file_name = file_name.split('/')[-1]
-        if not os.path.exists(file_name):
-            try:
-                wget.download(url_name)
-                print()
-            except urllib.error.HTTPError as err:
-                print(err)
-                return {} # return an empty dictionary
-
-    fp = open(file_name, 'rb')
-    # Create a PDF parser object associated with the file object.
-    parser = PDFParser(fp)
-    # Create a PDF document object that stores the document structure.
-    # Supply the password for initialization.
-    document = PDFDocument(parser)
-    # Check if the document allows text extraction. If not, abort.
-    if not document.is_extractable:
-        raise PDFTextExtractionNotAllowed
-
-    # Create a PDF resource manager object that stores shared resources.
-    rsrcmgr = PDFResourceManager()
-    # Set parameters for analysis.
-    laparams = LAParams()
-    # Create a PDF page aggregator object.
-    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
-    # Store Information and Data
-    courses = {} # store courses info in a dictionary
-    # Process each page contained in the document.
-    for page in PDFPage.create_pages(document):
-        interpreter.process_page(page)
-        # receive the LTPage object for the page.
-        layout = device.get_result()
-        for element in layout:
             if isinstance(element, LTTextBoxHorizontal):
                 text = element.get_text()
 
@@ -94,13 +61,13 @@ def process_pdf(file_name, type):
 
                     try: # check if the second part of the course name is starting with a digit
                         if not course.split()[1][0].isnumeric() or course.count(',') > 0:
-                            continue # skip if it does not start witha digit (because format is SUBJ CODE)
+                            return # skip if it does not start witha digit (because format is SUBJ CODE)
                     except IndexError:
                         if '/' in course: # that means it is like the format ( SUBJ1 / SUBJ2 CODE)
                             slash_found = True
                             course = course[:4] + ' ' + text[1].split()[1] + '/' # create format ( SUBJ1 CODE / SUBJ2 CODE) to work with the algorithm down below
                         else:
-                            continue # otherwise something is wrong and it is not a course
+                            return # otherwise something is wrong and it is not a course
 
 
                     if '/' in course:
@@ -118,7 +85,7 @@ def process_pdf(file_name, type):
                                 description_index = 1
                                 another_course = False
                         except IndexError:
-                            continue # if there is an error ignore the course                        
+                            return # if there is an error ignore the course                        
             
 
                     if not slash_found or (slash_found and another_course):
@@ -136,13 +103,73 @@ def process_pdf(file_name, type):
                     # print(course_fullcode)
                     # print(description)
 
+def process_pdf(file_name, type):
+    # Open a PDF file
+    print('reading from', file_name)
+
+
+    if (type == FileType.ONLINE):
+        url_name = file_name
+        file_name = file_name.split('/')[-1]
+        if not os.path.exists(file_name):
+            try:
+                wget.download(url_name)
+                print()
+            except urllib.error.HTTPError as err:
+                print(err)
+                return {} # return an empty dictionary
+
+
+    # since we are using parallel programming two files might end up having the same name
+    # therefore we change the files into some random name as they will be deleted anyways
+    if FileType.ONLINE:
+            temp_name = f'{str(random.randint(1,2000))}.pdf'
+            os.rename(file_name, temp_name)
+            file_name = temp_name
+
+    fp = open(file_name, 'rb')
+    # Create a PDF parser object associated with the file object.
+    parser = PDFParser(fp)
+    # Create a PDF document object that stores the document structure.
+    # Supply the password for initialization.
+    document = PDFDocument(parser)
+    # Check if the document allows text extraction. If not, abort.
+    if not document.is_extractable:
+        raise PDFTextExtractionNotAllowed
+
+    # Create a PDF resource manager object that stores shared resources.
+    rsrcmgr = PDFResourceManager()
+    # Set parameters for analysis.
+    laparams = LAParams()
+    # Create a PDF page aggregator object.
+    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+    interpreter = PDFPageInterpreter(rsrcmgr, device)
+    # Store Information and Data
+    courses = {} # store courses info in a dictionary
+    # Process each page contained in the document.
+    for page in PDFPage.create_pages(document):
+        interpreter.process_page(page)
+        # receive the LTPage object for the page.
+        layout = device.get_result()
+
+        elements = []
+
+        for element in layout:
+            elements.append(element)
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            for element in elements:
+                executor.submit(process_element,args=[element, courses])
 
     parser.close()
     fp.close()
     if type == FileType.ONLINE:
         os.remove(file_name) # remove file after processing  
-    print(len(courses),'courses has been extracted...\n')
+    # print(len(courses),'courses has been extracted...\n')
     return courses
 
 if __name__ == "__main__":
-    process_pdf('https://www.aub.edu.lb/Registrar/Documents/catalogue/graduate19-20/ceae.pdf', FileType.ONLINE)
+    start = time.perf_counter()
+    process_pdf('https://www.aub.edu.lb/Registrar/Documents/catalogue/undergraduate19-20/ceae.pdf', FileType.ONLINE)
+    end = time.perf_counter()
+    print(f'PDF Extraction took {round((end - start), 2)} secs')

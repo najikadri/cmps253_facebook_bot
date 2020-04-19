@@ -5,6 +5,10 @@ from pdf_catalogue import process_pdf, FileType # from our script to read catalo
 import csv
 import sys
 import configparser
+import threading
+import multiprocessing
+import concurrent.futures
+import time
 
 class ConfigFile:
 
@@ -16,34 +20,28 @@ class ConfigFile:
 
 def generate_courses_info (catalogues_file, courses_info_file):
 
-    with open(catalogues_file, 'r', encoding='utf-8') as input_file, open(courses_info_file, 'w', newline='', encoding='utf-8') as output_file:
+    courses = {}
+
+    with open(catalogues_file, 'r', encoding='utf-8') as input_file:
 
         data = csv.reader(input_file)
 
-        is_header = True
+        data = [ row[2] for row in data if row[2] != 'link' ]
 
-        entry = 0
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            catalogues = executor.map(process_pdf, data, [FileType.ONLINE] * len(data), chunksize=5)
+            for catalogue in catalogues:
+                courses.update(catalogue)
 
-        writer = csv.writer(output_file, delimiter=',')
+
+    with open(courses_info_file, 'w', newline='', encoding='utf-8') as output_file:
+
+        writer = csv.writer(output_file)
 
         writer.writerow(['Subject','Code','Description'])
 
-        for row in data:
-
-            if is_header:
-                is_header = False
-                continue
-
-            entry += 1
-
-            link = row[2]
-
-            print(f'Entry #{str(entry)}: ',)
-
-            courses = process_pdf(link, FileType.ONLINE)
-
-            for course in courses.values():
-                writer.writerow(course)
+        for course in courses.values():
+            writer.writerow(course)
 
 
 if __name__ == "__main__":
@@ -52,4 +50,7 @@ if __name__ == "__main__":
     read_config.read('config.ini')
     config = ConfigFile(read_config.get('settings','CataloguesFile'), read_config.get('settings', 'CourseInfoFile'))
     # generate the csv
+    start = time.perf_counter()
     generate_courses_info(config.catalogues_file, config.courses_info_file)
+    end = time.perf_counter()
+    print(f'PDF2CSV Conversion took {round((end - start), 2)} secs')

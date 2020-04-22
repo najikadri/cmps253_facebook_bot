@@ -15,8 +15,8 @@
 const natural = require('natural');
 const RiveScript = require('rivescript');
 const goto = require('./goto');
-const logger = require('./logger').instance();
-const Logger = require('./logger').Logger;
+const { createLogger, Logger } = require('./logger');
+const logger = createLogger();
 
 class NaturalLanguageManager {
 

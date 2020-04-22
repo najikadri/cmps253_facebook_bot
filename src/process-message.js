@@ -3,8 +3,8 @@ const dbm = require('./database-manager').instance(); // create an instance of o
 const path = require('path');
 const fb_api = require('./fb-api').instance();
 const nlp = require('./nlp-manager').instance();
-const logger = require('./logger').instance();
-const Logger = require('./logger').Logger;
+const { createLogger, Logger } = require('./logger');
+const logger = createLogger();
 const sc = require('./spell-checker').instance( () => {logger.log('spell checker corpus loaded successfully', Logger.severity.info)} );
 const sendTextMessage = fb_api.sendTextMessage; // a shortcut
 const getstarted = require('./get-started');

@@ -133,5 +133,5 @@ Logger.prototype.log = function(message,severity) {
 //---------------------------------------------------------------------------
 
 // export the class to be used in other module files
-module.exports = { instance: function () { return new Logger() }, init: function(settings) {return new Logger(settings)} };
+module.exports = { createLogger: function () { return new Logger() }, initLogger: function(settings) {return new Logger(settings)} };
 module.exports.Logger = Logger; // to use the severity enums

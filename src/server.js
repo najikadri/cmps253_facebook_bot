@@ -26,8 +26,8 @@ const loggerSettings = {
     errorFile: errorFile
 }
 
-const logger = require('./logger').init(loggerSettings); // initialize the module and then use instance afterwards
-const Logger = require('./logger').Logger;
+const { initLogger, Logger } = require('./logger');
+const logger = initLogger(loggerSettings);
 
 //------------------------------------------------------
 

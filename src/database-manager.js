@@ -10,8 +10,8 @@ const json2html = require('json2html'); // turn JSON into beautiful HTML table
 const path = require('path');
 const fs = require('fs');
 const createQueryIterator = require('./query-iterator').createQueryIterator; // import query iterator
-const logger = require('./logger').instance();
-const Logger = require('./logger').Logger;
+const { createLogger, Logger } = require('./logger');
+const logger = createLogger();
 
  // get the latest program provided
 const latest_program = { semester: "Spring", year: 2020};

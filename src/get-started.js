@@ -2,8 +2,8 @@
 const fb_api = require('./fb-api').instance();
 const sendTextMessage = fb_api.sendTextMessage; // shortcut
 const dbm = require('./database-manager').instance();
-const logger = require('./logger').instance();
-const Logger = require('./logger').Logger;
+const { createLogger, Logger } = require('./logger');
+const logger = createLogger();
 
 // we are using aync since the getprofile function is async and we need to 
 // wait for the promise to return the pending results

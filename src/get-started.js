@@ -2,6 +2,8 @@
 const fb_api = require('./fb-api').instance();
 const sendTextMessage = fb_api.sendTextMessage; // shortcut
 const dbm = require('./database-manager').instance();
+const logger = require('./logger').instance();
+const Logger = require('./logger').Logger;
 
 // we are using aync since the getprofile function is async and we need to 
 // wait for the promise to return the pending results
@@ -21,7 +23,7 @@ module.exports = async (userId) => {
    if (! dbm.userFound(userId) ){
        dbm.executeQuery(dbm.queries.add_user(userId, first_name, last_name), ( _ ) => {
            dbm.storeQuery(dbm.queries.get_users(), 'users'); // retreive all user after adding the new user
-           console.log(`user ${profile.first_name + ' ' + profile.last_name} has been successfully added`);
+           logger.log(`user ${profile.first_name + ' ' + profile.last_name} has been successfully added`, Logger.severity.info);
        });
    }
 

@@ -10,6 +10,8 @@ const json2html = require('json2html'); // turn JSON into beautiful HTML table
 const path = require('path');
 const fs = require('fs');
 const createQueryIterator = require('./query-iterator').createQueryIterator; // import query iterator
+const logger = require('./logger').instance();
+const Logger = require('./logger').Logger;
 
  // get the latest program provided
 const latest_program = { semester: "Spring", year: 2020};
@@ -105,7 +107,7 @@ DatabaseManager.prototype.setup_connection = function (database_path) {
 DatabaseManager.prototype.connect = function () {
     return new sqlite3.Database( this.database , sqlite3.OPEN_READWRITE, (err) => {
         if (err) {
-        console.error(err.message);
+            logger.log(err.message, Logger.severity.error);
         }
     });
 }
@@ -178,7 +180,7 @@ DatabaseManager.prototype.storeQuery = function (query, name, successFunc){
             successFunc(res);
         }
 
-        console.log(`[${name}] : query stored`);
+        logger.log(`[${name}] : query stored`, Logger.severity.info);
     })
 }
 
@@ -288,7 +290,6 @@ function _formatCourses(crs){ // courses, page number, max page number
         
     }
 
-    // console.log("courses view executed");
 
     return result;
 }
@@ -303,8 +304,6 @@ function _formatRooms(rooms){
 
         result += `Room ${i + 1}: ${room.bldgname} ${room.roomcode}\n\n`;
     }
-
-    // console.log('rooms view executed');
 
     return result;
 }
@@ -356,9 +355,6 @@ function _formatLectures(lectures){
 
         result += '\n\n';
     }
-
-    
-    // console.log('lectures view executed');
 
     return result;   
 }

@@ -3,7 +3,9 @@ const dbm = require('./database-manager').instance(); // create an instance of o
 const path = require('path');
 const fb_api = require('./fb-api').instance();
 const nlp = require('./nlp-manager').instance();
-const sc = require('./spell-checker').instance( () => {console.log('spell checker corpus loaded successfully')} );
+const logger = require('./logger').instance();
+const Logger = require('./logger').Logger;
+const sc = require('./spell-checker').instance( () => {logger.log('spell checker corpus loaded successfully', Logger.severity.info)} );
 const sendTextMessage = fb_api.sendTextMessage; // a shortcut
 const getstarted = require('./get-started');
 
@@ -128,8 +130,8 @@ const runAction = function (userId, msg, action_string) {
 
   }
 
-  console.log(action);
-  console.log(parameters);
+  logger.log(action, Logger.severity.debug);
+  logger.log(parameters, Logger.severity.debug);
 
   switch (action) {
     // gets the next query that was loaded before
@@ -266,7 +268,8 @@ const runAction = function (userId, msg, action_string) {
 
     case 'issues.message':
       dbm.executeQuery( dbm.queries.submit_issue(userId, parameters['msg']), (res) => {
-        console.log('an issue has been recorded, please check the issues dataset!'); // should be replaced by some logger
+        // successfully been replaced by a logger
+        logger.log('an issue has been recorded, please check the issues dataset!', Logger.severity.critical);
         return sendTextMessage(userId, "Okay, I have notified my team so they can fix your problem as soon as possible! 👌");
       });
       break;
@@ -343,7 +346,7 @@ const runAction = function (userId, msg, action_string) {
         return handleRequest(userId, res, dbm.formatDepartments);
       });
       break;
-    default: console.log('there must be something wrong!');
+    default: logger.log('there must be something wrong with the parsed action!', Logger.severity.error);
   }
 }
 

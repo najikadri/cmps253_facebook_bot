@@ -1,5 +1,3 @@
-const dbm = require('./database-manager').instance(); // use the database manager module
-// note: if logger is used independent from the server we need to connect to a database first
 const fs = require("fs");
 const colors = require("colors"); // used to color the text in console
 
@@ -29,6 +27,8 @@ class Logger {
             error: 2, //orange
             critical: 3 // red
         }
+
+        this.log('logger module successfully initialized', Logger.severity.info);
 
         Logger.instance = this;
         return this;
@@ -63,9 +63,9 @@ Logger.prototype._formatSeverity = function (severity,isConsole = false) {
         case Logger.severity.debug:
             return (isConsole ? "DEBUG".blue : "DEBUG");
         case Logger.severity.error:
-            return (isConsole ? "ERROR".yellow : "ERROR");
+            return (isConsole ? "ERROR!".yellow : "ERROR!");
         case Logger.severity.critical:
-            return (isConsole ? "CRITICAL".red : "CRITICAL");
+            return (isConsole ? "CRITICAL!".red : "CRITICAL!");
     }
 }
 
@@ -81,7 +81,7 @@ Logger.prototype._formatTime = function () {
 }
 
 Logger.prototype._formatMessage = function (message, severity, isConsole = false) {
-    return `[${logger._formatDate()} ${logger._formatTime()}] ${this._formatSeverity(severity, isConsole)}: ${message}`;
+    return `[${this._formatDate()} ${this._formatTime()}] ${this._formatSeverity(severity, isConsole)}: ${(typeof message == 'string' ? message : JSON.stringify(message))}`;
 }
 
 //---------------------------------------------------------------------------
@@ -95,7 +95,7 @@ Logger.prototype._logtoConsole = function (message, severity) {
 }
 
 Logger.prototype._logtoFile = function (message, severity, filename) {
-    fs.appendFile(filename, this._formatMessage(message +"\n", severity), (err) => {
+    fs.appendFile(filename, this._formatMessage(message, severity) + '\n' , (err) => {
         if (err) {
             this._logtoConsole(`Cannot Open File "${filename}"`, Logger.severity.error);
         }     
@@ -109,7 +109,7 @@ Logger.prototype.log = function(message,severity) {
     switch (severity) {
         case Logger.severity.info:
             this._logtoConsole(message, severity);
-            this.logtoFile(message, severity, this._settings.logFile);
+            this._logtoFile(message, severity, this._settings.logFile);
             break;
         case Logger.severity.debug:
             this._logtoConsole(message, severity);
@@ -133,4 +133,5 @@ Logger.prototype.log = function(message,severity) {
 //---------------------------------------------------------------------------
 
 // export the class to be used in other module files
-module.exports = { instance: function (settings) { return new Logger(settings) } };
+module.exports = { instance: function () { return new Logger() }, init: function(settings) {return new Logger(settings)} };
+module.exports.Logger = Logger; // to use the severity enums

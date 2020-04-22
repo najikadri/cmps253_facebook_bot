@@ -13,8 +13,6 @@ const verifyWebhook = (req, res) => {
     }
 
     global.host = req.hostname;
-
-    console.log('host name is: ' + global.host);
 }
 
 module.exports = verifyWebhook;

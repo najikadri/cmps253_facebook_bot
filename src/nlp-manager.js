@@ -15,6 +15,8 @@
 const natural = require('natural');
 const RiveScript = require('rivescript');
 const goto = require('./goto');
+const logger = require('./logger').instance();
+const Logger = require('./logger').Logger;
 
 class NaturalLanguageManager {
 
@@ -30,10 +32,10 @@ class NaturalLanguageManager {
 
         // load rivescript scripts directory and sort replies to use the nlp bot
         this.rivescript.loadDirectory(goto('./brain')).then(() => {
-            console.log('nlp files loaded successfully');
+            logger.log('NLP files loaded successfully', Logger.severity.info);
             this.rivescript.sortReplies();
 
-        }).catch(() => {console.log('error: loading files');});
+        }).catch(() => {logger.log('cannot load NLP files', Logger.severity.error);});
 
         return this;
 

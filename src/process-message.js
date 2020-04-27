@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const dbm = require('./database-manager').instance(); // create an instance of our database manager
 const path = require('path');
 const fb_api = require('./fb-api').instance();
-const nlp = require('./nlp-manager').instance();
+const nlp = require('./nlp/nlp-manager').instance();
 const { createLogger, Logger } = require('./logger');
 const logger = createLogger();
 const sc = require('./spell-checker').instance( () => {logger.log('spell checker corpus loaded successfully', Logger.severity.info)} );
@@ -28,13 +28,6 @@ dbm.storeQuery(dbm.queries.get_users(), 'users');
 const { FACEBOOK_ACCESS_TOKEN } = process.env;
 
 const ErrorMessage = "Sorry I couldn't find any results for your request. 😕";
-
-// helper function to trim strings
-if (typeof (String.prototype.trim) === "undefined") {
-  String.prototype.trim = function () {
-    return String(this).replace(/^\s+|\s+$/g, '');
-  };
-}
 
 // this function decides whether to display next button or not with the current query
 const displayQuery = function(userId, data, request)
@@ -77,20 +70,20 @@ const isValidDay = function(days){
 // help message builder
 
 const things_to_do = [
-  'ask to see all courses offered by the university (e.g. all courses)',
-  'ask to view departments catalogues (e.g. catalogue computer science undergraduate)',
-  'ask to see useful links related to AUB (e.g. links)',
-  'ask for a building\'s image (e.g. building Nicely)',
-  'ask for info/description about a specific course (e.g. info about CMPS 200)',
-  'ask for the courses offered for a specific subject (e.g. courses CMPS)',
-  'ask for courses with a specific attribute (e.g. attribute social sciences)',
-  'ask for lectures for a certain course (e.g. lectures MATH 201)',
-  'ask for lectures in a specific place and/or day(s) (e.g. lectures in bliss on mwf)',
-  'ask for the title or name of a course you heard of (e.g. title CMPS 253)',
-  'ask for info about instructors if you know their first and/or last names (e.g. faculty bdeir)',
-  'ask for the email of an instructor (e.g. email bdeir)',
-  'ask for tuition of a certain department (e.g. tuition computer science undergraduate)',
-  'ask for a study plan for a certain major and degree (e.g. study plan computer science undergraduate)'
+  'ask to see all courses offered by the university',
+  'ask to view departments catalogues',
+  'ask to see useful links related to AUB',
+  'ask for a building\'s image',
+  'ask for info/description about a specific course',
+  'ask for the courses offered for a specific subject',
+  'ask for courses with a specific attribute',
+  'ask for lectures for a certain course',
+  'ask for lectures in a specific place and/or day(s)',
+  'ask for the title or name of a course you heard of',
+  'ask for info about instructors if you know their first and/or last names',
+  'ask for the email of an instructor',
+  'ask for tuition of a certain department',
+  'ask for a study plan for a certain major and degree'
 ]
 
 const printThingsToDo = function () {
@@ -98,7 +91,7 @@ const printThingsToDo = function () {
   var result = '';
 
   things_to_do.forEach( (element) => {
-    result += `📕 ${element}\n\n`;
+    result += `📙 ${element}\n\n`;
   })
 
   return result;
@@ -202,15 +195,22 @@ const runAction = function (userId, msg, action_string) {
       });
       break;
     case 'lectures.building':
-      dbm.executeQuery(dbm.queries.get_lectures_in(parameters['in'].toUpperCase()), (res) => {
+      
+      var building = parameters['in'].toUpperCase();
+      var subj = (!!parameters['subj'] ? parameters['subj'].toUpperCase() : subj);
+      var code  = (!!parameters['code'] ? parameters['code'].toUpperCase() : code);
+
+      dbm.executeQuery(dbm.queries.get_lectures_in(building, subj, code), (res) => {
        return handleRequest(userId, res, dbm.formatLectures);
       })
       break;
     case 'lectures.days':
       var days = parameters['on'].toUpperCase();
+      var subj = (!!parameters['subj'] ? parameters['subj'].toUpperCase() : subj);
+      var code  = (!!parameters['code'] ? parameters['code'].toUpperCase() : code);
       var validation = isValidDay(days);
       if(validation === true){
-        dbm.executeQuery( dbm.queries.get_lectures_on(days), (res) => {
+        dbm.executeQuery( dbm.queries.get_lectures_on(days, subj, code), (res) => {
           return handleRequest(userId, res, dbm.formatLectures);
         })
       }else{
@@ -220,9 +220,11 @@ const runAction = function (userId, msg, action_string) {
     case 'lectures.building_and_days':
       var bldg = parameters['in'].toUpperCase();
       var days = parameters['on'].toUpperCase();
+      var subj = (!!parameters['subj'] ? parameters['subj'].toUpperCase() : subj);
+      var code  = (!!parameters['code'] ? parameters['code'].toUpperCase() : code);
       var validation = isValidDay(days);
       if(validation === true){
-        dbm.executeQuery( dbm.queries.get_lectures_in_on(bldg, days) , (res) => {
+        dbm.executeQuery( dbm.queries.get_lectures_in_on(bldg, days, subj, code) , (res) => {
           return handleRequest(userId, res, dbm.formatLectures);
         })
       }else{
@@ -231,7 +233,7 @@ const runAction = function (userId, msg, action_string) {
       break;
     case 'lectures.course':
       var subj = parameters['subj'].toUpperCase();
-      var code  = parameters['code'].toUpperCase();
+      var code  = (!!parameters['code'] ? parameters['code'].toUpperCase() : code);;
 
       dbm.executeQuery(dbm.queries.get_lectures_for(subj, code), (res) => {
         return handleRequest(userId, res, dbm.formatLectures);
@@ -346,13 +348,16 @@ const runAction = function (userId, msg, action_string) {
         return handleRequest(userId, res, dbm.formatDepartments);
       });
       break;
+    case 'buildings.core':
+      dbm.executeQuery( dbm.queries.get_buildings(), (res) => {
+        return handleRequest(userId, res, dbm.formatBuildings);
+      });
+      break;
     default: logger.log('there must be something wrong with the parsed action!', Logger.severity.error);
   }
 }
 
-const isAction = function (response) {
-  return response[0] === '#';
-}
+
 
 //--------------------------------------------------------------------------------
 
@@ -368,10 +373,22 @@ module.exports = (event) => {
   // let the natural language manager handle the message
   nlp.getResponse(userId, msg, (response) => {
 
-    if (isAction(response)) {
-      runAction(userId, msg, response);
-    } else {
-      return sendTextMessage(userId, response);
+    // run action if an action exists
+    if (!!response.action) {
+
+      if(!!response.answer){
+        sendTextMessage(userId, response.answer);
+      }
+
+      setTimeout(() => {
+        runAction(userId, msg, response.action);
+      }, 1000);
+      
+    } else if(!!response.answer) {
+      return sendTextMessage(userId, response.answer);
+    }else{
+      //TODO: make better answer not found messages
+      return sendTextMessage(userId, 'I still have not learned to answer this');
     }
 
   });

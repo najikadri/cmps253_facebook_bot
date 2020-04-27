@@ -47,10 +47,25 @@ class DatabaseManager {
         get_title: (subj, code) => { return `SELECT title FROM course WHERE subj='${subj}' and code='${code}'`;},
         get_lectures : () => { return "SELECT * FROM lecture".currentSemester(true); },
         get_rooms : () => { return "SELECT * FROM room";},
-        get_lectures_in: (bldgname) => { return `SELECT * FROM ( SELECT * FROM lecture WHERE bldgname='${bldgname}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;},
-        get_lectures_on: (days) => { return `SELECT * FROM ( SELECT * FROM lecture WHERE lec_days='${days}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;},
-        get_lectures_in_on: (bldgname, days) => {return `SELECT * FROM ( SELECT * FROM lecture WHERE bldgname='${bldgname}' AND lec_days='${days}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;},
-        get_lectures_for: (subj, code) => {return `SELECT * FROM ( SELECT * FROM lecture WHERE subj='${subj}' AND code='${code}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;},
+        get_lectures_in: (bldgname, subj, code) => { 
+            subj = (!!subj ? `'${subj}'` : 'subj');
+            code = (!!code ? `'${code}'` : 'code');
+            return `SELECT * FROM ( SELECT * FROM lecture WHERE subj = ${subj} AND code = ${code} AND bldgname='${bldgname}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;
+        },
+        get_lectures_on: (days, subj, code) => {
+            subj = (!!subj ? `'${subj}'` : 'subj');
+            code = (!!code ? `'${code}'` : 'code');
+            return `SELECT * FROM ( SELECT * FROM lecture WHERE subj = ${subj} AND code = ${code} AND lec_days='${days}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;
+        },
+        get_lectures_in_on: (bldgname, days, subj, code) => {
+            subj = (!!subj ? `'${subj}'` : 'subj');
+            code = (!!code ? `'${code}'` : 'code');
+            return `SELECT * FROM ( SELECT * FROM lecture WHERE subj = ${subj} AND code = ${code} AND bldgname='${bldgname}' AND lec_days='${days}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;
+        },
+        get_lectures_for: (subj, code) => {
+            code = (!!code ? `'${code}'` : 'code');
+            return `SELECT * FROM ( SELECT * FROM lecture WHERE subj='${subj}' AND code=${code} AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;
+        },
         get_users : () => { return "SELECT * FROM client;"},
         add_user : (userId, fn, ln) => { return `INSERT INTO client VALUES (${userId}, ${fn}, ${ln})`},
         get_courses_for: (subj) => {return `SELECT * FROM course WHERE subj="${subj}"`},
@@ -80,7 +95,8 @@ class DatabaseManager {
         },
         get_building_image: (bldgname) => { return `SELECT * FROM building WHERE (bldgname = '${bldgname}' COLLATE NOCASE OR alias like '${bldgname}%' COLLATE NOCASE) AND image_url NOT NULL;`},
         get_catalogue: (dep, deglvl) => { return `SELECT * FROM catalogues WHERE department = '${dep}' COLLATE NOCASE AND degree_level = '${deglvl}' COLLATE NOCASE;`},
-        get_departments: () => { return 'SELECT * FROM department;'}
+        get_departments: () => { return 'SELECT * FROM department;'},
+        get_buildings: () => { return 'SELECT * FROM building;'}
 
 
         
@@ -439,6 +455,25 @@ function _formatDepartments (departments){
     return result;
 }
 
+function _formatBuildings (buildings){
+
+    var result = '';
+
+    for (var i = 0; i < buildings.length;i++){
+        var building = buildings[i];
+
+        if (!!building.alias){
+            building.alias = '(' + building.alias + ')';
+            result += `${building.bldgname} ${building.alias}\n\n`;
+        }else{
+            result += `${building.bldgname}\n\n`;
+        }
+
+    }
+
+    return result;
+}
+
 // DATABASE MANAGER FORMATTER FUNCTIONS WRAPPER
 
 DatabaseManager.prototype.formatCourses = function (crs, pg = -1, mpg = -1) {
@@ -467,6 +502,10 @@ DatabaseManager.prototype.formatTuition = function(tuitions){
 
 DatabaseManager.prototype.formatDepartments = function(departments, pg = -1, mpg = -1){
     return _formatDepartments(departments) + _formatPage(pg, mpg);
+}
+
+DatabaseManager.prototype.formatBuildings = function(buildings, pg = -1, mpg = -1){
+    return _formatBuildings(buildings) + _formatPage(pg, mpg);
 }
 
 

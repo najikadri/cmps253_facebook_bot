@@ -1,0 +1,268 @@
+{
+    "name": "flapjack",
+    "locale": "en-US",
+    "data": [
+
+          {
+            "intent": "links.show",
+            "utterances": [
+              "link",
+              "AUB links",
+              "links university",
+              "sources",
+              "shortcuts",
+              "AUBsis",
+              "AUB Moodle",
+              "AUB LMS",
+              "any useful links  use",
+              "majors and programs does university have",
+              "majors and programs does AUB have",
+              "AUB main website",
+              "admit AUB",
+              "admissions",
+              "registration office",
+              "registrar",
+              "be harrased",
+              "title ix",
+              "bully", "bullying","bullied",
+              "someone be stalk",
+              "sexually assaulted",
+              "try hit on",
+              "trying hit on",
+              "acting weird lately",
+              "acts weird",
+              "check webmail",
+              "see AUB email",
+              "signin AUB email",
+              "sign in into AUB email",
+              "log in into AUB email",
+              "login AUB email",
+              "use university email",
+              "register university email",
+              "log in into microsoft office 365",
+              "sign in into microsoft outlook 365",
+              "log in into AUBsis",
+              "log in into AUB student information system",
+              "use AUBsis",
+              "find AUBsis",
+              "can not find AUBsis",
+              "enter secure area",
+              "view student information",
+              "access AUBsis",
+              "see my transcript",
+              "personal information",
+              "student services",
+              "US federal loans",
+              "student awards or financial aid",
+              "student work study program",
+              "apply AUB",
+              "apply university",
+              "find AUB Moodle",
+              "AUB Moodle",
+              "submit petition",
+              "calculate my tuition",
+              "tuition calculator",
+              "study at AUB costs",
+              "possible spend AUB",
+              "spend in general AUB",
+              "cost attending AUB",
+              "standard fees AUB",
+              "other costs or fees  study at AUB",
+              "living cost",
+              "residency cost",
+              "estimate books and supplies per supplement",
+              "entry visa Lebanon",
+              "cost food and living AUB",
+              "cost AUB dorms"
+            ],
+            "answers": [
+                "Here are some useful links that could help you out",
+                "I think this should help you out",
+                "Here you go",
+                "Alright I'm on it"
+            ]
+          },
+
+
+          {
+              "intent": "courses",
+              "utterances": [
+                "courses in general",
+                "list courses",
+                "all courses",
+                "available courses",
+                "offered courses",
+                "attribute",
+                "@course_attribute",
+                "@course"
+              ],
+
+              "answers": [
+                  "Well here you go",
+                  "There you go",
+                  "I'm on it chief",
+                  "Okay let's find these courses",
+                  "Okay I'm looking up for the courses",
+                  "If that's what you want"
+              ]
+          },
+
+          {
+            "intent": "courses.title",
+            "utterances": [
+              "title @course",
+              "title @course @course_code"
+            ],
+
+            "answers": []
+          },
+
+          {
+            "intent": "courses.info",
+            "utterances": [
+              "@course @course_code"
+            ],
+
+            "answers": []
+          },
+
+          {
+            "intent": "info",
+            "utterances": [
+                "@info"
+            ],
+
+            "answers": []
+          },
+
+          {
+            "intent": "instructors.info",
+            "utterances": [
+                "@instructor",
+                "@instructor @instructor"
+            ],
+
+            "answers": []
+          },
+
+
+          {
+            "intent": "lectures",
+            "utterances": [
+                "lectures",
+                "lectures in on for",
+                "lectures in @building",
+                "lectures on @datetime",
+                "lectures @course @course_code"
+            ],
+
+            "answers": [
+                "I'm working on it 👌",
+                "I will do it but let's hope there is capacity 🙏",
+                "Choose wisely 🤓"
+            ]
+
+          },
+
+          {
+            "intent": "issue",
+            "utterances": [
+                "report",
+                "issue",
+                "problem",
+                "something not right",
+                "not working",
+                "mistake",
+                "bug"
+            ],
+
+            "answers": [
+            ]
+
+          },
+
+          {
+            "intent": "tuition",
+            "utterances": [
+                "cost",
+                "credits",
+                "tuition",
+                "tuition @degree",
+                "tuition @degree @degree"
+            ],
+
+            "answers": [
+            ]
+
+          },
+
+        
+          {
+            "intent": "studyplan",
+            "utterances": [
+                "study plan",
+                "study-plan",
+                "studyplan"
+            ],
+
+            "answers": [
+            ]
+
+          },
+
+          {
+            "intent": "catalogue",
+            "utterances": [
+                "catalogue",
+                "catalog"
+            ],
+
+            "answers": [
+                "Okay I will find the catalogue file",
+                "Sending you the catalogue file",
+                "One catalogue file on the way"
+            ]
+
+          },
+
+          {
+            "intent": "departments",
+            "utterances": [
+                "departments"
+            ],
+
+            "answers": [
+            ]
+
+          },
+
+          {
+            "intent": "buildings",
+            "utterances": [
+                "buildings"
+            ],
+
+            "answers": [
+            ]
+
+          },
+
+          {
+            "intent": "buildings.show",
+            "utterances": [
+                "@building",
+                "@building hall",
+                "@building building"
+            ],
+
+            "answers": [
+              "I hope this helps",
+              "I know that building!",
+              "got it!"
+            ]
+
+          }
+
+
+    ]
+}

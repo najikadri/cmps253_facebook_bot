@@ -18,6 +18,7 @@ professor
 president
 chairperson
 building
+buildings
 info
 catalogue
 yes

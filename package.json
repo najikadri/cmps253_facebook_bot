@@ -12,6 +12,7 @@
   "author": "Mohammad Naji Kadri, Mazen Natour, Muhammad Al Ghali, Sara Darwish",
   "license": "ISC",
   "dependencies": {
+    "@nlpjs/basic": "^4.3.0",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "colors": "^1.4.0",
@@ -20,6 +21,7 @@
     "json2html": "0.0.8",
     "natural": "^0.6.3",
     "node-fetch": "^2.6.0",
+    "node-nlp": "^4.3.0",
     "request": "^2.88.0",
     "rivescript": "^2.1.0",
     "sqlite3": "^4.1.1"

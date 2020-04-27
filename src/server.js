@@ -31,6 +31,12 @@ const logger = initLogger(loggerSettings);
 
 //------------------------------------------------------
 
+// helper function to trim strings
+if (typeof (String.prototype.trim) === "undefined") {
+    String.prototype.trim = function () {
+      return String(this).replace(/^\s+|\s+$/g, '');
+    };
+}
 
 const dbm = require('./database-manager').instance(); // create an instance of our database manager
 dbm.setup_connection( goto('db/cmps.db')); // setup its connection once

@@ -268,6 +268,9 @@ const runAction = function (userId, msg, action_string) {
 
       break;
 
+    case 'issues.prompt':
+      fb_api.displayReportMessage(userId);
+      break;
     case 'issues.message':
       dbm.executeQuery( dbm.queries.submit_issue(userId, parameters['msg']), (res) => {
         // successfully been replaced by a logger
@@ -358,6 +361,40 @@ const runAction = function (userId, msg, action_string) {
 }
 
 
+var isIssueState = false; // checks if the user is writing an issue message
+
+function runIssueState (userId, event) {
+
+  if(isIssueState){
+    isIssueState = false;
+    var msg = event.message.text;
+    msg = msg.replace(/"/g, "'");
+    runAction(userId, msg , `#issues.message > msg:${msg}`);
+    return true;
+  }
+
+  if(!!event.message.quick_reply){
+    
+    if(event.message.quick_reply.payload == 'REPORT_YES'){
+        isIssueState = true;
+        sendTextMessage(userId, 'please describe for me your issue that you have ran into 📝');
+    }
+
+    if(event.message.quick_reply.payload == 'REPORT_NO'){
+      sendTextMessage(userId, 'okay glad to hear that! 😁');
+    }
+
+    return true;
+
+  }
+
+
+
+  return false;
+
+
+}
+
 
 //--------------------------------------------------------------------------------
 
@@ -370,28 +407,32 @@ module.exports = (event) => {
 
   const msg = sc.correct(message.toLowerCase()); // do spell checking before processing
 
-  // let the natural language manager handle the message
-  nlp.getResponse(userId, msg, (response) => {
+  var stateOccured = runIssueState(userId, event); // note: if there are many states then we would implement a state-manager module
 
-    // run action if an action exists
-    if (!!response.action) {
+  if(!stateOccured){
+    // let the natural language manager handle the message
+    nlp.getResponse(userId, msg, (response) => {
 
-      if(!!response.answer){
-        sendTextMessage(userId, response.answer);
+      // run action if an action exists
+      if (!!response.action) {
+
+        if(!!response.answer){
+          sendTextMessage(userId, response.answer);
+        }
+
+        setTimeout(() => {
+          runAction(userId, msg, response.action);
+        }, 1000);
+        
+      } else if(!!response.answer) {
+        return sendTextMessage(userId, response.answer);
+      }else{
+        //TODO: make better answer not found messages
+        return sendTextMessage(userId, 'I still have not learned to answer this');
       }
 
-      setTimeout(() => {
-        runAction(userId, msg, response.action);
-      }, 1000);
-      
-    } else if(!!response.answer) {
-      return sendTextMessage(userId, response.answer);
-    }else{
-      //TODO: make better answer not found messages
-      return sendTextMessage(userId, 'I still have not learned to answer this');
-    }
-
-  });
+    });
+  }
 
 }
 

@@ -29,7 +29,7 @@ module.exports = (nlp_object, successFunc) => {
             process_lectures_Intent(nlp_object);
             break;
         case 'issue':
-            nlp_object.action = '#issues.message';
+            nlp_object.action = '#issues.prompt';
             break;
         case 'departments':
             nlp_object.action = '#departments.core';

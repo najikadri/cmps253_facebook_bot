@@ -102,6 +102,41 @@ FB_API_Manager.prototype.displayQueryMessage = (userId, msg) => {
   );
 };
 
+
+// send a message with a next postback button to check if user wants to report an issue
+FB_API_Manager.prototype.displayReportMessage = (userId) => {
+  return fetch(
+    `https://graph.facebook.com/v2.6/me/messages?access_token=${FACEBOOK_ACCESS_TOKEN}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        messaging_type: 'RESPONSE',
+        recipient: {
+          id: userId,
+        },
+        message: {
+          text: "are you facing issues with this app? 😯",
+          quick_replies: [
+            {
+              content_type: "text",
+              title: "😕 Yes",
+              payload: "REPORT_YES"
+            },
+            {
+              content_type: "text",
+              title: "🤨 No",
+              payload: "REPORT_NO"
+            }
+          ]
+        },
+      }),
+    }
+  );
+};
+
 // send an image attachment
 //note: it uses facebook api version 6.0 not 2.6
 FB_API_Manager.prototype.sendImageMessage = (userId, image_url) => {

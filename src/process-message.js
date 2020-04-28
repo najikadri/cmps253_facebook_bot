@@ -361,23 +361,23 @@ const runAction = function (userId, msg, action_string) {
 }
 
 
-var isIssueState = false; // checks if the user is writing an issue message
+var issueState = {} // map of users who are in the issue state
 
 function runIssueState (userId, event) {
 
-  if(isIssueState){
-    isIssueState = false;
+  if(!!issueState[userId]){
     var msg = event.message.text;
     msg = msg.replace(/"/g, "'");
     runAction(userId, msg , `#issues.message > msg:${msg}`);
+    delete issueState[userId];
     return true;
   }
 
   if(!!event.message.quick_reply){
     
     if(event.message.quick_reply.payload == 'REPORT_YES'){
-        isIssueState = true;
-        sendTextMessage(userId, 'please describe for me your issue that you have ran into 📝');
+      issueState[userId] = userId;
+      sendTextMessage(userId, 'please describe for me your issue that you have ran into 📝');
     }
 
     if(event.message.quick_reply.payload == 'REPORT_NO'){
@@ -407,6 +407,15 @@ module.exports = (event) => {
 
   const msg = sc.correct(message.toLowerCase()); // do spell checking before processing
 
+  // see what users might say to the bot for analysis
+  dbm.executeQuery( dbm.queries.get_client(userId), (res) =>{
+    if(res.length > 0){
+      var first_name = res[0].first_name;
+      var last_name = res[0].last_name;
+      logger.log(`{${first_name + ' ' + last_name}}: "${msg}"`, Logger.severity.debug);
+    }
+  });
+
   var stateOccured = runIssueState(userId, event); // note: if there are many states then we would implement a state-manager module
 
   if(!stateOccured){
@@ -428,7 +437,9 @@ module.exports = (event) => {
         return sendTextMessage(userId, response.answer);
       }else{
         //TODO: make better answer not found messages
+        logger.log(`message with unresolved None intent: "${msg}"`, Logger.severity.error);
         return sendTextMessage(userId, 'I still have not learned to answer this');
+ 
       }
 
     });

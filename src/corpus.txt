@@ -22,3 +22,42 @@ buildings
 info
 catalogue
 yes
+email
+links
+link
+transcript
+petition
+financial
+report
+issue
+problem
+mistake
+bug
+cost
+studyplan
+study plan
+catalogue
+catalog
+departments
+department
+hall
+// attributes
+natural
+sciences
+science
+humanities
+social
+arabic
+english
+communication
+skills
+quantitative
+thought
+// departments
+mathematics
+epidemiology
+molecular
+psychology
+pharmacology
+management
+economics

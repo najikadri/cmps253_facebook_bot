@@ -1,4 +1,9 @@
-require('dotenv').config({ path: 'variables.env' }); // configuration file
+const path = require('path');
+const result = require('dotenv').config({ path: path.resolve(__dirname, '../variables.env') }) // configuration file
+
+if(result.error){
+    throw result.error;
+}
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -11,14 +16,9 @@ const goto = require('./goto');
 //--------------------------------------------------
 // initialize logger 
 
-const appdata = process.env.appdata; // store logs in the %APPDATA% folder
-const loggerDir = appdata + '\\facebook_bot\\';
-if(!fs.existsSync(loggerDir)){
-    fs.mkdirSync(loggerDir);
-}
-const logFile = loggerDir + '\\log.txt';
-const debugFile = loggerDir + '\\debug.txt';
-const errorFile = loggerDir + '\\errors.txt';
+const logFile =   'log.txt';
+const debugFile = 'debug.txt';
+const errorFile = 'errors.txt';
 
 const loggerSettings = {
     logFile: logFile,

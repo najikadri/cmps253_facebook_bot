@@ -15,5 +15,6 @@ src/db/*
 !src/db/pdf_catalogue.py
 !src/db/pdf2csv.py
 !src/db/config.ini
+*.txt
 variables.env
 

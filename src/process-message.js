@@ -435,8 +435,6 @@ module.exports = (event) => {
     // let the natural language manager handle the message
     nlp.getResponse(userId, msg, (response) => {
 
-      console.log(response);
-
       // run action if an action exists
       if (!!response.action) {
 

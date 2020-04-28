@@ -378,21 +378,34 @@ function runIssueState (userId, event) {
     if(event.message.quick_reply.payload == 'REPORT_YES'){
       issueState[userId] = userId;
       sendTextMessage(userId, 'please describe for me your issue that you have ran into 📝');
+      return true;
     }
 
     if(event.message.quick_reply.payload == 'REPORT_NO'){
       sendTextMessage(userId, 'okay glad to hear that! 😁');
+      return true;
     }
 
-    return true;
-
   }
-
 
 
   return false;
 
 
+}
+
+function runNextState (event, userId){
+
+  if(!!event.message.quick_reply && event.message.quick_reply.payload == 'NEXT_PAGE'){
+    return false;
+  }
+
+  return false;
+}
+
+function checkState (event, userId){
+
+  return runIssueState(event, userId) || runNextState(event, userId);
 }
 
 
@@ -422,16 +435,21 @@ module.exports = (event) => {
     // let the natural language manager handle the message
     nlp.getResponse(userId, msg, (response) => {
 
+      console.log(response);
+
       // run action if an action exists
       if (!!response.action) {
 
+        var answerFound = false;
+
         if(!!response.answer){
           sendTextMessage(userId, response.answer);
+          answerFound = true;
         }
 
         setTimeout(() => {
           runAction(userId, msg, response.action);
-        }, 1000);
+        }, (answerFound ? 1000 : 0));
         
       } else if(!!response.answer) {
         return sendTextMessage(userId, response.answer);

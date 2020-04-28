@@ -171,6 +171,10 @@ function process_None_Intent (nlp_object){
     var utternace = nlp_object.utterance;
     var text = utternace.toLowerCase(); // use if we care to see what the text contains
 
+    if(text == 'okay' || text == 'ok' || text == 'alright' | text == 'aha' | text == 'yup' || text == 'yes'){
+        nlp_object.answer = '👍';
+    }
+
     if(
         text.includes('help') || text.includes('assistance') || text.includes('assist') || 
         text.includes('guidance')  || text.includes('guide')

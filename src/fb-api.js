@@ -266,7 +266,7 @@ FB_API_Manager.prototype.sendUniversityLinks = (userId) => {
               elements: [
                 {
                   title: "General",
-                  image_url: 'https://www.aub.edu.lb/HomeRotator/aub-homepage-MO1_9124.jpg',
+                  image_url: 'https://src.lafargeholcim-foundation.org/img/cf314c1d-e093-44c5-8a8f-25e3724378e0/h(true)/f(1200)/c(1200-1.33333333333333-100-0-0)/lebanon_beirut_aub_building.jpg',
                   subtitle: 'Important and useful links for everyone',
 
                   default_action: {

@@ -80,6 +80,18 @@ class Catalogues:
     LINK = 2
 
 
+# substitute building keywords to avoid collision with courses keywords
+# example CHEM building and CHEM courses are the same
+def substitute(keyword):
+    subs = {
+        'CHEM': 'CHE',
+        'PHYS': 'PHY',
+        'BIOL': 'BIO'
+    }
+
+    return subs[keyword] if keyword in subs else keyword
+
+
 # dictionaries to store data to be generated
 courses = {}
 instuctors = {}
@@ -144,7 +156,7 @@ with open( config.catalog_file , 'r') as csv_file:
         if course_name != 'NULL' and course_name != 'N/A' and not course_name in courses :
             courses[course_name] = course
 
-        building = row[Catalog.BUILDING]
+        building = substitute(row[Catalog.BUILDING])
 
         if building != 'N/A' and building != 'NULL' and not building in buildings:
             buildings[building] = [building, 'null', 'null']
@@ -251,7 +263,7 @@ with open( config.buildings_file, 'r') as csv_file:
             is_header = False
             continue
 
-        bldgame = row[Buildings.BUILDING]
+        bldgame = substitute(row[Buildings.BUILDING])
 
         if bldgame in buildings:
             if row[Buildings.ALIAS] != '': # make sure that the alias is not empty
@@ -389,7 +401,7 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
             time[0] = f'"{time[0]}"'
             time[1] = f'"{time[1]}"'
 
-        building = lecture[Catalog.BUILDING]
+        building = substitute(lecture[Catalog.BUILDING])
 
         if building == 'N/A' or building == 'NULL':
             building = 'null'

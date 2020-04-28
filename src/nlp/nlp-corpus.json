@@ -239,10 +239,12 @@
           {
             "intent": "buildings",
             "utterances": [
-                "buildings"
+                "buildings",
+                "building"
             ],
 
             "answers": [
+              "Make sure to type the buildings' names exactly like this"
             ]
 
           },

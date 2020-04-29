@@ -7,15 +7,14 @@
       "utterances": [
         "show link",
         "AUB links",
-        "links university",
+        "register",
         "sources",
         "shortcuts",
         "AUBsis",
         "AUB Moodle",
         "AUB LMS",
         "any useful links  use",
-        "majors and programs does university have",
-        "majors and programs does AUB have",
+        "majors and programs",
         "AUB main website",
         "admit AUB",
         "admissions",
@@ -91,6 +90,8 @@
         "all courses",
         "available courses",
         "offered courses",
+        "given courses",
+        "courses given by",
         "attribute",
         "@course_attribute",
         "@course"
@@ -122,6 +123,8 @@
     {
       "intent": "info",
       "utterances": [
+        "who is @info",
+        "what is @info",
         "@info"
       ],
       "answers": []
@@ -154,6 +157,8 @@
       "utterances": [
         "report",
         "issue",
+        "error",
+        "wrong",
         "problem",
         "something not right",
         "not working",
@@ -247,8 +252,8 @@
         "are you here",
         "your personality",
         "describe yourself",
-        "tell about yourself",
-        "tell about you",
+        "about yourself",
+        "about you",
         "what are you",
         "who are you",
         "I want to know more about you",
@@ -340,6 +345,7 @@
         "I think you're beautiful",
         "you look amazing today",
         "you're so beautiful today",
+        "you are cute",
         "you look very pretty",
         "you look pretty good"
       ],
@@ -377,44 +383,6 @@
         "I'm sorry. I'll request to be made more charming",
         "I don't mean to be. I'll ask my developers to work on making me more amusing",
         "I can let my developers know so they can make me fun"
-      ]
-    },
-    {
-      "intent": "agent.boss",
-      "utterances": [
-        "who is your master",
-        "who do you work for",
-        "who do you think is your boss",
-        "who is your boss",
-        "I should be your boss",
-        "who is your owner",
-        "who is the boss",
-        "who developed you"
-      ],
-      "answers": [
-        "My developer has authority over my actions",
-        "I act on my developer's orders",
-        "My boss is the one who developed me"
-      ]
-    },
-    {
-      "intent": "agent.busy",
-      "utterances": [
-        "are you so busy",
-        "are you busy",
-        "are you still working",
-        "you're a busy person",
-        "are you very busy",
-        "are you still working on it",
-        "you seem busy",
-        "are you working today",
-        "do you have some time"
-      ],
-      "answers": [
-        "I always have time to help you. What can I do for you?",
-        "Never too busy for you",
-        "You're my priority",
-        "I always have time to help you. That's what I'm here for."
       ]
     },
     {
@@ -862,6 +830,8 @@
         "how are you",
         "fine and you",
         "good and you",
+        "good hbu",
+        "fine hbu",
         "how are you doing",
         "how is your day",
         "how is your day going",
@@ -963,34 +933,6 @@
       "answers": [
         "If you're bored, you could plan your dream vacation",
         "Boredom, huh? Have you ever seen a hedgehog taking a bath?"
-      ]
-    },
-    {
-      "intent": "user.busy",
-      "utterances": [
-        "I got work to do",
-        "I'm busy",
-        "I'm overloaded",
-        "I'm working",
-        "I got things to do"
-      ],
-      "answers": [
-        "I understand. I'll be here if you need me.",
-        "Okay. I'll let you get back to work"
-      ]
-    },
-    {
-      "intent": "user.cannotsleep",
-      "utterances": [
-        "I'm insomniac",
-        "I cannot sleep",
-        "I can't sleep",
-        "I'm sleepless",
-        "I can't fall sleep"
-      ],
-      "answers": [
-        "Maybe some music would help. Try listening to something relaxing",
-        "Reading is a good way to unwind, just don't read something too intense!"
       ]
     },
     {

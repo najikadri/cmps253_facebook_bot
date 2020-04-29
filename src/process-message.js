@@ -70,20 +70,21 @@ const isValidDay = function(days){
 // help message builder
 
 const things_to_do = [
-  'ask to see all courses offered by the university',
-  'ask to view departments catalogues',
-  'ask to see useful links related to AUB',
-  'ask for a building\'s image',
-  'ask for info/description about a specific course',
-  'ask for the courses offered for a specific subject',
-  'ask for courses with a specific attribute',
-  'ask for lectures for a certain course',
-  'ask for lectures in a specific place and/or day(s)',
-  'ask for the title or name of a course you heard of',
-  'ask for info about instructors if you know their first and/or last names',
-  'ask for the email of an instructor',
-  'ask for tuition of a certain department',
-  'ask for a study plan for a certain major and degree'
+  'report any problem you are facing (e.g. report problem)',
+  'ask to see all courses offered by the university (e.g. all courses)',
+  'ask to view departments catalogues (e.g. catalog computer science undergraduate)',
+  'ask to see useful links related to AUB (e.g. links)',
+  'ask for a building\'s image (e.g. nicely hall)',
+  'ask for info/description about a specific course (e.g. info about cmps 200)',
+  'ask for the courses offered for a specific subject (e.g. cmps courses)',
+  'ask for courses with a specific attribute (e.g. natural sciences courses)',
+  'ask for lectures for a certain course (e.g. cmps 200 lectures in bliss hall on mwf)',
+  'ask for lectures in a specific place and/or day(s) (e.g. lectures in nicely hall on tuesday and thursday)' ,
+  'ask for the title or name of a course you heard of (e.g. title of cmps 255)',
+  'ask for info about instructors if you know their first and/or last names (e.g. faculty bdeir)',
+  'ask for the email of an instructor (e.g. email bdeir)',
+  'ask for tuition of a certain department (e.g. tuition computer science)',
+  'ask for a study plan for a certain major and degree (e.g. study plan computer science undergraduate)'
 ]
 
 const printThingsToDo = function () {

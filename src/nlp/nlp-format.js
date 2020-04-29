@@ -2,9 +2,6 @@
 // this allows to process each intent and format it into the action format that is described
 // in the NLP manager
 
-const { createLogger, Logger } = require('../logger');
-const logger = createLogger();
-
 module.exports = (nlp_object, successFunc) => {
 
     // console.log(nlp_object);

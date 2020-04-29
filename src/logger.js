@@ -72,7 +72,7 @@ Logger.prototype._formatSeverity = function (severity,isConsole = false) {
 Logger.prototype._formatDate = function () {
     
     let current_date = new Date();
-    return (this._padZero(current_date.getDate()))  + "/" + (this._padZero(current_date.getMonth())) + "/" + current_date.getFullYear();
+    return (this._padZero(current_date.getDate()))  + "/" + (this._padZero(current_date.getMonth() + 1)) + "/" + current_date.getFullYear();
 }
 
 Logger.prototype._formatTime = function () {

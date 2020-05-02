@@ -1,7 +1,6 @@
 
 const request = require("request");
-
-const { FACEBOOK_ACCESS_TOKEN } = process.env;
+const FACEBOOK_ACCESS_TOKEN = require('./fb_access_token');
 
 function setupGetStartedButton(res){
     

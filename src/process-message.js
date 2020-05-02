@@ -23,10 +23,6 @@ dbm.storeQuery(dbm.queries.get_users(), 'users');
 //---------------------------------------------------
 // SETUP
 
-// Remember the Page Access Token you got from Facebook earlier?
-// Don't forget to add it to your `variables.env` file.
-const { FACEBOOK_ACCESS_TOKEN } = process.env;
-
 const ErrorMessage = "Sorry I couldn't find any results for your request. 😕";
 
 // this function decides whether to display next button or not with the current query

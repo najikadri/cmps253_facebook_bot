@@ -4,11 +4,7 @@
 
 const fetch = require('node-fetch');
 const dbm = require('./database-manager').instance();
-
-
-
-// Don't forget to add it to your `variables.env` file.
-const { FACEBOOK_ACCESS_TOKEN } = process.env;
+const FACEBOOK_ACCESS_TOKEN = require('./fb_access_token');
 
 // naji kadri psid: 3219726614708296
 

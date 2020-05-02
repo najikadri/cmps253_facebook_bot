@@ -271,7 +271,8 @@ const runAction = function (userId, msg, action_string) {
     case 'issues.message':
       dbm.executeQuery( dbm.queries.submit_issue(userId, parameters['msg']), (res) => {
         // successfully been replaced by a logger
-        logger.log('an issue has been recorded, please check the issues dataset!', Logger.severity.critical);
+        var msg = parameters['msg'];
+        logger.log(`an issue has been recorded in the database with the following message: "${msg}"`, Logger.severity.critical);
         return sendTextMessage(userId, "Okay, I have notified my team so they can fix your problem as soon as possible! 👌");
       });
       break;
@@ -451,7 +452,11 @@ module.exports = (event) => {
       }else{
         //TODO: make better answer not found messages
         logger.log(`message with unresolved None intent: "${msg}"`, Logger.severity.error);
-        return sendTextMessage(userId, 'I still have not learned to answer this');
+        sendTextMessage(userId, 'I still have not learned to answer this');
+
+       setTimeout( () => {
+         sendTextMessage(userId, HelpMessage);
+       }, 200);
  
       }
 

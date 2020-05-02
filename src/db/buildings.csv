@@ -1,6 +1,6 @@
 bldgname,alias,image_url
 OSB,,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/Suliman-L.jpg
-AGRIC,Agriculture,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/Agriculture-L.jpg
+AGRIC,,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/Agriculture-L.jpg
 NICELY,,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/Nicely-L.jpg
 ADAD,Ada Dodge,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/AdaDodgeHall.jpg
 COLL,College,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/CollegeHall-L.jpg
@@ -12,7 +12,7 @@ POST,Post,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/Post
 FISK,,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/Fisk-L.jpg
 IOEC,Oxy,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/Irani-L.jpg
 PHY,Physics Emile,https://www.aub.edu.lb/facilities/fpdu/Buildings/EmileBustani.jpg
-BIO,Biology,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/BiologyBuilding.jpg
+BIO,,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/BiologyBuilding.jpg
 CHSC,Hostler,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/Hostler-L.jpg
 CHE,Elmer,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/Elmer-L.jpg
 BLISS,Daniel,https://www.aub.edu.lb/facilities/fpdu/PublishingImages/Buildings/Daniel-L.jpg

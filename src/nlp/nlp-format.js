@@ -172,15 +172,22 @@ function process_None_Intent (nlp_object){
         nlp_object.answer = '👍';
     }
 
+    if( text.includes('flapjack') ){
+        console.log('here');
+        nlp_object.answer = 'yes?';
+    }
+
     if(
         text.includes('help') || text.includes('assistance') || text.includes('assist') || 
         text.includes('guidance')  || text.includes('guide')
     ){
         nlp_object.action = '#help.core';
+        nlp_object.answer = undefined;
     }
 
     if(text === 'next' || text.includes('next query') || text.includes('next page') ){
         nlp_object.action = '#query.next';
+        nlp_object.answer = undefined;
     }
 
 }

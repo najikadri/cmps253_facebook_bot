@@ -7,7 +7,6 @@ if(result.error){
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const sqlite3 = require('sqlite3').verbose();
 const json2html = require('json2html'); // turn JSON into beautiful HTML table
 const fs = require('fs');
 
@@ -39,11 +38,8 @@ if (typeof (String.prototype.trim) === "undefined") {
 }
 
 const dbm = require('./database-manager').instance(); // create an instance of our database manager
-dbm.setup_connection( goto('db/cmps.db')); // setup its connection once
 
 const setupGetStartedButton = require("./setup-button");
-
-const getstarted = require('./get-started');
 
 const app = express();
 
@@ -76,11 +72,26 @@ app.get('/view/:query', (req, res) => {
             // delete fbclid because we don't care about it for now
             delete req.query.fbclid;
 
-            if (!!req.query.building){
+            var subj = req.query.subj;
+            var code = req.query.code;
+
+            if(!!req.query.building && !!req.query.days){
+
+                var building = req.query.building;
+                var days = req.query.days;
+                building = building.toUpperCase();
+                days = days.toUpperCase();
+
+                dbm.renderedQuery( dbm.queries.get_lectures_in_on(building, days, subj, code), (table) => {
+                    res.send(table);
+                });
+
+
+            } else if (!!req.query.building){
                 var building = req.query.building;
                 building = building.toUpperCase();
 
-                dbm.renderedQuery( dbm.queries.get_lectures_in(building), (table) => {
+                dbm.renderedQuery( dbm.queries.get_lectures_in(building, subj, code), (table) => {
                     res.send(table);
                 });
             }else if (!!req.query.days) {
@@ -88,7 +99,7 @@ app.get('/view/:query', (req, res) => {
                 var days = req.query.days;
                 days = days.toUpperCase();
 
-                dbm.renderedQuery( dbm.queries.get_lectures_at(days), (table) => {
+                dbm.renderedQuery( dbm.queries.get_lectures_on(days, subj, code), (table) => {
                     res.send(table);
                 });
 

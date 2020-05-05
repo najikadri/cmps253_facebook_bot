@@ -1,21 +1,19 @@
--- sqlite
+-- mysql
 
 -- This is the schema for our database
-
-PRAGMA foreign_keys=ON;
 
 CREATE TABLE course (
     subj VARCHAR(30), -- subj is subject like CMPS
     code varchar(20), -- code is course numbering like 200
     title VARCHAR(30),
     attribute VARCHAR(40),
-    description STRING,
+    description text,
     PRIMARY KEY (subj, code)
 );
 
 CREATE TABLE prerequisite (
     forsubj VARCHAR(30),
-    forcode VARHAR(20),
+    forcode VARCHAR(20),
     reqsubj VARCHAR(30),
     reqcode VARCHAR(20),
     PRIMARY KEY (forsubj, forcode, reqsubj, reqcode),
@@ -26,13 +24,13 @@ CREATE TABLE prerequisite (
 CREATE TABLE building (
     bldgname VARCHAR(20),
     alias VARCHAR(20),
-    image_url STRING,
+    image_url TEXT,
     PRIMARY KEY (bldgname)
 );
 
 CREATE TABLE room (
     bldgname VARCHAR(20),
-    roomcode varchar(20),
+    roomcode VARCHAR(20),
     PRIMARY KEY (bldgname, roomcode),
     FOREIGN KEY (bldgname) REFERENCES building(bldgname)
 );
@@ -46,25 +44,25 @@ CREATE TABLE instructor (
     office_starting_hour TIME,
     office_ending_hour TIME,
     bldgname VARCHAR(20),
-    roomcode int,
-    image_url STRING,
+    roomcode VARCHAR(20),
+    image_url TEXT,
     CONSTRAINT instructor_id PRIMARY KEY (email),
     CONSTRAINT office_room FOREIGN KEY (bldgname, roomcode) REFERENCES room(bldgname, roomcode)
 );
 
 CREATE TABLE lecture (
     crn int,
-    semester varchar(12),
+    semester VARCHAR(12),
     lec_year int, -- year when the lecture was being taught
     lec_days VARCHAR(3), -- days per week of lecture
-    starting_hour TIME,
-    ending_hour TIME,
+    starting_hour TEXT,
+    ending_hour TEXT,
     section varchar(5),
     credits int,
-    subj varchar(30),
-    code int,
+    subj VARCHAR(30),
+    code VARCHAR(20),
     bldgname VARCHAR(20),
-    roomcode int,
+    roomcode varchar(20),
     instructor_email VARCHAR(30),
     CONSTRAINT lecture_id PRIMARY KEY (crn, semester, lec_year),
     CONSTRAINT course_link FOREIGN KEY (subj, code) REFERENCES course(subj, code),
@@ -73,14 +71,14 @@ CREATE TABLE lecture (
 );
 
 CREATE TABLE client ( -- user is a reserved keyword
-    fid int, -- facebook id
-    first_name VARCHAR,
-    last_name VARCHAR,
+    fid bigint unsigned, -- facebook id
+    first_name VARCHAR(30),
+    last_name VARCHAR(30),
     CONSTRAINT facebook_id PRIMARY KEY (fid)
 );
 
 CREATE TABLE issue (
-    fid int,
+    fid bigint unsigned,
     msgno int,
     text VARCHAR(100),
     CONSTRAINT issue_id PRIMARY KEY (fid, msgno),
@@ -89,21 +87,21 @@ CREATE TABLE issue (
 
 CREATE TABLE material (
     title VARCHAR(80),
-    date_published DATE,
-    fid int,
+    date_published TEXT,
+    fid bigint unsigned,
     subj VARCHAR(30),
-    code int,
+    code VARCHAR(20),
     CONSTRAINT material_id PRIMARY KEY (title),
     CONSTRAINT contributor FOREIGN KEY (fid) REFERENCES client(fid),
     CONSTRAINT material_course FOREIGN KEY (subj, code) REFERENCES course(subj, code)
 );
 
 CREATE TABLE tutor (
-    fid int,
+    fid bigint unsigned,
     tutor_name VARCHAR(45),
     seniority VARCHAR(20),
     gpa float,
-    tutor_desc STR, -- tutor description
+    tutor_desc TEXT, -- tutor description
     website VARCHAR(100),
     phone_no VARCHAR(30),
     email VARCHAR(30),
@@ -112,33 +110,33 @@ CREATE TABLE tutor (
 );
 
 CREATE TABLE teaches (
-    fid int,
+    fid bigint unsigned,
     subj VARCHAR(30),
-    code int,
+    code VARCHAR(20),
     price int,
     speciality VARCHAR(60),
     CONSTRAINT teaching PRIMARY KEY (fid, subj, code),
     CONSTRAINT tutor_link FOREIGN KEY (fid) REFERENCES tutor(fid),
-    CONSTRAINT course_link FOREIGN KEY (subj, code) REFERENCES course(subj, code)
+    CONSTRAINT teaches_course_link FOREIGN KEY (subj, code) REFERENCES course(subj, code)
 );
 
 CREATE TABLE tip (
-    fid int,
+    fid bigint unsigned,
     post_id int,
     category VARCHAR(30),
     content TEXT,
     CONSTRAINT tip_id PRIMARY KEY (fid, post_id),
-    CONSTRAINT client_link FOREIGN KEY (fid) REFERENCES client(fid)
+    CONSTRAINT tip_client_link FOREIGN KEY (fid) REFERENCES client(fid)
 );
 
 
 CREATE TABLE agreement (
-    client_id int,
-    author_id int,
+    client_id bigint unsigned,
+    author_id bigint unsigned,
     post_id int,
     agree boolean,
     CONSTRAINT agreement PRIMARY KEY (client_id, author_id, post_id),
-    CONSTRAINT client_link FOREIGN KEY (client_id) REFERENCES client(fid),
+    CONSTRAINT agreement_client_link FOREIGN KEY (client_id) REFERENCES client(fid),
     CONSTRAINT tip_link FOREIGN KEY (author_id, post_id) REFERENCES tip(fid, post_id)
 );
 
@@ -151,7 +149,7 @@ CREATE TABLE department (
     name VARCHAR(30),
     faculty_name VARCHAR(60),
     CONSTRAINT department_id PRIMARY KEY (name),
-    CONSTRAINT faculty_link FOREIGN KEY (faculty_name) REFERENCES faculty(name)
+    CONSTRAINT department_faculty_link FOREIGN KEY (faculty_name) REFERENCES faculty(name)
 );
 
 CREATE TABLE tuition (
@@ -161,15 +159,15 @@ CREATE TABLE tuition (
     degree_level VARCHAR(30),
     credit_cost VARCHAR(30),
     CONSTRAINT tuition_id PRIMARY KEY (semester, year, faculty_name, degree_level),
-    CONSTRAINT faculty_link FOREIGN KEY (faculty_name) REFERENCES faculty(name)
+    CONSTRAINT tuition_faculty_link FOREIGN KEY (faculty_name) REFERENCES faculty(name)
 );
 
 CREATE TABLE info (
     tag VARCHAR(30),
     value TEXT,
-    image_url STRING,
-    default_action_url STRING,
-    title STRING,
+    image_url TEXT,
+    default_action_url TEXT,
+    title TEXT,
     CONSTRAINT tag_id PRIMARY KEY (tag)
 );
 
@@ -184,7 +182,7 @@ CREATE TABLE studyplan (
 CREATE TABLE catalogues (
     department VARCHAR(30),
     degree_level VARCHAR(30),
-    link STRING,
+    link text,
     CONSTRAINT catalouges_id PRIMARY KEY (department, degree_level),
     CONSTRAINT department_fk FOREIGN KEY  (department) REFERENCES department(name)
 );

@@ -96,7 +96,7 @@ function setup_NER(ner){
     ner.addRegexRule('en', 'course_code', /[0-9]{3}[-]*[a-zA-Z]{0,2}/g);
 
     // add courses attributes entities
-    dbm.executeQuery( "SELECT DISTINCT REPLACE(attribute, 'I', '') as attribute from course WHERE attribute NOT NULL;" , (res) => {
+    dbm.executeQuery( "SELECT DISTINCT REPLACE(attribute, 'I', '') as attribute from course WHERE attribute IS NOT NULL;" , (res) => {
         ner.addRuleOptionTexts('en','course_attribute','attribute', res.map((course) => course.attribute.trim() ));
     });
 
@@ -105,7 +105,7 @@ function setup_NER(ner){
     ner.addRuleOptionTexts('en', 'datetime', 'day_shortcut', ["M", "T", "W", "R", "F", "TR", "WF", "MW", "MWF"]);
 
     // add building entities
-    dbm.executeQuery( "SELECT DISTINCT alias from building WHERE alias NOT NULL;" , (res1) => {
+    dbm.executeQuery( "SELECT DISTINCT alias from building WHERE alias IS NOT NULL;" , (res1) => {
         dbm.executeQuery( 'SELECT DISTINCT bldgname from building;', (res2) => {
             var names1 = res1.map( (building) => building.alias );
             var names2 = res2.map( (building) => building.bldgname );

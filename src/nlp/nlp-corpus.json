@@ -133,7 +133,8 @@
       "intent": "instructors.info",
       "utterances": [
         "@instructor",
-        "@instructor @instructor"
+        "@instructor @instructor",
+        "@instructor@instructor"
       ],
       "answers": []
     },

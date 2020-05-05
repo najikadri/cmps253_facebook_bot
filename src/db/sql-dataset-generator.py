@@ -310,20 +310,21 @@ with open( config.catalogues_file , 'r') as csv_file:
 # inserted or none of them if there is any error or any problem
 
 def begin (sql_file):
-    sql_file.write('BEGIN; \n')
+    sql_file.write('START TRANSACTION; \n')
 
 def end (sql_file):
-    sql_file.write('END; \n')
+    sql_file.write('COMMIT; \n')
 
 
 
 # convert dataset information to sql statements
+# note: we need a better way to transfer data as mysql is different and slower than sqlite
 
 with open( config.output_file , 'w', encoding='utf-8') as sql_file:
 
     sql_file.write("-- facebook_data base dataset ( auto-generated )\n\n")
 
-    sql_file.write('PRAGMA foreign_keys = ON;\n\n')
+    sql_file.write('set autocommit = 0;\n\n')
 
 
     # inserting courses
@@ -495,6 +496,8 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
         sql_file.write(f'INSERT INTO catalogues VALUES ("{ctlg[Catalogues.DEPARTMENT]}", "{ctlg[Catalogues.DEGREE_LEVEL]}", "{ctlg[Catalogues.LINK]}");\n')
 
     end(sql_file)
+
+    sql_file.write('set autocommit = 1;')
     
 
 

@@ -5,7 +5,7 @@ The manager can add data into the database, change values and ofcourse return qu
 to users.
 the database manager handles common queries used by the facebook chat bot and format them
 */
-const sqlite3 = require("sqlite3");
+const mysql2 = require('mysql2');
 const json2html = require('json2html'); // turn JSON into beautiful HTML table
 const path = require('path');
 const fs = require('fs');
@@ -13,17 +13,20 @@ const createQueryIterator = require('./query-iterator').createQueryIterator; // 
 const { createLogger, Logger } = require('./logger');
 const logger = createLogger();
 
- // get the latest program provided
-const latest_program = { semester: "Spring", year: 2020};
+// get the latest program provided
+// note: we have decided to only keep updated data each year so we don't need to specify the year and semester
+// for example if we are in 2020 in the database there will be only lectures and courses for just the year 2020
+// both spring and fall.
+// const latest_program = { semester: "Spring", year: 2020};
 
-String.prototype.currentSemester = function(with_where = false){
-    return `${this} ${(with_where ? 'WHERE ' : 'AND ')} semester="${latest_program.semester}" AND lec_year=${latest_program.year}`;
-}
+// String.prototype.currentSemester = function(with_where = false){
+//     return `${this} ${(with_where ? 'WHERE ' : 'AND ')} \`lec_year\`=${latest_program.year}`;
+// }
 
-// ashortcut since it is used very frequently
-function currentSemester (){
-    return `semester="${latest_program.semester}" AND lec_year=${latest_program.year}`;
-}
+// // a shortcut since it is used very frequently
+// function currentSemester (){
+//     return `lec_year=${latest_program.year}`;
+// }
 
 
 class DatabaseManager {
@@ -36,43 +39,81 @@ class DatabaseManager {
 
         DatabaseManager.instance = this;
 
+        const { DB_HOST } = process.env;
+        const { DB_USER } = process.env;
+        const { DB_PASS } = process.env;
+        const { DB_DATABASE } = process.env;
+
+        this.settings = {
+            host: DB_HOST,
+            user: DB_USER,
+            password: DB_PASS,
+            database: DB_DATABASE,
+        }
+
+        // this.settings = {
+        //     host: 'localhost',
+        //     port: 3308,
+        //     user: 'root',
+        //     database: 'facebot'
+        // }
+
+        this.connection = this.setupConnection();
+
+        // make sure to connect and refresh the connection to keep it alive
+        this.connection.connect( (err) => {
+
+            if(err){
+                throw err;
+            }
+
+            logger.log('successfully connected to the database', Logger.severity.info);
+
+            setInterval( () => {
+                this.connection.query('SELECT 1 + 1', [], (err) => {
+                    // logger.log('database connection refreshed', Logger.severity.debug);
+                });
+            }, 20000);
+
+        });
+
         return this;
     }
 
     // store frequently used queries
     queries = {
-        get_courses : () => { return "SELECT * FROM course"; },
-        get_courses_by_attribute: (attr) => { return `SELECT * FROM course WHERE attribute LIKE '${attr}%' COLLATE NOCASE;`},
-        get_course_info: (subj, code) => { return `SELECT * FROM course WHERE subj = '${subj}' AND code = '${code}' AND description NOT NULL;`},
+        get_courses : () => { return "SELECT * FROM `course`"; },
+        get_courses_by_attribute: (attr) => { return `SELECT * FROM course WHERE attribute LIKE '${attr}%';`},
+        get_course_info: (subj, code) => { return `SELECT * FROM course WHERE subj = '${subj}' AND code = '${code}' AND description IS NOT NULL;`},
         get_title: (subj, code) => { return `SELECT title FROM course WHERE subj='${subj}' and code='${code}'`;},
-        get_lectures : () => { return "SELECT * FROM lecture".currentSemester(true); },
-        get_rooms : () => { return "SELECT * FROM room";},
+        get_lectures : () => { return "SELECT * FROM `lecture`" },
+        get_rooms : () => { return "SELECT * FROM `room`";},
         get_lectures_in: (bldgname, subj, code) => { 
-            subj = (!!subj ? `'${subj}'` : 'subj');
-            code = (!!code ? `'${code}'` : 'code');
-            return `SELECT * FROM ( SELECT * FROM lecture WHERE subj = ${subj} AND code = ${code} AND bldgname='${bldgname}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;
+            subj = (!!subj ? `'${subj}'` : 'L.subj');
+            code = (!!code ? `'${code}'` : 'L.code');
+            return `SELECT * FROM lecture as L LEFT JOIN (SELECT instructor.email, instructor.first_name, instructor.last_name FROM instructor) as I ON L.instructor_email = I.email WHERE L.bldgname = '${bldgname}' AND L.subj = ${subj} AND L.code = ${code};`;
         },
         get_lectures_on: (days, subj, code) => {
-            subj = (!!subj ? `'${subj}'` : 'subj');
-            code = (!!code ? `'${code}'` : 'code');
-            return `SELECT * FROM ( SELECT * FROM lecture WHERE subj = ${subj} AND code = ${code} AND lec_days='${days}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;
+            subj = (!!subj ? `'${subj}'` : 'L.subj');
+            code = (!!code ? `'${code}'` : 'L.code');
+            return `SELECT * FROM lecture as L LEFT JOIN (SELECT instructor.email, instructor.first_name, instructor.last_name FROM instructor) as I ON L.instructor_email = I.email WHERE L.lec_days = '${days}' AND L.subj = ${subj} AND L.code = ${code};`;
         },
         get_lectures_in_on: (bldgname, days, subj, code) => {
-            subj = (!!subj ? `'${subj}'` : 'subj');
-            code = (!!code ? `'${code}'` : 'code');
-            return `SELECT * FROM ( SELECT * FROM lecture WHERE subj = ${subj} AND code = ${code} AND bldgname='${bldgname}' AND lec_days='${days}' AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;
+            subj = (!!subj ? `'${subj}'` : 'L.subj');
+            code = (!!code ? `'${code}'` : 'L.code');
+            return `SELECT * FROM lecture as L LEFT JOIN (SELECT instructor.email, instructor.first_name, instructor.last_name FROM instructor) as I ON L.instructor_email = I.email WHERE L.bldgname = '${bldgname}' AND L.lec_days = '${days}' AND L.subj = ${subj} AND L.code = ${code};`;
         },
         get_lectures_for: (subj, code) => {
-            code = (!!code ? `'${code}'` : 'code');
-            return `SELECT * FROM ( SELECT * FROM lecture WHERE subj='${subj}' AND code=${code} AND ${currentSemester()}) LEFT JOIN (SELECT email, first_name, last_name FROM instructor) ON instructor_email = email;`;
+            code = (!!code ? `'${code}'` : 'L.code');
+            return `SELECT * FROM lecture as L LEFT JOIN (SELECT instructor.email, instructor.first_name, instructor.last_name FROM instructor) as I ON L.instructor_email = I.email WHERE L.subj = '${subj}' AND L.code = ${code};`;
         },
         get_users : () => { return "SELECT * FROM client;"},
         add_user : (userId, fn, ln) => { return `INSERT INTO client VALUES (${userId}, ${fn}, ${ln})`},
         get_courses_for: (subj) => {return `SELECT * FROM course WHERE subj="${subj}"`},
-        get_instructor_by_firstname: (first_name) => {return `SELECT * FROM instructor WHERE LOWER(first_name) like '%${first_name}%';`},
-        get_instructor_by_lastname: (last_name) => {return `SELECT * FROM instructor WHERE LOWER(last_name) like '%${last_name}%';`},
-        get_instructor_by_fullname: (fullname) => {return `SELECT * FROM instructor WHERE LOWER(first_name || " " || last_name) = '${fullname}';`},
-        submit_issue: (user_id, message) => {return `insert into issue values (${user_id}, ifnull( (select max(msgno) + 1 from issue where fid= ${user_id}),  1), "${message}");`},
+        get_instructor_by_firstname: (first_name) => {return `SELECT * FROM instructor WHERE first_name like '%${first_name}%';`},
+        get_instructor_by_lastname: (last_name) => {return `SELECT * FROM instructor WHERE last_name like '%${last_name}%';`},
+        get_instructor_by_fullname: (fullname) => {return `SELECT * FROM instructor WHERE CONCAT(first_name , " " , last_name) = '${fullname}';`},
+        submit_issue: (user_id, message) => {return `insert into issue values (${user_id}, ifnull( (select max(I.msgno) + 1 from issue as I where fid= ${user_id}),  1), "${message}");`},
         get_tuition: (dep, deglvl) => {
             if(!!deglvl){
                 deglvl = `'${deglvl}'`; // surround with string quotation marks
@@ -83,20 +124,18 @@ class DatabaseManager {
             FROM department,
                  tuition
            WHERE department.faculty_name = tuition.faculty_name AND 
-                 department.name = '${dep}' COLLATE NOCASE AND 
-                 tuition.degree_level = ${deglvl} COLLATE NOCASE AND 
-                 tuition.semester = '${latest_program.semester}' AND 
-                 tuition.year = ${latest_program.year};
+                 department.name = '${dep}' AND 
+                 tuition.degree_level = ${deglvl}
           ;`
         },
         get_info: (tag) => { return `SELECT * FROM info WHERE tag = '${tag}';`},
         get_studyplan( major, deglvl){
-            return `SELECT * FROM studyplan WHERE major = '${major}' COLLATE NOCASE AND degree_level = '${deglvl}' COLLATE NOCASE;`
+            return `SELECT * FROM studyplan WHERE major = '${major}' AND degree_level = '${deglvl}' ;`
         },
-        get_building_image: (bldgname) => { return `SELECT * FROM building WHERE (bldgname = '${bldgname}' COLLATE NOCASE OR alias like '${bldgname}%' COLLATE NOCASE) AND image_url NOT NULL;`},
-        get_catalogue: (dep, deglvl) => { return `SELECT * FROM catalogues WHERE department = '${dep}' COLLATE NOCASE AND degree_level = '${deglvl}' COLLATE NOCASE;`},
-        get_departments: () => { return 'SELECT * FROM department;'},
-        get_buildings: () => { return 'SELECT * FROM building;'},
+        get_building_image: (bldgname) => { return `SELECT * FROM building WHERE (bldgname = '${bldgname}'OR alias like '${bldgname}%' ) AND image_url IS NOT NULL;`},
+        get_catalogue: (dep, deglvl) => { return `SELECT * FROM catalogues WHERE department = '${dep}'AND degree_level = '${deglvl}' ;`},
+        get_departments: () => { return 'SELECT * FROM `department`;'},
+        get_buildings: () => { return 'SELECT * FROM `building`;'},
         get_client: (fid) => { return `SELECT * FROM client WHERE fid=${fid};`}
 
 
@@ -114,66 +153,26 @@ class DatabaseManager {
 
 }
 
-// select a database to connect to
-DatabaseManager.prototype.setup_connection = function (database_path) {
-    DatabaseManager.prototype.database = database_path;
-}
-
 
 // return an open connection to the database; need to close manually
-DatabaseManager.prototype.connect = function () {
-    return new sqlite3.Database( this.database , sqlite3.OPEN_READWRITE, (err) => {
-        if (err) {
-            logger.log(err.message, Logger.severity.error);
-        }
-    });
-}
-
-// this function reads queries from a sql file and executes them
-//note: don't use this for now as the sqlite3 module uses asynchronous methods
-DatabaseManager.prototype.runSQLfile = function(file_path) {
-
-
-    var db = this.connect();
-
-    var data = fs.readFileSync( file_path , 'utf-8');
-
-    var queries = data.split( new RegExp(';', 'm') );
-
-    for (var i = 0; i <  queries.length; i++){
-
-        if(queries[i] == ''){
-            continue;
-        }
-
-        db.run(queries[i], [] , (err) => {
-            if (err) {
-              console.log('ERROR!', err);
-            }
-          });
-
-          
-    }
-
-    db.close();
-
+DatabaseManager.prototype.setupConnection = function () {
+    return mysql2.createConnection(this.settings);
 }
 
 // connnect to the database and return query results and then close the connection
-DatabaseManager.prototype.executeQuery = function (query, successFunc ) {
+DatabaseManager.prototype.executeQuery = function (query, successFunc) {
+    
 
-    var db = this.connect();
-
-    db.all( query , [], (err, rows)=>{
+    // the callback function should be err, rows, fields but we don't use fields meta-data
+    this.connection.query( query, (err, rows, _ )=>{
 
         if(err){
             throw err;
         }
 
-        db.close();
-
         successFunc(rows);
-    })
+    });
+
 }
 
 // does exactly like executeQuery but return results as rendered HTML content

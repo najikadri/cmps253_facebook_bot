@@ -32,6 +32,15 @@ def add_fas_instructors_to_dictionary(filename_):
         else:
             Office = Office.split(', ')
             Building = Office[0]
+            if "Physics" in Building:
+                Building = "Phy"
+            if "Business" in Building:
+                Building = "OSB"
+            Building = Building.split(" ")[0]
+            if Building == "Chemistry":
+                Building = "Che"
+            if Building == "Biology":
+                Building = "Bio"
             Room = Office[1]
         
         Extension = lines_lst[i+5]

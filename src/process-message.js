@@ -384,7 +384,8 @@ function runIssueState (userId, event) {
 function runNextState (event, userId){
 
   if(!!event.message.quick_reply && event.message.quick_reply.payload == 'NEXT_PAGE'){
-    return false;
+    runAction(userId, 'Next Page', '#query.next');
+    return true;
   }
 
   return false;
@@ -416,7 +417,7 @@ module.exports = (event) => {
     }
   });
 
-  var stateOccured = runIssueState(userId, event); // note: if there are many states then we would implement a state-manager module
+  var stateOccured = runIssueState(userId, event) || runNextState(event, userId); // note: if there are many states then we would implement a state-manager module
 
   if(!stateOccured){
     // let the natural language manager handle the message

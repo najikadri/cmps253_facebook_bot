@@ -30,7 +30,13 @@ module.exports = async (userId) => {
    var message  = `Hello ${profile.first_name}! 😃 I'm Flapjack and I'm here to help you to answer your questions about the computer science department in the American University of Beirut.\nAsk me anything you would like to know or type help and I'll walk you through.`;
    message += `\nIf you are facing any problem please do let me know! 😊`;
 
-    return sendTextMessage(userId, message);
+   fb_api.sendImageMessage(userId, 'https://i.imgur.com/RiDzXyw.jpg');
+
+   setTimeout(() => {
+       return sendTextMessage(userId, message);  
+   }, 3000);
+
+
 
 
 

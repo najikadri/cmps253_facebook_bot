@@ -17,17 +17,17 @@ module.exports = (event) => {
         switch(payload.category){
             case 'PNP':
                 dbm.executeQuery("SELECT * FROM faqs WHERE category='P/NP Grading'", (res) => {
-                    return handleRequest(userId, res, dbm.formaFaqs, 1);
+                    return handleRequest(userId, res, dbm.formaFaqs, 1, 'Question');
                 });
                 break;
             case 'RI':
                 dbm.executeQuery("SELECT * FROM faqs WHERE category='Registration issues'", (res) => {
-                    return handleRequest(userId, res, dbm.formaFaqs, 1);
+                    return handleRequest(userId, res, dbm.formaFaqs, 1, 'Question');
                 });
                 break;
             case 'GS':
                 dbm.executeQuery("SELECT * FROM faqs WHERE category='Graduate studies'", (res) => {
-                    return handleRequest(userId, res, dbm.formaFaqs, 1);
+                    return handleRequest(userId, res, dbm.formaFaqs, 1, 'Question');
                 });
                 break;
         }

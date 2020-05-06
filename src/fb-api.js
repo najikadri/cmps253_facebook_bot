@@ -69,7 +69,7 @@ FB_API_Manager.prototype.sendTextMessage = (userId, text) => {
 
 
 // send a message with a next postback button to display next page of a a query message
-FB_API_Manager.prototype.displayQueryMessage = (userId, msg) => {
+FB_API_Manager.prototype.displayQueryMessage = (userId, msg, label = 'Page') => {
   return fetch(
     `https://graph.facebook.com/v2.6/me/messages?access_token=${FACEBOOK_ACCESS_TOKEN}`,
     {
@@ -87,7 +87,7 @@ FB_API_Manager.prototype.displayQueryMessage = (userId, msg) => {
           quick_replies: [
             {
               content_type: "text",
-              title: "👉 Next Page",
+              title: `👉 Next ${label}`,
               payload: "NEXT_PAGE"
               // image_url :"http://example.com/img/green.png"   // use to add images to quick replies 
             }

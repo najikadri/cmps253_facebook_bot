@@ -12,13 +12,13 @@ const displayQuery = function(userId, data, request)
   if(request.page() === request.last()){
     return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
   }else{
-    return fb_api.displayQueryMessage(userId, request.formatter(data, request.page(), request.last()));
+    return fb_api.displayQueryMessage(userId, request.formatter(data, request.page(), request.last()), request.label);
   }
 }
 
 // a function to handle custom queries requests
-const handleRequest = function(userId, res, formatter, partition_size = 10) {
-  dbm.requestCustomQuery(userId, res, formatter, partition_size);
+const handleRequest = function(userId, res, formatter, partition_size = 10, label = 'Page') {
+  dbm.requestCustomQuery(userId, res, formatter, partition_size, label);
   var request = dbm.getRequest(userId);
   var data = request.nextPage();
   if(!!data){

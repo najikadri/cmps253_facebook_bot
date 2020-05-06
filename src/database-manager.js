@@ -246,8 +246,8 @@ DatabaseManager.prototype.requestStoredQuery= function(userId, table_entry, form
 }
 
 // create a custom request on demand
-DatabaseManager.prototype.requestCustomQuery = function(userId, query_res, formatter, partition_size = 10){
-    this.ongoing[userId] = { data: createQueryIterator(query_res, partition_size), formatter: formatter };
+DatabaseManager.prototype.requestCustomQuery = function(userId, query_res, formatter, partition_size = 10, label = 'Page'){
+    this.ongoing[userId] = { data: createQueryIterator(query_res, partition_size), formatter: formatter, label: label };
 }
 
 // returns the ongoing query that the user is using
@@ -260,6 +260,7 @@ DatabaseManager.prototype.getRequest = function(userId){
             formatter: this.ongoing[userId].formatter,
             page: this.ongoing[userId].data.getCurrentPage,
             last : this.ongoing[userId].data.getPagesNum,
+            label: this.ongoing[userId].label,
             nextPage : () => {
                 var data = this.ongoing[userId].data.next();
 
@@ -294,8 +295,12 @@ function _mapDays(lec_days){
     return lec_days;
 }
 
-function _formatPage (pg, mpg){
-    return ( pg > 0 ? `\n\n page (${pg}/${mpg})` : '');
+function _formatPage (pg, mpg, label){
+    if (!!label){
+        return ( pg > 0 ? `\n\n ${label} (${pg}/${mpg})` : '');
+    }else{
+        return ( pg > 0 ? `\n\n page (${pg}/${mpg})` : '');
+    }
 }
 
 
@@ -618,7 +623,7 @@ DatabaseManager.prototype.formatWhoTeaches = function(instrs, pg = -1, mpg = -1)
 }
 
 DatabaseManager.prototype.formaFaqs = function(faqs, pg = -1, mpg = -1){
-    return _formatFaqs(faqs) + _formatPage(pg, mpg);
+    return _formatFaqs(faqs) + _formatPage(pg, mpg, 'Question');
 }
 
 

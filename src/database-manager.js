@@ -564,6 +564,21 @@ function _formatBuildings (buildings){
     return result;
 }
 
+function _formatFaqs (faqs){
+
+    var result = '';
+
+    result += `${faqs[0].category}\n\n`
+
+    for(var i = 0; i < faqs.length; i++){
+        var faq = faqs[i];
+
+        result += `❓ Question: ${faq.question}\n\n  ${faq.answer}\n\n`;
+    }
+
+    return result;
+}
+
 // DATABASE MANAGER FORMATTER FUNCTIONS WRAPPER
 
 DatabaseManager.prototype.formatCourses = function (crs, pg = -1, mpg = -1) {
@@ -600,6 +615,10 @@ DatabaseManager.prototype.formatBuildings = function(buildings, pg = -1, mpg = -
 
 DatabaseManager.prototype.formatWhoTeaches = function(instrs, pg = -1, mpg = -1){
     return _formatWhoTeaches(instrs) + _formatPage(pg, mpg);
+}
+
+DatabaseManager.prototype.formaFaqs = function(faqs, pg = -1, mpg = -1){
+    return _formatFaqs(faqs) + _formatPage(pg, mpg);
 }
 
 

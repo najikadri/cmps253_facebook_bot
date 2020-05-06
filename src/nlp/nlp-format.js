@@ -58,6 +58,9 @@ module.exports = (nlp_object, successFunc) => {
         case 'info':
             process_info_Intent(nlp_object);
             break;
+        case 'faqs':
+            nlp_object.action = '#faqs.core';
+            break;
 
     }
 
@@ -337,9 +340,13 @@ function  process_coursesInfo_Intent (nlp_object){
     var course_subject = get_entity('course', nlp_object);
     var course_code = get_entity('course_code', nlp_object);
     var subject = get_text(course_subject);
-    var code = get_text(course_code);
 
-    nlp_object.action = `#courses.info > subj:${subject}  , code:${code}`;
+    if(!!course_code){
+        var code = get_text(course_code);
+        nlp_object.action = `#courses.info > subj:${subject}  , code:${code}`;
+    }else{
+         nlp_object.answer = 'You need to type course subject and code to get info about it (e.g. info about cmps 200)';
+    }
 }
 
 

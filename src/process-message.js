@@ -8,6 +8,7 @@ const logger = createLogger();
 const sc = require('./spell-checker').instance( () => {logger.log('spell checker corpus loaded successfully', Logger.severity.info)} );
 const sendTextMessage = fb_api.sendTextMessage; // a shortcut
 const getstarted = require('./get-started');
+const { displayQuery, handleRequest, ErrorMessage } = require('./query-request-handler');
 
 //---------------------------------------------------
 // SETUP & STORE COMMON QUERIES
@@ -22,30 +23,6 @@ dbm.storeQuery(dbm.queries.get_users(), 'users');
 
 //---------------------------------------------------
 // SETUP
-
-const ErrorMessage = "Sorry I couldn't find any results for your request. 😕";
-
-// this function decides whether to display next button or not with the current query
-const displayQuery = function(userId, data, request)
-{
-  if(request.page() === request.last()){
-    return sendTextMessage(userId, request.formatter(data, request.page(), request.last()));
-  }else{
-    return fb_api.displayQueryMessage(userId, request.formatter(data, request.page(), request.last()));
-  }
-}
-
-// a function to handle custom queries requests
-const handleRequest = function(userId, res, formatter) {
-  dbm.requestCustomQuery(userId, res, formatter);
-  var request = dbm.getRequest(userId);
-  var data = request.nextPage();
-  if(!!data){
-    displayQuery(userId, data, request);
-  }else{
-    return sendTextMessage(userId, ErrorMessage);
-  }
-}
 
 // this function checks if day is valid
 const isValidDay = function(days){
@@ -68,6 +45,7 @@ const isValidDay = function(days){
 const things_to_do = [
   'Report any problem you are facing (e.g. report problem)',
   'Useful links related to AUB (e.g. links)',
+  'Advicing FAQS (e.g. faqs)',
   'Departments catalogues (e.g. catalog computer science undergraduate)',
   'All courses offered by the university (e.g. all courses)',
   'Courses offered for a specific subject (e.g. cmps courses)',
@@ -361,6 +339,9 @@ const runAction = function (userId, msg, action_string) {
       dbm.executeQuery( dbm.queries.get_buildings(), (res) => {
         return handleRequest(userId, res, dbm.formatBuildings);
       });
+      break;
+    case 'faqs.core':
+      fb_api.sendFaqsTemplate(userId);
       break;
     default: logger.log('there must be something wrong with the parsed action!', Logger.severity.error);
   }

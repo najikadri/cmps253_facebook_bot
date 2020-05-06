@@ -187,3 +187,9 @@ CREATE TABLE catalogues (
     CONSTRAINT catalouges_id PRIMARY KEY (department, degree_level),
     CONSTRAINT department_fk FOREIGN KEY  (department) REFERENCES department(name)
 );
+
+CREATE TABLE faqs (
+    category VARCHAR(30),
+    question TEXT,
+    answer TEXT
+);

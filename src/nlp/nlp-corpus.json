@@ -115,7 +115,8 @@
     {
       "intent": "courses.info",
       "utterances": [
-        "@course @course_code"
+        "@course @course_code",
+        "about @course @course_code"
       ],
       "answers": []
     },
@@ -198,6 +199,15 @@
         "not working",
         "mistake",
         "bug"
+      ],
+      "answers": []
+    },
+    {
+      "intent": "faqs",
+      "utterances": [
+        "faqs",
+        "advicing faqs",
+        "advicing"
       ],
       "answers": []
     },

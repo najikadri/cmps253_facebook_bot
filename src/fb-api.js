@@ -370,6 +370,53 @@ FB_API_Manager.prototype.sendUniversityLinks = (userId) => {
 };
 
 
+FB_API_Manager.prototype.sendFaqsTemplate = (userId) => {
+
+  return fetch(
+    `https://graph.facebook.com/v2.6/me/messages?access_token=${FACEBOOK_ACCESS_TOKEN}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({
+        messaging_type: 'RESPONSE',
+        recipient: {
+          id: userId,
+        },
+        message: {
+          attachment: {
+            type: 'template',
+            payload: {
+              template_type: 'button',
+              text: 'Please choose a FAQ category',
+              buttons: [
+                {
+                  type: 'postback',
+                  title: 'P/NP Grading',
+                  payload: '{"type": "FAQS", "category": "PNP"}'
+                },
+                {
+                  type: 'postback',
+                  title: 'Registration issues',
+                  payload: '{"type": "FAQS", "category": "RI" }'
+                },
+                {
+                  type: 'postback',
+                  title: 'Graduate studies',
+                  payload: '{"type": "FAQS", "category": "GS"}'
+                }
+              ]
+            }
+          }
+        },
+      }),
+    }
+  );
+
+};
+
+
 
 // send a common message to all users in the database
 FB_API_Manager.prototype.broadcastMessage = function(text) {

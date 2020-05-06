@@ -16,6 +16,8 @@ const dbm = require('../database-manager').instance();
 const { dockStart } = require('@nlpjs/basic');
 const goto = require('../goto');
 const format = require('./nlp-format');
+const { createLogger, Logger } = require('../logger');
+const logger = createLogger();
 
 
 class NaturalLanguageManager {
@@ -86,62 +88,71 @@ function setup_NER(ner){
     //TODO: bug: if two entities share same text value then only one will be used
     // example: we have CHEM course and CHEM building but NLP will always see CHEM as building for some reason
 
-    // add courses subject entities 
-    // note: removed info from subj because it shadows the keyword info in the intent
-    dbm.executeQuery( 'SELECT DISTINCT subj FROM course WHERE subj <> "INFO";' , (res) => {
-        ner.addRuleOptionTexts('en','course','subject', res.map((course) => course.subj));
-    });
+    dbm.connection.connect( (err) => {
+
+        if(err){
+            throw err;
+        }
+
+        // add courses subject entities 
+        // note: removed info from subj because it shadows the keyword info in the intent
+        dbm.executeQuery( 'SELECT DISTINCT subj FROM course WHERE subj <> "INFO";' , (res) => {
+            ner.addRuleOptionTexts('en','course','subject', res.map((course) => course.subj));
+        });
+        
+        // add courses code regex entity
+        ner.addRegexRule('en', 'course_code', /[0-9]{3}[-]*[a-zA-Z]{0,2}/g);
+
+        // add courses attributes entities
+        dbm.executeQuery( "SELECT DISTINCT REPLACE(attribute, 'I', '') as attribute from course WHERE attribute IS NOT NULL;" , (res) => {
+            ner.addRuleOptionTexts('en','course_attribute','attribute', res.map((course) => course.attribute.trim() ));
+        });
+
+        // add datetime day entity
+        ner.addRuleOptionTexts('en', 'datetime','day', ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+        ner.addRuleOptionTexts('en', 'datetime', 'day_shortcut', ["M", "T", "W", "R", "F", "TR", "WF", "MW", "MWF"]);
+
+        // add building entities
+        dbm.executeQuery( "SELECT DISTINCT alias from building WHERE alias IS NOT NULL;" , (res1) => {
+            dbm.executeQuery( 'SELECT DISTINCT bldgname from building;', (res2) => {
+                var names1 = res1.map( (building) => building.alias );
+                var names2 = res2.map( (building) => building.bldgname );
+                ner.addRuleOptionTexts('en','building','name',   names1.concat(names2));
+            });
+        });
+
+
+        // add instructor entities
+        dbm.executeQuery ( 'SELECT DISTINCT first_name FROM instructor;',  (res1) => {
+            var first_names = res1.map( (instructor) => instructor.first_name);
+
+            dbm.executeQuery( 'SELECT DISTINCT last_name FROM instructor;', (res2) => {
+                var last_names = res2.map( (instructor) => instructor.last_name);
+
+                ner.addRuleOptionTexts('en','instructor','first_name', first_names);
+                ner.addRuleOptionTexts('en','instructor','last_name', last_names);
+
+            });
     
-    // add courses code regex entity
-    ner.addRegexRule('en', 'course_code', /[0-9]{3}[-]*[a-zA-Z]{0,2}/g);
-
-    // add courses attributes entities
-    dbm.executeQuery( "SELECT DISTINCT REPLACE(attribute, 'I', '') as attribute from course WHERE attribute IS NOT NULL;" , (res) => {
-        ner.addRuleOptionTexts('en','course_attribute','attribute', res.map((course) => course.attribute.trim() ));
-    });
-
-    // add datetime day entity
-    ner.addRuleOptionTexts('en', 'datetime','day', ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
-    ner.addRuleOptionTexts('en', 'datetime', 'day_shortcut', ["M", "T", "W", "R", "F", "TR", "WF", "MW", "MWF"]);
-
-    // add building entities
-    dbm.executeQuery( "SELECT DISTINCT alias from building WHERE alias IS NOT NULL;" , (res1) => {
-        dbm.executeQuery( 'SELECT DISTINCT bldgname from building;', (res2) => {
-            var names1 = res1.map( (building) => building.alias );
-            var names2 = res2.map( (building) => building.bldgname );
-            ner.addRuleOptionTexts('en','building','name',   names1.concat(names2));
         });
-    });
 
+        // add info entities
+        ner.addRuleOptionTexts('en','info','keyword', 
+            ['president', 'chairman', 'chairperson', 'chairwoman', 'contact', 'department', 'dep' , 'news']
+        );
 
-    // add instructor entities
-    dbm.executeQuery ( 'SELECT DISTINCT first_name FROM instructor;',  (res1) => {
-        var first_names = res1.map( (instructor) => instructor.first_name);
+        // add degree entities
+        ner.addRuleOptionTexts('en','degree','level', ['undergraduate', 'undergrad', 'graduate', 'grad', 'freshman', 'doctorate']);
 
-        dbm.executeQuery( 'SELECT DISTINCT last_name FROM instructor;', (res2) => {
-            var last_names = res2.map( (instructor) => instructor.last_name);
-
-            ner.addRuleOptionTexts('en','instructor','first_name', first_names);
-            ner.addRuleOptionTexts('en','instructor','last_name', last_names);
-
+        dbm.executeQuery( 'SELECT DISTINCT faculty_name FROM department;', (res) => {
+            logger.log(`NER faculties loaded with ${res.length} entities`, Logger.severity.debug);
+            ner.addRuleOptionTexts('en', 'degree', 'faculty', res.map( (fac) => fac.faculty_name ));
         });
- 
-    });
 
-    // add info entities
-    ner.addRuleOptionTexts('en','info','keyword', 
-        ['president', 'chairman', 'chairperson', 'chairwoman', 'contact', 'department', 'dep' , 'news']
-    );
-
-    // add degree entities
-    ner.addRuleOptionTexts('en','degree','level', ['undergraduate', 'undergrad', 'graduate', 'grad', 'freshman', 'doctorate']);
-
-    dbm.executeQuery( 'SELECT DISTINCT faculty_name FROM department;', (res) => {
-        ner.addRuleOptionTexts('en', 'degree', 'faculty', res.map( (fac) => fac.faculty_name ));
-    });
-
-    dbm.executeQuery( 'SELECT name FROM department;', (res) => {
-        ner.addRuleOptionTexts('en', 'degree', 'department', res.map( (dep) => dep.name));
+        dbm.executeQuery( 'SELECT name FROM department;', (res) => {
+            logger.log(`NER faculties departments with ${res.length} entities`, Logger.severity.debug);
+            ner.addRuleOptionTexts('en', 'degree', 'department', res.map( (dep) => dep.name));
+        });
     });
 
 

@@ -622,7 +622,7 @@ DatabaseManager.prototype.formatWhoTeaches = function(instrs, pg = -1, mpg = -1)
     return _formatWhoTeaches(instrs) + _formatPage(pg, mpg);
 }
 
-DatabaseManager.prototype.formaFaqs = function(faqs, pg = -1, mpg = -1){
+DatabaseManager.prototype.formatFaqs = function(faqs, pg = -1, mpg = -1){
     return _formatFaqs(faqs) + _formatPage(pg, mpg, 'Question');
 }
 

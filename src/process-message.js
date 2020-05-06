@@ -66,21 +66,21 @@ const isValidDay = function(days){
 // help message builder
 
 const things_to_do = [
-  'report any problem you are facing (e.g. report problem)',
-  'ask to see all courses offered by the university (e.g. all courses)',
-  'ask to view departments catalogues (e.g. catalog computer science undergraduate)',
-  'ask to see useful links related to AUB (e.g. links)',
-  'ask for a building\'s image (e.g. nicely hall)',
-  'ask for info/description about a specific course (e.g. info about cmps 200)',
-  'ask for the courses offered for a specific subject (e.g. cmps courses)',
-  'ask for courses with a specific attribute (e.g. natural sciences courses)',
-  'ask for lectures for a certain course (e.g. cmps 200 lectures in bliss hall on mwf)',
-  'ask for lectures in a specific place and/or day(s) (e.g. lectures in nicely hall on tuesday and thursday)' ,
-  'ask for the title or name of a course you heard of (e.g. title of cmps 255)',
-  'ask for info about instructors if you know their first and/or last names (e.g. faculty bdeir)',
-  'ask for the email of an instructor (e.g. email bdeir)',
-  'ask for tuition of a certain department (e.g. tuition computer science)',
-  'ask for a study plan for a certain major and degree (e.g. study plan computer science undergraduate)'
+  'Report any problem you are facing (e.g. report problem)',
+  'Useful links related to AUB (e.g. links)',
+  'Departments catalogues (e.g. catalog computer science undergraduate)',
+  'All courses offered by the university (e.g. all courses)',
+  'Courses offered for a specific subject (e.g. cmps courses)',
+  'Courses with a specific attribute (e.g. natural sciences courses)',
+  'Info/description about a specific course (e.g. info about cmps 200)',
+  'Title or name of a course you heard of (e.g. title of cmps 255)',
+  'Lectures for a certain course (e.g. cmps 200 lectures in bliss hall on mwf)',
+  'Lectures in a specific place and/or day(s) (e.g. lectures in nicely hall on tuesday and thursday)',
+  'List instructors who teach certain courses or subjects (e.g. who teach cmps / cmps 200)',
+  'Info about instructors if you know their first and/or last names (e.g. faculty bdeir)',
+  'Building\'s image (e.g. nicely hall)',
+  'Tuition of a certain department (e.g. tuition computer science)',
+  'Study plan for a certain major and degree (e.g. study plan computer science undergraduate)',
 ]
 
 const printThingsToDo = function () {
@@ -88,13 +88,13 @@ const printThingsToDo = function () {
   var result = '';
 
   things_to_do.forEach( (element) => {
-    result += `📙 ${element}\n\n`;
+    result += `✅ ${element}\n\n`;
   })
 
   return result;
 }
 
-const HelpMessage = `Here are some of the things that you could do:\n\n${printThingsToDo()}`;
+const HelpMessage = `Here are some of the things that you can request:\n\n${printThingsToDo()}`;
 
 
 //--------------------------------------------------------------------------------

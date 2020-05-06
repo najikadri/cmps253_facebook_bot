@@ -176,7 +176,13 @@
         "teaches @course",
         "teach @course",
         "gives @course",
-        "give @course"
+        "give @course",
+        "@course @course_code instructors",
+        "@course instructors",
+        "@course @course_code professors",
+        "@course professors",
+        "@course @course_code doctors",
+        "@course doctors"
       ],
       "answers": []
     },

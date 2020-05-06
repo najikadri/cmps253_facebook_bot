@@ -514,7 +514,7 @@ function _formatWhoTeaches(instrs){
         var name = instr.first_name + ' ' + instr.last_name;
         var email = instr.email;
 
-        result += `Instructor: ${name} (${email})\n`;
+        result += `👨‍🏫 ${name} (${email})\n`;
 
         result += '\n\n';
     }

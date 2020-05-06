@@ -14,7 +14,9 @@ undergraduate
 graduate
 doctorate
 instructor
+instructors
 professor
+professors
 president
 chairperson
 building

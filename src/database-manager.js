@@ -5,6 +5,7 @@ The manager can add data into the database, change values and ofcourse return qu
 to users.
 the database manager handles common queries used by the facebook chat bot and format them
 */
+const env = process.env.NODE_ENV || 'development';
 const mysql2 = require('mysql2');
 const json2html = require('json2html'); // turn JSON into beautiful HTML table
 const path = require('path');
@@ -44,19 +45,24 @@ class DatabaseManager {
         const { DB_PASS } = process.env;
         const { DB_DATABASE } = process.env;
 
-        this.settings = {
-            host: DB_HOST,
-            user: DB_USER,
-            password: DB_PASS,
-            database: DB_DATABASE,
-        }
+        if (env == 'development'){
 
-        // this.settings = {
-        //     host: 'localhost',
-        //     port: 3308,
-        //     user: 'root',
-        //     database: 'facebot'
-        // }
+            this.settings = {
+                host: 'localhost',
+                port: 3308,
+                user: 'root',
+                database: 'facebot'
+            }
+            
+        }else{
+
+            this.settings = {
+                host: DB_HOST,
+                user: DB_USER,
+                password: DB_PASS,
+                database: DB_DATABASE,
+            }
+        }
 
         this.connection = this.setupConnection();
 
@@ -136,7 +142,11 @@ class DatabaseManager {
         get_catalogue: (dep, deglvl) => { return `SELECT * FROM catalogues WHERE department = '${dep}'AND degree_level = '${deglvl}' ;`},
         get_departments: () => { return 'SELECT * FROM `department`;'},
         get_buildings: () => { return 'SELECT * FROM `building`;'},
-        get_client: (fid) => { return `SELECT * FROM client WHERE fid=${fid};`}
+        get_client: (fid) => { return `SELECT * FROM client WHERE fid=${fid};`},
+        get_who_teaches(subj, code){
+            code = (!!code ? `'${code}'` : 'code');
+            return `SELECT DISTINCT first_name, last_name, email FROM lecture JOIN instructor ON lecture.instructor_email = instructor.email WHERE subj='${subj}' AND code=${code} AND (section like "L%" OR section REGEXP '^[0-9]+$') ORDER BY first_name, last_name`;
+        }
 
 
         
@@ -433,6 +443,25 @@ function _formatInstructors(instrs){
 
 }
 
+function _formatWhoTeaches(instrs){
+
+    var result = '';
+
+    for(var i = 0; i  < instrs.length; i++){
+        var instr = instrs[i];
+
+        var name = instr.first_name + ' ' + instr.last_name;
+        var email = instr.email;
+
+        result += `Instructor: ${name} (${email})\n`;
+
+        result += '\n\n';
+    }
+
+    return result;
+
+}
+
 function _formatTuition (tuitions) {
     var text = '';
     for (var i = 0; i < tuitions.length; i++){
@@ -508,6 +537,9 @@ DatabaseManager.prototype.formatBuildings = function(buildings, pg = -1, mpg = -
     return _formatBuildings(buildings) + _formatPage(pg, mpg);
 }
 
+DatabaseManager.prototype.formatWhoTeaches = function(instrs, pg = -1, mpg = -1){
+    return _formatWhoTeaches(instrs) + _formatPage(pg, mpg);
+}
 
 
 

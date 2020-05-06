@@ -25,6 +25,9 @@ module.exports = (nlp_object, successFunc) => {
         case 'lectures':
             process_lectures_Intent(nlp_object);
             break;
+        case 'lectures.whoteaches':
+            process_whoTeaches_Intent(nlp_object);
+            break;
         case 'issue':
             nlp_object.action = '#issues.prompt';
             break;
@@ -346,7 +349,7 @@ function process_info_Intent (nlp_object){
     var info = get_entities('info', nlp_object);
 
     var president = get_info_tag(info, 'president');
-    var chairperson = get_info_tag(info, ['chairman', 'chairperson', 'chairwoman']);
+    var chairperson = get_info_tag(info, ['chairman', 'chairperson', 'chairwoman','chair']);
     var contact = get_info_tag(info, 'contact');
     var department_keyword = get_info_tag(info, ['department', 'dep']);
 
@@ -374,6 +377,17 @@ function process_info_Intent (nlp_object){
            nlp_object.answer = 'specify the department so I can tell you more about it';
        }
     }
+}
+
+function  process_whoTeaches_Intent(nlp_object){
+
+    var course_subject = get_entity('course', nlp_object);
+    var course_code = get_entity('course_code', nlp_object);
+    var subject = get_text(course_subject);
+    var code = (!!course_code ? get_text(course_code) : undefined);
+    code = (!!subject && !!code ? `, code:${code}` : '');
+
+    nlp_object.action = `#lectures.whoteaches > subj:${subject} ${code}`;
 }
 
 

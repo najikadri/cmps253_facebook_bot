@@ -138,7 +138,7 @@ function setup_NER(ner){
 
         // add info entities
         ner.addRuleOptionTexts('en','info','keyword', 
-            ['president', 'chairman', 'chairperson', 'chairwoman', 'contact', 'department', 'dep' , 'news']
+            ['president', 'chairman', 'chairperson', 'chairwoman', 'chair', 'contact', 'department', 'dep' , 'news']
         );
 
         // add degree entities

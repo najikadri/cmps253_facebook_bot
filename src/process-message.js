@@ -230,11 +230,19 @@ const runAction = function (userId, msg, action_string) {
       break;
     case 'lectures.course':
       var subj = parameters['subj'].toUpperCase();
-      var code  = (!!parameters['code'] ? parameters['code'].toUpperCase() : code);;
+      var code  = (!!parameters['code'] ? parameters['code'].toUpperCase() : code);
 
       dbm.executeQuery(dbm.queries.get_lectures_for(subj, code), (res) => {
         return handleRequest(userId, res, dbm.formatLectures);
       })
+      break;
+    case 'lectures.whoteaches':
+      var subj = parameters['subj'].toUpperCase();
+      var code  = (!!parameters['code'] ? parameters['code'].toUpperCase() : code);
+
+      dbm.executeQuery( dbm.queries.get_who_teaches(subj, code), (res) => {
+        return handleRequest(userId, res, dbm.formatWhoTeaches);
+      });
       break;
     case 'instructors.info':
       // parameter could be name or email

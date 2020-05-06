@@ -45,7 +45,6 @@
         "log in into AUB student information system",
         "use AUBsis",
         "find AUBsis",
-        "can not find AUBsis",
         "enter secure area",
         "view student information",
         "access AUBsis",
@@ -134,7 +133,13 @@
       "utterances": [
         "@instructor",
         "@instructor @instructor",
-        "@instructor@instructor"
+        "@instructor@instructor",
+        "about @instructor",
+        "about @instructor @instructor",
+        "about @instructor@instructor",
+        "name @instructor",
+        "name @instructor @instructor",
+        "name @instructor@instructor"
       ],
       "answers": []
     },
@@ -152,6 +157,28 @@
         "I will do it but let's hope there is capacity 🙏",
         "Choose wisely 🤓"
       ]
+    },
+    {
+      "intent": "lectures.whoteaches",
+      "utterances": [
+        "teaches @course @course_code courses",
+        "teach @course @course_code courses",
+        "gives @course @course_code courses",
+        "give @course @course_code courses",
+        "teaches @course courses",
+        "teach @course courses",
+        "gives @course courses",
+        "give @course courses",
+        "teaches @course @course_code",
+        "teach @course @course_code",
+        "gives @course @course_code",
+        "give @course @course_code",
+        "teaches @course",
+        "teach @course",
+        "gives @course",
+        "give @course"
+      ],
+      "answers": []
     },
     {
       "intent": "issue",

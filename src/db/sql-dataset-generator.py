@@ -14,7 +14,7 @@ import configparser # install configparser to read config.ini file
 class ConfigFile:
     def __init__(self, catalog_file, attribute_file, department_faculty_file,
      tuition_file, instructors_images_file, buildings_file, course_info_file,
-     catalogues_file, output_file):
+     catalogues_file, instructors_office_title_file, output_file):
         self.catalog_file = f'{catalog_file}.csv'
         self.attribute_file = f'{attribute_file}.csv'
         self.department_faculty_file = f'{department_faculty_file}.csv'
@@ -23,6 +23,7 @@ class ConfigFile:
         self.buildings_file = f'{buildings_file}.csv'
         self.course_info_file = f'{course_info_file}.csv'
         self.catalogues_file = f'{catalogues_file}.csv'
+        self.instructors_office_title_file = f'{instructors_office_title_file}.csv'
         self.output_file = f'{output_file}.sql'
 
 # define columns in the dataset if it might change later on
@@ -79,6 +80,11 @@ class Catalogues:
     DEGREE_LEVEL = 1
     LINK = 2
 
+class OfficeTitle:
+    EMAIL = 0
+    TITLE = 1
+    BUILDING = 2
+    ROOM = 3
 
 # substitute building keywords to avoid collision with courses keywords
 # example CHEM building and CHEM courses are the same
@@ -117,6 +123,7 @@ config = ConfigFile(
     read_config.get('settings', 'BuildingsFile'),
     read_config.get('settings', 'CourseInfoFile'),
     read_config.get('settings', 'CataloguesFile'),
+    read_config.get('settings', 'InstructorsOfficeTitle'),
     read_config.get('settings', 'OutputFile')
 )
 
@@ -147,11 +154,12 @@ with open( config.catalog_file , 'r') as csv_file:
         if not email in instuctors and email != 'N/A' and email != 'NULL':
 
             if instr_name == 'N/A' or instr_name == 'NULL':
-                instuctors[email] = [f'"{email}"', 'null','null', 'null']
+                # note: format is email, first_name, last_name, image_url, title, bldgname, roomcode
+                instuctors[email] = [f'"{email}"', 'null','null', 'null', 'null', 'null', 'null']
             else:
                 first_name = instr_name.split()[0]
                 last_name = ' '.join( instr_name.split()[1:])
-                instuctors[email] = [f'"{email}"', f'"{ first_name }"', f'"{  last_name  }"', 'null']
+                instuctors[email] = [f'"{email}"', f'"{ first_name }"', f'"{  last_name  }"', 'null', 'null', 'null', 'null']
 
         if course_name != 'NULL' and course_name != 'N/A' and not course_name in courses :
             courses[course_name] = course
@@ -249,7 +257,33 @@ with open( config.instructors_images_file, 'r') as csv_file:
         email = row[InstructorsImages.EMAIL]
 
         if email in instuctors:
-            instuctors[email][-1] = f'"{row[InstructorsImages.SRC]}"'
+            instuctors[email][3] = f'"{row[InstructorsImages.SRC]}"'
+
+with open( config.instructors_office_title_file, 'r') as csv_file:
+
+    data = csv.reader(csv_file)
+
+    is_header = True
+
+    for row in data:
+
+        if is_header:
+            is_header = False
+            continue
+
+        email = row[OfficeTitle.EMAIL]
+
+        if email in instuctors:
+            instuctors[email][4] = f'"{row[OfficeTitle.TITLE]}"' if row[OfficeTitle.TITLE] != 'NULL' else instuctors[email][4]
+            instuctors[email][5] = f'"{row[OfficeTitle.BUILDING]}"' if row[OfficeTitle.BUILDING] != 'NULL' else instuctors[email][5]
+            instuctors[email][6] = f'"{row[OfficeTitle.ROOM]}"' if row[OfficeTitle.ROOM] != 'NULL' else instuctors[email][6]
+
+            building = row[OfficeTitle.BUILDING].upper()
+            room = row[OfficeTitle.ROOM].upper()
+
+            if room != 'NULL' and (building + room) not in rooms:
+                buildings[building] = [building, 'null', 'null']
+                rooms[building+room] = (building, room)
 
 with open( config.buildings_file, 'r') as csv_file:
 
@@ -324,14 +358,14 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
 
     sql_file.write("-- facebook_data base dataset ( auto-generated )\n\n")
 
-    sql_file.write('set autocommit = 0;\n\n')
+    sql_file.write('SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";\n')
+    sql_file.write('SET autocommit = 0;\n\n')
 
+    begin(sql_file)
 
     # inserting courses
 
     sql_file.write('-- INSERT COURSES \n\n')
-
-    begin(sql_file)
 
     for course in courses.values():
 
@@ -345,46 +379,31 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
             
         sql_file.write(f'INSERT INTO course VALUES ("{course[0]}","{str(course[1])}","{course[2]}", {course[3]}, {course[4]});\n')
 
-    end(sql_file)
-
     # inserting buildings
 
     sql_file.write('\n-- INSERT BUILDINGS \n\n')
 
-    begin(sql_file)
-
     for bldg in buildings.values():
         sql_file.write(f'INSERT INTO building  VALUES ("{bldg[0]}", {bldg[1]}, {bldg[2]});\n')
-
-    end(sql_file)
 
     # inserting rooms
 
     sql_file.write('\n-- INSERT ROOMS \n\n')
 
-    begin(sql_file)
 
     for room in rooms.values():
         sql_file.write(f'INSERT INTO room  VALUES ("{room[0]}", "{room[1]}");\n')
-
-    end(sql_file)
  
     # inserting instructors
 
     sql_file.write('\n-- INSERT INSTRUCTORS \n\n')
 
-    begin(sql_file)
-
     for instr in instuctors.values():
-        sql_file.write(f'INSERT INTO instructor (email, first_name, last_name, image_url) VALUES ({instr[0]}, {instr[1]}, {instr[2]}, {instr[3]});\n')
-
-    end(sql_file)
+        sql_file.write(f'INSERT INTO instructor (email, first_name, last_name, image_url, title, bldgname, roomcode) VALUES ({instr[0]}, {instr[1]}, {instr[2]}, {instr[3]}, {instr[4]}, {instr[5]}, {instr[6]});\n')
 
     # inserting lectures
 
     sql_file.write('\n-- INSERT LECTURES \n\n')
-
-    begin(sql_file)
 
     for lecture in lectures.values():
         # check for null values or N/A
@@ -441,39 +460,27 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
 
         sql_file.write(f'INSERT INTO lecture VALUES ({str(lecture[0])}, "{lecture[Catalog.SEMESTER]}", {lecture[Catalog.YEAR]}, {days}, {time[0]}, {time[1]}, "{lecture[Catalog.SECTION]}", {lecture[Catalog.CREDITS]} , "{lecture[Catalog.COURSE_SUBJ]}", "{lecture[Catalog.COURSE_CODE]}", {building}, {room}, {email});\n')
 
-    end(sql_file)
-
 
     # inserting faculties
 
     sql_file.write('\n-- INSERT FACULTIES \n\n')
 
-    begin(sql_file)
-
     for faculty in faculties.values():
         sql_file.write(f'INSERT INTO faculty VALUES ("{faculty}");\n')
-
-    end(sql_file)
 
     # inserting departments
 
     sql_file.write('\n-- INSERT DEPARTMENTS \n\n')
-
-    begin(sql_file)
 
     for department in departments.values():
         dep = department[ DepartmentFaculty.DEPARTMENT ]
         fac = department[ DepartmentFaculty.FACULTY ]
         sql_file.write(f'INSERT INTO department VALUES ("{dep}", "{fac}");\n')
 
-    end(sql_file)
-
 
     # inserting tuitions
 
     sql_file.write('\n-- INSERT TUITION \n\n')
-
-    begin(sql_file)
 
     for tuition in tuitions.values():
         sems = tuition[ Tuition.SEMESTER ]
@@ -483,14 +490,9 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
         crd = tuition[ Tuition.CREDIT_COST ]
         sql_file.write(f'INSERT INTO tuition VALUES ("{sems}", {year}, "{fac}", "{deglvl}", "{crd}");\n')
 
-    end(sql_file)
-
-
     # inserting catalogues
 
     sql_file.write('\n-- INSERT CATALOGUES \n\n')
-
-    begin(sql_file)
 
     for ctlg in catalogues.values():
         sql_file.write(f'INSERT INTO catalogues VALUES ("{ctlg[Catalogues.DEPARTMENT]}", "{ctlg[Catalogues.DEGREE_LEVEL]}", "{ctlg[Catalogues.LINK]}");\n')

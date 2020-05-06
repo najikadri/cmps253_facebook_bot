@@ -116,9 +116,9 @@ class DatabaseManager {
         get_users : () => { return "SELECT * FROM client;"},
         add_user : (userId, fn, ln) => { return `INSERT INTO client VALUES (${userId}, ${fn}, ${ln})`},
         get_courses_for: (subj) => {return `SELECT * FROM course WHERE subj="${subj}"`},
-        get_instructor_by_firstname: (first_name) => {return `SELECT * FROM instructor WHERE first_name like '%${first_name}%';`},
-        get_instructor_by_lastname: (last_name) => {return `SELECT * FROM instructor WHERE last_name like '%${last_name}%';`},
-        get_instructor_by_fullname: (fullname) => {return `SELECT * FROM instructor WHERE CONCAT(first_name , " " , last_name) = '${fullname}';`},
+        get_instructor_by_firstname: (first_name) => {return `SELECT * FROM (SELECT DISTINCT subj, code, instructor_email FROM lecture) AS L JOIN instructor AS I on I.email = L.instructor_email WHERE I.first_name LIKE '%${first_name}%' ORDER BY first_name, last_name, subj, code`},
+        get_instructor_by_lastname: (last_name) => {return `SELECT * FROM (SELECT DISTINCT subj, code, instructor_email FROM lecture) AS L JOIN instructor AS I on I.email = L.instructor_email WHERE I.last_name LIKE '%${last_name}%' ORDER BY first_name, last_name, subj, code`},
+        get_instructor_by_fullname: (fullname) => {return `SELECT * FROM (SELECT DISTINCT subj, code, instructor_email FROM lecture) AS L JOIN instructor AS I on I.email = L.instructor_email WHERE CONCAT(I.first_name , " " , I.last_name) = '${fullname}' ORDER BY first_name, last_name, subj, code`},
         submit_issue: (user_id, message) => {return `insert into issue values (${user_id}, ifnull( (select max(I.msgno) + 1 from issue as I where fid= ${user_id}),  1), "${message}");`},
         get_tuition: (dep, deglvl) => {
             if(!!deglvl){
@@ -394,15 +394,34 @@ function _formatTitle (subj, code, res){
     return `${subj} ${code} : ${res[0].title}`;
 }
 
+function _formatInstructorCourses(courses){
+    var result = '';
+
+    result += '\n\tTeaches:\n';
+    for( var j = 0; j < courses.length; j++){
+        result += `\t◼\t${courses[j]}\n`;
+    }
+
+    return result;
+}
+
 function _formatInstructors(instrs){
 
     var result = '';
 
+    var courses = [];
+    var current_instructor = undefined;
+    var current_instructor_added = false
+    var has_office = false
+
     for(var i = 0; i  < instrs.length; i++){
+
         var instr = instrs[i];
 
         var name = instr.first_name + ' ' + instr.last_name;
+        var course = instr.subj + ' ' + instr.code;
         var email = instr.email;
+        var title = instr.title;
         var department = (!!instr.department ? instr.department : undefined);
         var office_days = (!!instr.office_days ? _mapDays(instr.office_days) : undefined);
         var building = (!!instr.bldgname ? instr.bldgname : undefined);
@@ -410,30 +429,72 @@ function _formatInstructors(instrs){
         var office_starting_hour = (!!instr.office_starting_hour ? instr.office_starting_hour : undefined);
         var office_ending_hour = (!!instr.office_ending_hour ? instr.office_ending_hour : undefined);
 
-        result += `Instructor: ${name} (${email})\n`;
+        if(current_instructor != email){
+            if(!!current_instructor){
+                result += _formatInstructorCourses(courses);
+            }
 
-        if(!!department){
-            result += `Department: ${department}\n`;
+            courses.length = 0;
+            current_instructor_added = false;
+            current_instructor = email;
+            has_office = false
+
+            result += '\n';
         }
 
-        if(!!building || !!office_days || !!office_starting_hour){
-            result += `Office Hours:`;
+        if(!current_instructor_added) {
+
+            result += `👨‍🏫 ${name} (${email})\n`;
+
+            if(!!title){
+                result += `\n\tTitle: ${title}\n`;
+            }
+
+            if(!!department){
+                result += `\tDepartment: ${department}\n`;
+            }
+
+            if(!!building || !!office_days || !!office_starting_hour){
+                result += `\tOffice:`;
+            }
+            
+
+            if(!!building){
+                has_office = true
+                result += ` ${building} ${room}`;
+            }
+
+            if(!!office_days){
+                result += ` every ${office_days}`;
+            }
+
+            if(!!office_starting_hour){
+                result += ` between ${office_starting_hour} and ${office_ending_hour}`;
+            }
+
+            if(has_office){
+                result += '\n';
+            }
+
+            current_instructor_added = true;
         }
+
+        courses.push(course);
         
+        // last case
+        if(i == instrs.length - 1){
 
-        if(!!building){
-            result += ` ${building} ${room}`;
+            if(!!current_instructor){
+                result += _formatInstructorCourses(courses);
+            }
+
+            courses.length = 0;
+            current_instructor_added = false;
+            current_instructor = email;
+            has_office = false
+
+            result += '\n';
         }
-
-        if(!!office_days){
-            result += ` every ${office_days}`;
-        }
-
-        if(!!office_starting_hour){
-            result += ` between ${office_starting_hour} and ${office_ending_hour}`;
-        }
-
-        result += '\n\n';
 
     }
 

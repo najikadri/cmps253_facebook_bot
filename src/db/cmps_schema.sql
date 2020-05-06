@@ -39,6 +39,7 @@ CREATE TABLE instructor (
     email VARCHAR(30),
     first_name VARCHAR(20),
     last_name VARCHAR(20),
+    title VARCHAR(100),
     department VARCHAR(20),
     office_days VARCHAR(3),
     office_starting_hour TIME,

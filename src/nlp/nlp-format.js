@@ -179,7 +179,6 @@ function process_None_Intent (nlp_object){
     }
 
     if( text.includes('flapjack') ){
-        console.log('here');
         nlp_object.answer = 'yes?';
     }
 
@@ -330,6 +329,17 @@ function  process_instructorInfo_Intent (nlp_object){
     first_name = (!!first_name ? get_text(first_name) : '');
     last_name = (!!last_name ? get_text(last_name) : '');
 
+    if(first_name == last_name){
+        var names = get_entities('instructor', nlp_object);
+
+        if (names.length > 2){
+            last_name = get_text(names[2]);
+        }else{
+
+            last_name = '';
+        }
+    }
+
     var name = String(first_name + ' ' + last_name).replace(/^\s+|\s+$/g, ''); // trim string
 
     nlp_object.action = `#instructors.info > name:${name}`;
@@ -367,21 +377,21 @@ function process_info_Intent (nlp_object){
             // for now we only have computer science department
             nlp_object.action = '#info.get > tag:cmps_chairperson';
         }else{
-            nlp_object.answer = 'specify the department so I can tell you its chairperson';
+            nlp_object.answer = 'Specify the department so I can tell you its chairperson';
         }
     }else if(!!contact && !!department_keyword){
         if(!!department){
              // for now we only have computer science department
              nlp_object.action = '#info.get > tag:cmps_dep_contact_info';
         }else{
-            nlp_object.answer = 'specify the department so I can show you its contact info';
+            nlp_object.answer = 'Specify the department so I can show you its contact info';
         }
     }else if (!!department_keyword){
         if(!!department){
             // for now we only have computer science department
             nlp_object.action = '#info.get > tag:cmps_dep';
        }else{
-           nlp_object.answer = 'specify the department so I can tell you more about it';
+           nlp_object.answer = 'Specify the department so I can tell you more about it';
        }
     }
 }
@@ -390,11 +400,15 @@ function  process_whoTeaches_Intent(nlp_object){
 
     var course_subject = get_entity('course', nlp_object);
     var course_code = get_entity('course_code', nlp_object);
-    var subject = get_text(course_subject);
-    var code = (!!course_code ? get_text(course_code) : undefined);
-    code = (!!subject && !!code ? `, code:${code}` : '');
+    if(!!course_subject) {
+        var subject = get_text(course_subject);
+        var code = (!!course_code ? get_text(course_code) : undefined);
+        code = (!!subject && !!code ? `, code:${code}` : '');
 
-    nlp_object.action = `#lectures.whoteaches > subj:${subject} ${code}`;
+        nlp_object.action = `#lectures.whoteaches > subj:${subject} ${code}`;
+    }else{
+        nlp_object.answer = 'Please choose subject or subject and code (e.g. CMPS 253 instructors)';
+    }
 }
 
 

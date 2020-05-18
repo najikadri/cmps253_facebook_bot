@@ -228,7 +228,7 @@ const runAction = function (userId, msg, action_string) {
 
         var name = parameters['name'];
 
-        // try to find or suggest instructors by full name first, then by last name, and finally by first name
+        // try to find or suggest instructors by full name first, then by either first or last name
         dbm.executeQuery( dbm.queries.get_instructor_by_fullname(name), (res) => {
           if(res.length > 1){
             if(!!res[0].image_url){
@@ -236,14 +236,8 @@ const runAction = function (userId, msg, action_string) {
             }
             return handleRequest(userId, res, dbm.formatInstructors);
           }else{
-            dbm.executeQuery( dbm.queries.get_instructor_by_lastname(name), (res) => {
-              if(res.length > 0){
-                return handleRequest(userId, res, dbm.formatInstructors);
-              }else{
-                dbm.executeQuery( dbm.queries.get_instructor_by_firstname(name), (res) => {
-                  return handleRequest(userId, res, dbm.formatInstructors);
-                });
-              }
+            dbm.executeQuery( dbm.queries.get_instructor_by_name(name), (res) => {
+              return handleRequest(userId, res, dbm.formatInstructors);
             });
           }
         });
@@ -278,6 +272,10 @@ const runAction = function (userId, msg, action_string) {
     case 'info.get':
       var tag = parameters['tag'];
       dbm.executeQuery( dbm.queries.get_info(tag), (res) => {
+
+        if(res.length === 0){
+          return sendTextMessage(userId, ErrorMessage);
+        }
         
         var info = res[0];
 

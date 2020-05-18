@@ -119,6 +119,7 @@ class DatabaseManager {
         get_instructor_by_firstname: (first_name) => {return `SELECT * FROM (SELECT DISTINCT subj, code, instructor_email FROM lecture) AS L JOIN instructor AS I on I.email = L.instructor_email WHERE I.first_name LIKE '%${first_name}%' ORDER BY first_name, last_name, subj, code`},
         get_instructor_by_lastname: (last_name) => {return `SELECT * FROM (SELECT DISTINCT subj, code, instructor_email FROM lecture) AS L JOIN instructor AS I on I.email = L.instructor_email WHERE I.last_name LIKE '%${last_name}%' ORDER BY first_name, last_name, subj, code`},
         get_instructor_by_fullname: (fullname) => {return `SELECT * FROM (SELECT DISTINCT subj, code, instructor_email FROM lecture) AS L JOIN instructor AS I on I.email = L.instructor_email WHERE CONCAT(I.first_name , " " , I.last_name) = '${fullname}' ORDER BY first_name, last_name, subj, code`},
+        get_instructor_by_name: (name) => {return `SELECT *, CHAR_LENGTH(first_name) as length FROM (SELECT DISTINCT subj, code, instructor_email FROM lecture) AS L JOIN instructor AS I on I.email = L.instructor_email WHERE I.last_name LIKE '%${name}%' OR I.first_name LIKE '%${name}%' ORDER BY length, first_name, last_name, subj, code`},
         submit_issue: (user_id, message) => {return `insert into issue values (${user_id}, ifnull( (select max(I.msgno) + 1 from issue as I where fid= ${user_id}),  1), "${message}");`},
         get_tuition: (dep, deglvl) => {
             if(!!deglvl){

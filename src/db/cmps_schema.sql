@@ -40,7 +40,7 @@ CREATE TABLE instructor (
     first_name VARCHAR(20),
     last_name VARCHAR(20),
     title VARCHAR(100),
-    department VARCHAR(20),
+    department VARCHAR(60),
     office_days VARCHAR(3),
     office_starting_hour TIME,
     office_ending_hour TIME,
@@ -147,7 +147,7 @@ CREATE TABLE faculty (
 );
 
 CREATE TABLE department (
-    name VARCHAR(30),
+    name VARCHAR(60),
     faculty_name VARCHAR(60),
     CONSTRAINT department_id PRIMARY KEY (name),
     CONSTRAINT department_faculty_link FOREIGN KEY (faculty_name) REFERENCES faculty(name)
@@ -181,7 +181,7 @@ CREATE TABLE studyplan (
 
 
 CREATE TABLE catalogues (
-    department VARCHAR(30),
+    department VARCHAR(60),
     degree_level VARCHAR(30),
     link text,
     CONSTRAINT catalouges_id PRIMARY KEY (department, degree_level),

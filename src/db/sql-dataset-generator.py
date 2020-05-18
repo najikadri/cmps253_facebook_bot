@@ -14,7 +14,7 @@ import configparser # install configparser to read config.ini file
 class ConfigFile:
     def __init__(self, catalog_file, attribute_file, department_faculty_file,
      tuition_file, instructors_images_file, buildings_file, course_info_file,
-     catalogues_file, instructors_office_title_file, output_file):
+     catalogues_file, instructors_office_title_file, info_file, output_file):
         self.catalog_file = f'{catalog_file}.csv'
         self.attribute_file = f'{attribute_file}.csv'
         self.department_faculty_file = f'{department_faculty_file}.csv'
@@ -24,6 +24,7 @@ class ConfigFile:
         self.course_info_file = f'{course_info_file}.csv'
         self.catalogues_file = f'{catalogues_file}.csv'
         self.instructors_office_title_file = f'{instructors_office_title_file}.csv'
+        self.info_file = f'{info_file}.csv'
         self.output_file = f'{output_file}.sql'
 
 # define columns in the dataset if it might change later on
@@ -86,6 +87,13 @@ class OfficeTitle:
     BUILDING = 2
     ROOM = 3
 
+class INFO:
+    TAG = 0
+    VALUE = 1
+    IMAGE_URL = 2
+    DEFAULT_ACTION_URL = 3
+    TITLE = 4
+
 # substitute building keywords to avoid collision with courses keywords
 # example CHEM building and CHEM courses are the same
 def substitute(keyword):
@@ -108,8 +116,15 @@ faculties = {}
 departments = {}
 tuitions = {}
 catalogues = {}
+info = {}
 
 # load configuration file
+
+ONE_FILE = False # if True generate only a single file instead of multiple ones for each table/relation
+
+if len(sys.argv) > 1:
+    ONE_FILE = True if sys.argv[1].lower() == 'true' else False
+
 
 read_config = configparser.ConfigParser()
 read_config.read('config.ini')
@@ -124,6 +139,7 @@ config = ConfigFile(
     read_config.get('settings', 'CourseInfoFile'),
     read_config.get('settings', 'CataloguesFile'),
     read_config.get('settings', 'InstructorsOfficeTitle'),
+    read_config.get('settings', 'InfoFile'),
     read_config.get('settings', 'OutputFile')
 )
 
@@ -338,30 +354,59 @@ with open( config.catalogues_file , 'r') as csv_file:
 
         catalogues[dep] = row
 
+with open( config.info_file, 'r') as csv_file:
+
+    data = csv.reader(csv_file)
+
+    is_header = True
+
+    for row in data:
+
+        if is_header:
+            is_header = False
+            continue
+
+        if row[INFO.IMAGE_URL] == 'NULL':
+            row[INFO.IMAGE_URL] = 'null'
+        else:
+            row[INFO.IMAGE_URL] = f'"{row[INFO.IMAGE_URL]}"'
+        
+        if row[INFO.DEFAULT_ACTION_URL] == 'NULL':
+            row[INFO.DEFAULT_ACTION_URL] = 'null'
+        else:
+            row[INFO.DEFAULT_ACTION_URL] = f'"{row[INFO.DEFAULT_ACTION_URL]}"'
+
+        if row[INFO.TITLE] == 'NULL':
+            row[INFO.TITLE] = 'null'
+        else:
+            row[INFO.TITLE] = f'"{row[INFO.TITLE]}"'
+
+        info[row[INFO.TAG]] = row
+
 
 # important functions that are used to make transcations faster
 # note any sql statements between begin and end will either all be 
 # inserted or none of them if there is any error or any problem
 
-def begin (sql_file):
+def begin (sql_file, name):
+    sql_file.write(f"-- facebook_data {name} dataset ( auto-generated )\n\n")
+
+    sql_file.write('SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";\n')
+    sql_file.write('SET autocommit = 0;\n\n')
+
     sql_file.write('START TRANSACTION; \n')
 
 def end (sql_file):
-    sql_file.write('COMMIT; \n')
-
+    sql_file.write('\nCOMMIT; \n')
+    sql_file.write('set autocommit = 1;')
 
 
 # convert dataset information to sql statements
 # note: we need a better way to transfer data as mysql is different and slower than sqlite
 
-with open( config.output_file , 'w', encoding='utf-8') as sql_file:
+with open( config.output_file if ONE_FILE else 'aub_courses.sql' , 'a' if ONE_FILE else 'w', encoding='utf-8') as sql_file:
 
-    sql_file.write("-- facebook_data base dataset ( auto-generated )\n\n")
-
-    sql_file.write('SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";\n')
-    sql_file.write('SET autocommit = 0;\n\n')
-
-    begin(sql_file)
+    begin(sql_file, 'courses')
 
     # inserting courses
 
@@ -379,6 +424,15 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
             
         sql_file.write(f'INSERT INTO course VALUES ("{course[0]}","{str(course[1])}","{course[2]}", {course[3]}, {course[4]});\n')
 
+    end(sql_file)
+
+
+#-------------------------------------------------------------------------------------------
+
+with open( config.output_file if ONE_FILE else 'aub_buildings.sql' , 'a' if ONE_FILE else 'w', encoding='utf-8') as sql_file:
+
+    begin(sql_file, 'buildings')
+    
     # inserting buildings
 
     sql_file.write('\n-- INSERT BUILDINGS \n\n')
@@ -386,21 +440,46 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
     for bldg in buildings.values():
         sql_file.write(f'INSERT INTO building  VALUES ("{bldg[0]}", {bldg[1]}, {bldg[2]});\n')
 
+
+    end(sql_file)
+
+#-------------------------------------------------------------------------------------------
+
+with open( config.output_file if ONE_FILE else  'aub_rooms.sql' , 'a' if ONE_FILE else 'w', encoding='utf-8') as sql_file:
+
+    begin(sql_file, 'rooms')
+
     # inserting rooms
 
     sql_file.write('\n-- INSERT ROOMS \n\n')
 
 
     for room in rooms.values():
-        sql_file.write(f'INSERT INTO room  VALUES ("{room[0]}", "{room[1]}");\n')
- 
+        sql_file.write(f'INSERT INTO room  VALUES ("{room[0]}", "{room[1]}");\n')    
+        
+    end(sql_file)
+
+#-------------------------------------------------------------------------------------------
+
+with open( config.output_file if ONE_FILE else  'aub_instructors.sql' , 'a' if ONE_FILE else 'w', encoding='utf-8') as sql_file:
+
+    begin(sql_file, 'instructors')
+    
     # inserting instructors
 
     sql_file.write('\n-- INSERT INSTRUCTORS \n\n')
 
     for instr in instuctors.values():
-        sql_file.write(f'INSERT INTO instructor (email, first_name, last_name, image_url, title, bldgname, roomcode) VALUES ({instr[0]}, {instr[1]}, {instr[2]}, {instr[3]}, {instr[4]}, {instr[5]}, {instr[6]});\n')
+        sql_file.write(f'INSERT INTO instructor (email, first_name, last_name, image_url, title, bldgname, roomcode) VALUES ({instr[0]}, {instr[1]}, {instr[2]}, {instr[3]}, {instr[4]}, {instr[5]}, {instr[6]});\n')    
+        
+    end(sql_file)
 
+#-------------------------------------------------------------------------------------------
+
+with open( config.output_file if ONE_FILE else  'aub_lectures.sql' , 'a' if ONE_FILE else 'w' , encoding='utf-8') as sql_file:
+
+    begin(sql_file, 'lectures')
+    
     # inserting lectures
 
     sql_file.write('\n-- INSERT LECTURES \n\n')
@@ -458,9 +537,16 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
 
         
 
-        sql_file.write(f'INSERT INTO lecture VALUES ({str(lecture[0])}, "{lecture[Catalog.SEMESTER]}", {lecture[Catalog.YEAR]}, {days}, {time[0]}, {time[1]}, "{lecture[Catalog.SECTION]}", {lecture[Catalog.CREDITS]} , "{lecture[Catalog.COURSE_SUBJ]}", "{lecture[Catalog.COURSE_CODE]}", {building}, {room}, {email});\n')
+        sql_file.write(f'INSERT INTO lecture VALUES ({str(lecture[0])}, "{lecture[Catalog.SEMESTER]}", {lecture[Catalog.YEAR]}, {days}, {time[0]}, {time[1]}, "{lecture[Catalog.SECTION]}", {lecture[Catalog.CREDITS]} , "{lecture[Catalog.COURSE_SUBJ]}", "{lecture[Catalog.COURSE_CODE]}", {building}, {room}, {email});\n')    
+        
+    end(sql_file)
 
+#-------------------------------------------------------------------------------------------
 
+with open( config.output_file if ONE_FILE else  'aub_faculties.sql' , 'a' if ONE_FILE else 'w', encoding='utf-8') as sql_file:
+
+    begin(sql_file, 'faculties')
+    
     # inserting faculties
 
     sql_file.write('\n-- INSERT FACULTIES \n\n')
@@ -468,6 +554,14 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
     for faculty in faculties.values():
         sql_file.write(f'INSERT INTO faculty VALUES ("{faculty}");\n')
 
+    end(sql_file)
+
+#-------------------------------------------------------------------------------------------
+
+with open( config.output_file if ONE_FILE else  'aub_departments.sql' , 'a' if ONE_FILE else 'w', encoding='utf-8') as sql_file:
+
+    begin(sql_file, 'departments')
+    
     # inserting departments
 
     sql_file.write('\n-- INSERT DEPARTMENTS \n\n')
@@ -477,6 +571,13 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
         fac = department[ DepartmentFaculty.FACULTY ]
         sql_file.write(f'INSERT INTO department VALUES ("{dep}", "{fac}");\n')
 
+    end(sql_file)
+
+#-------------------------------------------------------------------------------------------
+
+with open( config.output_file if ONE_FILE else  'aub_tuition.sql' , 'a' if ONE_FILE else 'w', encoding='utf-8') as sql_file:
+
+    begin(sql_file, 'tuition')
 
     # inserting tuitions
 
@@ -488,19 +589,40 @@ with open( config.output_file , 'w', encoding='utf-8') as sql_file:
         fac = tuition[ Tuition.FACULTY ]
         deglvl = tuition[ Tuition.DEGREE_LEVEL ]
         crd = tuition[ Tuition.CREDIT_COST ]
-        sql_file.write(f'INSERT INTO tuition VALUES ("{sems}", {year}, "{fac}", "{deglvl}", "{crd}");\n')
+        sql_file.write(f'INSERT INTO tuition VALUES ("{sems}", {year}, "{fac}", "{deglvl}", "{crd}");\n')    
+        
+    end(sql_file)
 
+#-------------------------------------------------------------------------------------------
+
+with open( config.output_file if ONE_FILE else  'aub_catalogues.sql' , 'a' if ONE_FILE else 'w', encoding='utf-8') as sql_file:
+
+    begin(sql_file, 'catalogues')
+    
     # inserting catalogues
 
     sql_file.write('\n-- INSERT CATALOGUES \n\n')
 
     for ctlg in catalogues.values():
-        sql_file.write(f'INSERT INTO catalogues VALUES ("{ctlg[Catalogues.DEPARTMENT]}", "{ctlg[Catalogues.DEGREE_LEVEL]}", "{ctlg[Catalogues.LINK]}");\n')
+        sql_file.write(f'INSERT INTO catalogues VALUES ("{ctlg[Catalogues.DEPARTMENT]}", "{ctlg[Catalogues.DEGREE_LEVEL]}", "{ctlg[Catalogues.LINK]}");\n')  
 
     end(sql_file)
 
-    sql_file.write('set autocommit = 1;')
-    
+#-------------------------------------------------------------------------------------------
 
+with open( config.output_file if ONE_FILE else  'aub_info.sql' , 'a' if ONE_FILE else 'w', encoding='utf-8') as sql_file:
+
+    begin(sql_file, 'info')
+
+    # inserting info
+
+    sql_file.write('\n-- INSERT INFO \n\n')
+
+    for cinfo in info.values(): # cinfo means current info
+        sql_file.write(f'INSERT INTO info VALUES ("{cinfo[0]}", "{cinfo[1]}", {cinfo[2]}, {cinfo[3]}, {cinfo[4]});\n')   
+        
+    end(sql_file)
+
+#-------------------------------------------------------------------------------------------
 
 print("facebook_bot base dataset sql successfully generated!")

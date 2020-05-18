@@ -1,0 +1,16 @@
+tag,value,image_url,default_action_url,title
+cmps_dep_contact_info,"Beirut Office 
+Mailing address:
+American University of Beirut
+Department of Computer Science 
+PO Box 11-0236, Riad El Solh
+Beirut, Lebanon 1107-2020
+  
+Phone: +961-1-350000 (ext. 4215/6)
+Fax: +961-1-744461
+E-mail: cmps@aub.edu.lb
+Website: http://www.cs.aub.edu.lb",NULL,NULL,NULL
+cmps_dep,The Department of Computer Science at the American University of Beirut prepares students for advanced studies and professional careers in the dynamically changing world of computing and information technology. Our programs combine the theoretical foundations of computing with the practical knowledge of software development vital to industry and provide a broad and integrated curriculum.,https://www.aub.edu.lb/fas/cs/HomeRotator/Bliss-2.jpg,https://www.aub.edu.lb/fas/cs/Pages/default.aspx,Computer Science Department
+cmps_chairperson,Haidar Safa,https://s3-us-west-1.amazonaws.com/co-directory-images/hsafa.jpg,NULL,NULL
+president,"Fadlo R. Khuri is the 16th and current president of the American University of Beirut.
+He assumed office in September 2015 and was officially inaugurated on January 25, 2016.",https://upload.wikimedia.org/wikipedia/en/5/58/AUB_President_Fadlo_R._Khuri.jpg,NULL,NULL

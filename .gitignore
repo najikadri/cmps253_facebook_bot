@@ -4,16 +4,7 @@ node_modules/*
 src/db/*
 !src/db/sql-dataset-generator.py
 !src/db/cmps_schema.sql
-!src/db/aub_catalog_dataset.csv
-!src/db/courses_attributes.csv
-!src/db/tuition_fees.csv
-!src/db/departments_faculties.csv
-!src/db/instructors_images.csv
-!src/db/instructors_office_title.csv
-!src/db/buildings.csv
-!src/db/courses_info.csv
-!src/db/catalogues.csv
-!src/db/faqs.csv
+!src/db/*.csv
 !src/db/pdf_catalogue.py
 !src/db/pdf2csv.py
 !src/db/config.ini

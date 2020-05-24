@@ -8,6 +8,8 @@ into sql code that can be used to populate our database with data.
 import csv
 import sys
 import configparser # install configparser to read config.ini file
+import os
+import os.path
 
 # define necessary classes for the sql generator
 
@@ -403,6 +405,11 @@ def end (sql_file):
 
 # convert dataset information to sql statements
 # note: we need a better way to transfer data as mysql is different and slower than sqlite
+
+if ONE_FILE: # delete file if already exists because we are appending not overwriting
+    if os.path.isfile(config.output_file):
+        os.remove(config.output_file)
+        
 
 with open( config.output_file if ONE_FILE else 'aub_courses.sql' , 'a' if ONE_FILE else 'w', encoding='utf-8') as sql_file:
 

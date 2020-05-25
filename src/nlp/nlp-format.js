@@ -363,12 +363,14 @@ function  process_coursesInfo_Intent (nlp_object){
 function process_info_Intent (nlp_object){
 
     var department = get_entity('degree', nlp_object, 'department');
+    var faculty = get_entity('faculty', nlp_object);
     var info = get_entities('info', nlp_object);
 
     var president = get_info_tag(info, 'president');
     var chairperson = get_info_tag(info, ['chairman', 'chairperson', 'chairwoman','chair']);
     var contact = get_info_tag(info, 'contact');
     var department_keyword = get_info_tag(info, ['department', 'dep']);
+    var dean = get_info_tag(info, 'dean');
 
     if(!!president){
         nlp_object.action = '#info.get > tag:president';
@@ -393,6 +395,13 @@ function process_info_Intent (nlp_object){
        }else{
            nlp_object.answer = 'Specify the department so I can tell you more about it';
        }
+    }else if (!!dean){
+        if(!!faculty){
+            // for now we only have FAS dean
+            nlp_object.action = '#info.get > tag:dean_fas';
+        }else{
+            nlp_object.answer = 'Specify the faculty so I can tell you who is its dean';
+        }
     }
 }
 

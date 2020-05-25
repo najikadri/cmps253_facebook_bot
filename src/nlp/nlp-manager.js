@@ -138,7 +138,13 @@ function setup_NER(ner){
 
         // add info entities
         ner.addRuleOptionTexts('en','info','keyword', 
-            ['president', 'chairman', 'chairperson', 'chairwoman', 'chair', 'contact', 'department', 'dep' , 'news']
+            ['president', 'chairman', 'chairperson', 'chairwoman', 'chair', 'contact', 'department', 'dep' , 'news', 'dean']
+        );
+
+        // add faculties
+
+        ner.addRuleOptionTexts('en', 'faculty', 'name',
+            ['arts and sciences', 'fas']
         );
 
         // add degree entities

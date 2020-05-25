@@ -1,6 +1,7 @@
 // corpus of words that are required to be spelled correctly to activate the rivescript triggers
 
 help
+fas
 faqs
 lectures
 courses

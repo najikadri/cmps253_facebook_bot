@@ -10,4 +10,4 @@ src/db/*
 !src/db/config.ini
 *.txt
 variables.env
-
+client_secret.json

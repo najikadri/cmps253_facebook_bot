@@ -9,6 +9,7 @@ const sc = require('./spell-checker').instance( () => {logger.log('spell checker
 const sendTextMessage = fb_api.sendTextMessage; // a shortcut
 const getstarted = require('./get-started');
 const { displayQuery, handleRequest, ErrorMessage } = require('./query-request-handler');
+const stats = require('./stats-sheet').instance(); // collect data from users
 
 //---------------------------------------------------
 // SETUP & STORE COMMON QUERIES
@@ -420,6 +421,15 @@ module.exports = (event) => {
   if(!stateOccured){
     // let the natural language manager handle the message
     nlp.getResponse(userId, msg, (response) => {
+
+      stats.updateEntry({
+        Message: msg,
+        Response: response.answer,
+        Intent: response.intent,
+        Action: response.action
+      });
+
+      stats.applyEntry();
 
       // run action if an action exists
       if (!!response.action) {

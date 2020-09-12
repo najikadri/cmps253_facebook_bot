@@ -22,7 +22,7 @@
     "json2html": "0.0.8",
     "mysql2": "^2.1.0",
     "natural": "^0.6.3",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "node-nlp": "^4.3.0",
     "request": "^2.88.0",
     "rivescript": "^2.1.0",
